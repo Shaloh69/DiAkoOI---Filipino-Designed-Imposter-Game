@@ -54,7 +54,13 @@ jobs:
 
       - run: flutter analyze
 
-      - run: flutter test
+      - name: Tests with coverage
+        run: flutter test --coverage
+
+      # A1 requires >= 90% line coverage on lib/engine/. Measuring it once
+      # during Phase 1 proves nothing about Phase 6, so it is a gate.
+      - name: Engine coverage gate
+        run: dart run tool/check_engine_coverage.dart
 
       # Alchemist CI mode. Baselines are committed and must not be regenerated
       # here — a missing or changed baseline fails the job
