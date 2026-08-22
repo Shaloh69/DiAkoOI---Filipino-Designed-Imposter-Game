@@ -16,15 +16,22 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.0.3
+  # Engine models. freezed_annotation and json_annotation are pure Dart, so
+  # lib/engine/ stays free of any package:flutter import (CLAUDE.md §Hard rules).
+  freezed_annotation: ^3.1.0
   go_router: ^17.3.0
+  json_annotation: ^4.12.0
   logging: ^1.3.0
   shared_preferences: ^2.5.5
 
 dev_dependencies:
   alchemist: ^0.12.1
+  build_runner: ^2.4.13
   flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
+  freezed: ^3.2.0
+  json_serializable: ^6.9.0
   test: ^1.31.0
   very_good_analysis: ^10.0.0
 
