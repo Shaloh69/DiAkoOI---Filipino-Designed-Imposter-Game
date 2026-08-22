@@ -21,7 +21,7 @@ branch is based on the one before it and GitHub retargets as they merge:
 | [#1](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/1) | `phase/00-foundation` | `main` | CI green |
 | [#2](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/2) | `chore/step-0-housekeeping` | `phase/00-foundation` | CI green |
 | [#3](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/3) | `phase/01-engine` | `chore/step-0-housekeeping` | CI green |
-| [#4](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/4) | `phase/02-content` | `phase/01-engine` | see PR |
+| [#4](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/4) | `phase/02-content` | `phase/01-engine` | CI green |
 
 Phase 3 should branch from `phase/02-content`.
 
@@ -96,7 +96,8 @@ No human gate. Fully closeable by machine, and closed.
 
 ### Phase 2 — Content · **AUDIT-INCOMPLETE**
 
-The pipeline is built and green. **The bank is empty**, and only humans can fill it.
+The pipeline is built and CI-green (all five jobs). **The bank is empty**, and only humans
+can fill it.
 
 | A2 item | Status |
 |---|---|
