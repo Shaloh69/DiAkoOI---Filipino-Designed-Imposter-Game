@@ -43,18 +43,9 @@ representative of the target market. Specifications in `docs/06-TESTING-STRATEGY
 
 - Other Flutter projects on this machine (BlueWatt, AIRAT-NA, EngiRent) also move to
   3.47.1. Accepted deliberately when the upgrade was chosen.
-- Golden baselines are generated in Alchemist **CI mode** with platform goldens disabled,
-  so there is exactly one set of baselines rather than one per operating system.
-
-  **CI mode is not byte-identical across operating systems.** This was assumed and then
-  tested: a baseline generated on Windows fails on Linux by 0.73% / 156px. Baselines are
-  therefore generated on Linux only, pinned to the same Flutter version CI uses, via
-  `docker compose -f docker-compose.goldens.yml run --rm goldens`. Golden groups skip off
-  Linux with an explicit reason (`app/test/golden/golden_platform.dart`), so
-  `flutter test --tags golden` still exits 0 on a Windows dev machine while CI remains the
-  authority. Developers get no local golden feedback; that is the cost of platform-locked
-  baselines and is the same tradeoff `docs/06-TESTING-STRATEGY.md` §4 already makes for
-  Playwright.
+- Golden baselines are generated on Linux only, pinned to this same Flutter version. CI
+  mode reduces cross-platform variance but does not produce byte-identical output — see
+  **ADR 0004** for the measurement, the Docker workflow, and the accepted tradeoff.
 
 ## Still open
 

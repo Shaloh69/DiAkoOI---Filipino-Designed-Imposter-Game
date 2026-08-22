@@ -17,11 +17,17 @@ import 'dart:async';
 
 import 'package:alchemist/alchemist.dart';
 
+import 'golden/golden_platform.dart';
+
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   return AlchemistConfig.runWithConfig(
     config: const AlchemistConfig(
       platformGoldensConfig: PlatformGoldensConfig(enabled: false),
     ),
-    run: testMain,
+    run: () async {
+      await testMain();
+      // Registration is complete here, so the skip count is final.
+      reportSkippedGoldenGroups();
+    },
   );
 }

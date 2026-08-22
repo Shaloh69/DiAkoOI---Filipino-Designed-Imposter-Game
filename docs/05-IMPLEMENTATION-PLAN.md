@@ -163,15 +163,19 @@ split three ways.
 [ ] SPIKE: prototype hold-to-reveal blur on the V60 Lite and confirm it holds frame
     budget. If not, pick an alternative NOW (06-TESTING-STRATEGY.md §8b) — discovering
     this in Phase 5 means reworking the interaction the product is built around
-[ ] Alchemist configured, CI mode, baselines generated IN DOCKER
+[ ] Alchemist configured, CI mode, baselines generated IN DOCKER — they are
+    byte-locked to Linux and skip elsewhere (docs/adr/0004-golden-baselines.md)
 [ ] Widgetbook or equivalent gallery
 ```
 
-**Exit:** every primitive has goldens across every pack, generated in Docker.
+**Exit:** every primitive has goldens across every pack, generated in Docker and
+passing **in CI**.
 
 ### A3 — Theme baseline
-- [ ] `flutter test --tags golden` green in CI on a clean checkout
-- [ ] **Golden matrix: every primitive × every Vibe Pack** exists and passes
+- [ ] `flutter test --tags golden` green **in CI** on a clean checkout
+- [ ] **Golden matrix: every primitive × every Vibe Pack** exists and passes **in CI**.
+      Goldens execute on Linux only — a local green means they were *skipped*, not
+      verified (docs/adr/0004-golden-baselines.md)
 - [ ] **Every pack passes 4.5:1** body text and 3:1 large text contrast
 - [ ] Crew vs imposter distinguishable **without colour** in every pack
 - [ ] Watermark legible on every pack; never obstructs grid or card content
@@ -394,6 +398,10 @@ Page specs in `09-WEB-SPEC.md`.
 
 **Every phase:** `flutter analyze` and lint clean · full suite green · no new TODO without
 a linked issue · dependencies checked for advisories.
+
+**"Full suite green" means green in CI.** Golden tests execute on Linux only. On a Windows
+or macOS machine they skip, print a `GOLDENS NOT VERIFIED` banner, and the run still exits
+0 — so a local pass is not visual verification. See docs/adr/0004-golden-baselines.md.
 
 **Escalate to a human when:**
 - A design rule appears wrong (propose, don't patch — several are counterintuitive on

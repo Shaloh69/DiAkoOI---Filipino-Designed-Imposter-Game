@@ -109,6 +109,12 @@ Goldens: Alchemist **CI mode**, baselines generated in Docker. Golden primitives
 reveal-card states, not whole screens. **The golden matrix is every primitive × every Vibe
 Pack** — that's what proves theming works and catches hardcoded values.
 
+**Goldens execute on Linux/CI only.** Baselines are byte-locked to Linux, so on Windows or
+macOS the golden groups skip, print a `GOLDENS NOT VERIFIED` banner, and the run still
+exits 0. **A local green is not verification** — only CI is. Regenerate and verify with
+`docker compose -f docker-compose.goldens.yml run --rm goldens`. See
+`docs/adr/0004-golden-baselines.md`.
+
 Playwright visual: `animations: 'disabled'`, mask dynamic content, Docker baselines
 committed, `updateSnapshots: 'none'` in CI.
 
