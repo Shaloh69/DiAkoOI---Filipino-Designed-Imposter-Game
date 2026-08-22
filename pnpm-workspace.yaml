@@ -1,0 +1,17 @@
+packages:
+  - site
+  - admin
+  - api
+  - e2e
+
+allowBuilds:
+  esbuild: set this to true or false
+  sharp: set this to true or false
+
+# Postinstall scripts are blocked by default in pnpm 10+. These are the ones we
+# actually need: native/binary downloads for the build and test toolchains.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - '@tailwindcss/oxide'
+  - unrs-resolver

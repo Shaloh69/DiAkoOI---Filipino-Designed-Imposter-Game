@@ -1,0 +1,112 @@
+openapi: 3.1.0
+
+# The contract is written first and is the source of truth: generate clients
+# from it, never hand-edit it to match code (CLAUDE.md §Off-limits).
+# JSON Schema dialect pinned explicitly to avoid validator mismatches
+# (docs/06-TESTING-STRATEGY.md §6).
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+
+info:
+  title: DiAkoOi API
+  version: 0.1.0
+  description: >-
+    Feedback, word-bank delivery and aggregate telemetry for DiAkoOi.
+    Nothing here is required to start or finish a game — the app is
+    offline-first and the server copy of the word bank is an update, not a
+    dependency (CLAUDE.md §Hard rules).
+  license:
+    name: See LICENSE in the repository
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+
+tags:
+  - name: health
+    description: Liveness and readiness.
+
+paths:
+  /v1/health:
+    get:
+      operationId: getHealth
+      tags: [health]
+      summary: Liveness probe
+      description: >-
+        Always 200 while the process is serving. `data.database` reports
+        connectivity separately so a database outage is visible without
+        making the probe itself fail.
+      responses:
+        '200':
+          description: The service is serving requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Meta:
+      type: object
+      additionalProperties: false
+      required: [requestId, timestamp]
+      properties:
+        requestId:
+          type: string
+          description: Correlation id echoed in logs.
+          minLength: 1
+        timestamp:
+          type: string
+          format: date-time
+
+    HealthData:
+      type: object
+      additionalProperties: false
+      required: [status, uptimeSeconds, database]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        uptimeSeconds:
+          type: number
+          minimum: 0
+        database:
+          type: string
+          description: Result of the most recent connectivity check.
+          enum: [up, down, not_configured]
+
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/HealthData'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    # Documenting the error body is the cheapest way to avoid the most common
+    # contract violation (docs/06-TESTING-STRATEGY.md §6).
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              description: Stable, machine-readable identifier.
+              minLength: 1
+            message:
+              type: string
+              description: Human-readable explanation. Never contains secrets.
+              minLength: 1
