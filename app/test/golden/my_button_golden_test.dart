@@ -13,6 +13,8 @@ import 'package:diakooi/style/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'golden_platform.dart';
+
 void main() {
   group('MyButton', () {
     unawaited(
@@ -33,5 +35,5 @@ void main() {
         ),
       ),
     );
-  });
+  }, skip: skipUnlessGoldenPlatform);
 }

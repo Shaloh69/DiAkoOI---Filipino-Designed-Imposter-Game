@@ -1,0 +1,24 @@
+# Golden baseline generation. Deliberately a separate file from
+# docker-compose.yml: this is a build tool, not part of the running stack.
+#
+#   docker compose -f docker-compose.goldens.yml run --rm goldens
+#
+# Sources are mounted read-only and built in a scratch copy, so Linux
+# .dart_tool/ and build/ artifacts never land in the host tree. Only the
+# regenerated PNGs are written back.
+services:
+  goldens:
+    build:
+      context: .
+      dockerfile: docker/goldens.Dockerfile
+    volumes:
+      - ./app:/src:ro
+      - ./app/test/golden/goldens:/out
+    command: >-
+      bash -lc "
+      cp -r /src /work-src && cd /work-src &&
+      rm -rf .dart_tool build &&
+      flutter pub get &&
+      flutter test --tags golden --update-goldens &&
+      cp -rv test/golden/goldens/. /out/
+      "
