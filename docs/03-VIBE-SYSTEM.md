@@ -164,8 +164,15 @@ full attribution sheet listing licence type and source URL.
 ## 7. Implementation
 
 Base on the **Flutter Casual Games Toolkit basic template**, which already ships
-`lib/src/audio/` (an `AudioController` with music/SFX split and lifecycle handling) and
-`lib/src/style/` for theming. Do not build an audio stack from scratch — see 07-TEMPLATES.md.
+`lib/audio/` (an `AudioController` with music/SFX split and lifecycle handling) and
+`lib/style/` for theming. Do not build an audio stack from scratch — see 07-TEMPLATES.md.
+
+> **Path corrected 2026-08-23.** These were written as `lib/src/audio/` and `lib/src/style/`;
+> upstream flattened `lib/src/` away, and both were adopted into DiAkoOi at
+> `app/lib/audio/` and `app/lib/style/`. The song and SFX registries there are deliberately
+> empty — the template's placeholder audio was removed at adoption, and Phase 3 fills them
+> from `assets/vibes/`. `AudioController` treats an empty playlist or SFX list as a silent
+> no-op, so nothing crashes before the packs land. See `docs/adr/0002-templates.md`.
 
 - `audioplayers` for playback (already wired in the template).
 - Theme delivered through a Riverpod provider exposing the active `VibePack`, consumed by
