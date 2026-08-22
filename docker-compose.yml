@@ -38,6 +38,13 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: diakooi-tunnel
     restart: unless-stopped
+    # Opt-in: without a token this container crash-loops, which would make a
+    # plain `docker compose up -d` never settle. Local development does not
+    # need a tunnel.
+    #   docker compose up -d                      -> postgres + api
+    #   docker compose --profile tunnel up -d     -> adds the tunnel
+    profiles:
+      - tunnel
     depends_on:
       - api
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}

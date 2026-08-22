@@ -1,0 +1,204 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Android only for v1 — there is no iOS job and there must not be one
+# (CLAUDE.md §Identity).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.1'
+  NODE_VERSION: '22'
+
+jobs:
+  dart:
+    name: dart
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Verify the template strip held
+        working-directory: .
+        run: |
+          if grep -rniE 'admob|google_mobile_ads|googlemobileads|in_app_purchase|games_services|crashlytics' app/ ; then
+            echo "::error::Ads/IAP/crashlytics reference reintroduced into app/"
+            exit 1
+          fi
+          echo "No ads/IAP/crashlytics references in app/."
+
+      - run: flutter analyze
+
+      - run: flutter test
+
+      # Alchemist CI mode. Baselines are committed and must not be regenerated
+      # here — a missing or changed baseline fails the job
+      # (docs/06-TESTING-STRATEGY.md §3).
+      - name: Golden tests
+        run: flutter test --tags golden
+
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: app/test/**/failures/
+          if-no-files-found: ignore
+
+  web:
+    name: web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build site
+        run: pnpm --filter @diakooi/site build
+
+      - name: Lint site
+        run: pnpm --filter @diakooi/site lint
+
+      - name: Build admin
+        run: pnpm --filter @diakooi/admin build
+
+      - name: Lint admin
+        run: pnpm --filter @diakooi/admin lint
+
+      - name: Typecheck admin
+        run: pnpm --filter @diakooi/admin typecheck
+
+  api:
+    name: api
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: diakooi
+          POSTGRES_PASSWORD: diakooi
+          POSTGRES_DB: diakooi_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U diakooi -d diakooi_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm --filter @diakooi/api build
+
+      - name: Vitest + Supertest
+        run: pnpm --filter @diakooi/api test
+        env:
+          NODE_ENV: test
+
+  contract:
+    name: contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @diakooi/api build
+
+      - name: Start the API
+        run: |
+          node api/dist/server.js &
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:3000/v1/health && break
+            sleep 1
+          done
+        env:
+          NODE_ENV: production
+          API_PORT: '3000'
+          API_HOST: 127.0.0.1
+
+      - name: Install Schemathesis
+        run: pip install schemathesis
+
+      # The spec is the contract; anyone could depend on any declared field.
+      - name: Schemathesis
+        run: schemathesis run api/openapi.yaml --checks all --url http://127.0.0.1:3000
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    # Baselines are platform-locked, so visual tests run in the official
+    # Playwright image rather than on the runner's own browsers
+    # (docs/06-TESTING-STRATEGY.md §4).
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build site
+        run: pnpm --filter @diakooi/site build
+
+      - name: Playwright
+        run: pnpm --filter @diakooi/e2e test
+        env:
+          CI: 'true'
+
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          if-no-files-found: ignore
