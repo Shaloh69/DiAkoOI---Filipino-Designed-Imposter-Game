@@ -1,0 +1,31 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+buhaypinoy,Jeepney,"makulay na sasakyan, abot-abot ang bayad",pampublikong sasakyan sa kalsada,isang paraan ng pagbiyahe,1,national
+buhaypinoy,Sari-sari store,maliit na tindahan sa tabi ng bahay,binibilhan ng tingi sa kanto,isang lugar na binibilhan,1,national
+buhaypinoy,Tricycle,"may sidecar, tatlo ang gulong",maliit na sasakyan sa loob ng barangay,isang sasakyan sa kalsada,1,national
+buhaypinoy,Palengke,"maingay, maraming tindero at sariwang paninda",lugar na pinupuntahan ng maaga,isang lugar na maraming tao,1,national
+buhaypinoy,Videoke,may mic at may score sa dulo,kinakanta kapag may okasyon,isang libangan sa gabi,1,national
+buhaypinoy,Fiesta,may prusisyon at handaan sa buong bayan,taunang okasyon sa isang lugar,isang pagdiriwang,2,national
+buhaypinoy,Bayanihan,sabay-sabay na pagbubuhat ng bahay,pagtutulungan ng magkakapitbahay,isang ugaling Pilipino,2,national
+buhaypinoy,Tsinelas,"goma at bukas ang daliri, pang-labas ng bahay",sinusuot sa paa araw-araw,isang bagay na sinusuot,1,national
+buhaypinoy,Balikbayan box,malaking karton na galing sa ibang bansa,padala ng kamag-anak sa abroad,isang bagay na hinihintay,2,national
+buhaypinoy,Simbang Gabi,siyam na araw na misa bago mag-Pasko,maagang simba tuwing Disyembre,isang gawain sa simbahan,2,national
+buhaypinoy,Pasalubong,dala pagkatapos ng biyahe,binibigay pag-uwi galing sa malayo,isang bagay na regalo,2,national
+buhaypinoy,Tambay,"nakaupo sa kanto, walang ginagawa",nakikipagkuwentuhan sa labas,isang gawain sa labas,3,national
+buhaypinoy,Kuya,tawag sa nakatatandang lalaki,paggalang sa mas matanda sa iyo,isang tawag sa tao,2,national
+buhaypinoy,Merienda,kinakain sa pagitan ng tanghalian at hapunan,pagkain sa hapon,isang oras ng pagkain,2,national
+buhaypinoy,Barangay,pinakamaliit na yunit ng pamahalaan,may kapitan at may hall,isang lugar sa bayan,2,national
+buhaypinoy,Sampaguita,"maliit at puti, ibinebenta sa kalsada",bulaklak na inaalay sa simbahan,isang halaman,3,national
+buhaypinoy,Jollibee mascot,pulang bubuyog na nakasuot ng damit,simbolo ng isang kainan,isang karakter sa negosyo,3,national
+buhaypinoy,Traffic,"hindi umuusad, matagal sa daan",problema tuwing rush hour,isang bagay sa kalsada,1,national
+buhaypinoy,Brownout,biglang nawawala ang ilaw,kapag walang kuryente sa buong lugar,isang problema sa bahay,2,national
+buhaypinoy,Bagyo,"malakas na hangin at ulan, may signal",kalamidad tuwing tag-ulan,isang kalagayan ng panahon,1,national
+buhaypinoy,Pamasahe,ibinibigay sa driver bago bumaba,bayad sa pagsakay,isang gastos araw-araw,2,national
+buhaypinoy,Kapitbahay,nakatira sa tabi ng bahay mo,taong malapit ang tirahan,isang tao sa paligid,2,national
+buhaypinoy,Bahay kubo,"yari sa kawayan at kugon, nasa bukid",lumang uri ng tirahan,isang uri ng bahay,2,national
+buhaypinoy,Karinderya,maliit na kainan na may nakadisplay na ulam,binibilhan ng murang pagkain,isang lugar na kumakain,2,national
+buhaypinoy,Tabo,ginagamit sa banyo para sa tubig,gamit sa paliligo,isang gamit sa bahay,2,national
+buhaypinoy,Walis tingting,"yari sa manipis na patpat, pang-labas",ginagamit sa paglilinis ng bakuran,isang gamit sa paglilinis,3,national
+buhaypinoy,Sungka,may butas na kahoy at maliliit na bato,isang lumang laro sa bahay,isang laro noon,4,national
+buhaypinoy,Piso,pinakamaliit na papel o barya,ginagamit sa pagbili,isang bagay na ginagastos,2,national
+buhaypinoy,Kalesa,"hinihila ng kabayo, may gulong",lumang sasakyan na makikita sa lumang lugar,isang sasakyan noon,3,national
+buhaypinoy,Salu-salo,"magkakasama sa hapag, maraming pagkain",pagtitipon ng pamilya,isang okasyon sa bahay,3,national

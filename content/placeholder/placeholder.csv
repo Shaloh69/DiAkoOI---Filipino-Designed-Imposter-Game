@@ -1,0 +1,21 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+pagkain,Adobo,"ulam na may toyo at suka, matagal lutuin",isang ulam na kinakain with rice,isang pagkain sa bahay,1,national
+pagkain,Sinigang,"maasim na sabaw, may gulay at karne",mainit na ulam na may sabaw,isang ulam na iniinit,1,national
+pagkain,Halo-halo,malamig na dessert na maraming sangkap,kinakain kapag mainit ang panahon,isang matamis na bagay,1,national
+pagkain,Lechon,"buong baboy na iniihaw, pang-fiesta",pagkain na nasa gitna ng handaan,isang ulam sa okasyon,1,national
+aktor,Vice Ganda,"host ng noontime show, kilala sa pagpapatawa",isang sikat na TV personality,isang tao sa showbiz,1,national
+aktor,Coco Martin,lead sa matagal na aksyon na teleserye,isang aktor na sikat sa TV,isang artista,2,national
+aktor,Sarah Geronimo,mang-aawit na sikat sa noontime shows,isang singer na umaarte rin,isang tao sa showbiz,1,national
+aktor,Kathryn Bernardo,aktres na sikat sa loveteam,isang batang aktres sa pelikula,isang artista sa TV,2,national
+kpop,BTS,"pitong lalaki, may sariling pangalan ang fandom",isang sikat na grupo mula Korea,isang grupo na kumakanta,1,national
+kpop,BLACKPINK,"apat na babae, sikat sa buong mundo",isang girl group mula Korea,isang grupo ng mga babae,1,national
+kpop,Twice,"maraming miyembro, kilala sa cute na kanta",isang girl group na sikat sa Asia,isang grupo na sumasayaw,2,national
+kpop,EXO,boy group na may konsepto ng kapangyarihan,isang grupo ng mga lalaki mula Korea,isang sikat na grupo,2,national
+buhaypinoy,Jeepney,"makulay na sasakyan, abot-abot ang bayad",pampublikong sasakyan sa kalsada,isang paraan ng pagbiyahe,1,national
+buhaypinoy,Sari-sari store,maliit na tindahan sa tabi ng bahay,binibilhan ng tingi sa kanto,isang lugar na binibilhan,1,national
+buhaypinoy,Tricycle,"may sidecar, tatlo ang gulong",maliit na sasakyan sa loob ng barangay,isang sasakyan sa kalsada,1,national
+buhaypinoy,Palengke,"maingay, maraming tindero at sariwang paninda",lugar na pinupuntahan ng maaga,isang lugar na maraming tao,1,national
+teleserye,Darna,"babaeng superhero na lumilipad, may bato",karakter na maraming gumanap,isang tauhan sa TV,1,national
+teleserye,Ang Probinsyano,matagal na aksyon na palabas tungkol sa pulis,isang teleserye na tumagal ng maraming taon,isang palabas sa TV,2,national
+teleserye,Marimar,babae sa dalampasigan na may aso,lumang palabas na sikat na sikat,isang teleserye noon,3,national
+teleserye,Mara Clara,dalawang batang nagkapalit noong sanggol,lumang drama tungkol sa magkaaway,isang palabas noon,3,national

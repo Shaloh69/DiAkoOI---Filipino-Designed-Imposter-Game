@@ -1,0 +1,31 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+pagkain,Adobo,"ulam na may toyo at suka, matagal lutuin",isang ulam na kinakain with rice,isang pagkain sa bahay,1,national
+pagkain,Sinigang,"maasim na sabaw, may gulay at karne",mainit na ulam na may sabaw,isang ulam na iniinit,1,national
+pagkain,Halo-halo,malamig na dessert na maraming sangkap,kinakain kapag mainit ang panahon,isang matamis na bagay,1,national
+pagkain,Lechon,"buong baboy na iniihaw, pang-fiesta",pagkain na nasa gitna ng handaan,isang ulam sa okasyon,1,national
+pagkain,Sisig,"mainit na ulam sa plate, pang-pulutan",ulam na sikat sa Pampanga,isang ulam na inihahain,2,national
+pagkain,Balut,"kinakain sa gabi, binebenta sa kalye",isang street food na hindi lahat kaya,isang pagkain na galing sa hayop,2,national
+pagkain,Taho,binebenta ng naglalakad tuwing umaga,matamis na inumin na may sago,isang bagay na binibili sa labas,2,national
+pagkain,Pancit,"mahabang noodles, pinapakain sa birthday",isang ulam na may noodles,isang pagkain sa handaan,1,national
+pagkain,Lumpia,"balot na may gulay, isinasawsaw sa suka",pagkain na maliit at pinipirito,isang meryenda sa handaan,2,national
+pagkain,Kare-kare,"ulam na may mani, kasama ang bagoong",malapot na ulam na may gulay,isang ulam na may sarsa,2,national
+pagkain,Dinuguan,"maitim na ulam, kadalasang may puto",isang ulam na hindi lahat kumakain,isang ulam na may sarsa,3,national
+pagkain,Bibingka,"niluluto sa dahon, sikat tuwing Pasko",isang kakanin na kinakain sa umaga,isang matamis na pagkain,3,national
+pagkain,Kwek-kwek,"orange na street food, isinasawsaw",pagkain sa labas ng school,isang meryenda,3,national
+pagkain,Puto,"maliit at puti, kadalasang kasama ng ulam",isang kakanin na pinapasingaw,isang matamis na meryenda,2,national
+pagkain,Bagoong,"maalat na pampalasa, galing sa dagat",isang bagay na idinadagdag sa pagkain,isang panlasa sa ulam,3,national
+pagkain,Tapsilog,"karne, itlog at kanin sa isang plato",almusal na binibili sa kanto,isang pagkain sa umaga,2,national
+pagkain,Champorado,"maitim at matamis, kinakain pag umuulan",isang mainit na pagkain sa umaga,isang matamis na pagkain,2,national
+pagkain,Turon,"binalot na prutas, pinirito at matamis",isang meryenda na binibili sa kalye,isang matamis na binibili,3,national
+pagkain,Longganisa,"maliit at hugis singsing, pang-almusal",karne na niluluto sa umaga,isang pagkain sa umaga,2,national
+pagkain,Ginataan,"may gata at kamote, mainit kainin",isang matamis na may sabaw,isang meryenda sa hapon,3,national
+pagkain,Sorbetes,"binebenta sa kariton, may kulay-kulay",malamig na binibili sa labas,isang matamis na malamig,2,national
+pagkain,Isaw,tinutuhog at iniihaw sa kalye,street food na inihahaw sa gabi,isang pagkain sa labas,3,national
+pagkain,Menudo,"may patatas at karne, may pulang sarsa",isang ulam sa handaan,isang ulam na may sarsa,3,national
+pagkain,Pandesal,binibili tuwing umaga sa bakery,isang tinapay na kinakain sa almusal,isang bagay na kinakain sa umaga,1,national
+pagkain,Buko juice,"malamig na inumin, galing sa puno",inumin kapag mainit ang panahon,isang malamig na inumin,2,national
+pagkain,Leche flan,"matamis at dilaw, may caramel sa ibabaw",isang panghimagas sa handaan,isang matamis pagkatapos kumain,2,national
+pagkain,Sotanghon,"manipis na noodles sa sabaw, pang-sakit",mainit na pagkain kapag may lagnat,isang pagkain na may sabaw,3,national
+pagkain,Chicharon,"malutong at maalat, pang-meryenda",isang bagay na kinakain habang nanonood,isang malutong na meryenda,3,national
+pagkain,Palabok,"may dilaw na sarsa, may chicharon sa ibabaw",isang noodle dish sa handaan,isang pagkain na may sarsa,3,national
+pagkain,Suman,"binalot sa dahon, isinasawsaw sa asukal",isang kakanin na kinakain sa umaga,isang matamis na binalot,4,national

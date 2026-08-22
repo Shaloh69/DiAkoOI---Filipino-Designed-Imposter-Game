@@ -1,0 +1,259 @@
+{
+  "formatVersion": 1,
+  "contentVersion": "2026-08-22",
+  "isPlaceholder": true,
+  "note": "PLACEHOLDER — machine-generated candidate content, NOT authored and NOT reviewed. Exists so Phase 4 has something to run. Must be replaced by the authored bank before release (docs/02-CONTENT-PH.md §6, §7).",
+  "topics": [
+    {
+      "topicId": "aktor",
+      "wordCount": 4,
+      "words": [
+        {
+          "topicId": "aktor",
+          "word": "Coco Martin",
+          "clues": {
+            "tight": "lead sa matagal na aksyon na teleserye",
+            "standard": "isang aktor na sikat sa TV",
+            "loose": "isang artista"
+          },
+          "difficultyRating": 2,
+          "region": "national"
+        },
+        {
+          "topicId": "aktor",
+          "word": "Kathryn Bernardo",
+          "clues": {
+            "tight": "aktres na sikat sa loveteam",
+            "standard": "isang batang aktres sa pelikula",
+            "loose": "isang artista sa TV"
+          },
+          "difficultyRating": 2,
+          "region": "national"
+        },
+        {
+          "topicId": "aktor",
+          "word": "Sarah Geronimo",
+          "clues": {
+            "tight": "mang-aawit na sikat sa noontime shows",
+            "standard": "isang singer na umaarte rin",
+            "loose": "isang tao sa showbiz"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "aktor",
+          "word": "Vice Ganda",
+          "clues": {
+            "tight": "host ng noontime show, kilala sa pagpapatawa",
+            "standard": "isang sikat na TV personality",
+            "loose": "isang tao sa showbiz"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        }
+      ]
+    },
+    {
+      "topicId": "buhaypinoy",
+      "wordCount": 4,
+      "words": [
+        {
+          "topicId": "buhaypinoy",
+          "word": "Jeepney",
+          "clues": {
+            "tight": "makulay na sasakyan, abot-abot ang bayad",
+            "standard": "pampublikong sasakyan sa kalsada",
+            "loose": "isang paraan ng pagbiyahe"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "buhaypinoy",
+          "word": "Palengke",
+          "clues": {
+            "tight": "maingay, maraming tindero at sariwang paninda",
+            "standard": "lugar na pinupuntahan ng maaga",
+            "loose": "isang lugar na maraming tao"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "buhaypinoy",
+          "word": "Sari-sari store",
+          "clues": {
+            "tight": "maliit na tindahan sa tabi ng bahay",
+            "standard": "binibilhan ng tingi sa kanto",
+            "loose": "isang lugar na binibilhan"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "buhaypinoy",
+          "word": "Tricycle",
+          "clues": {
+            "tight": "may sidecar, tatlo ang gulong",
+            "standard": "maliit na sasakyan sa loob ng barangay",
+            "loose": "isang sasakyan sa kalsada"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        }
+      ]
+    },
+    {
+      "topicId": "kpop",
+      "wordCount": 4,
+      "words": [
+        {
+          "topicId": "kpop",
+          "word": "BLACKPINK",
+          "clues": {
+            "tight": "apat na babae, sikat sa buong mundo",
+            "standard": "isang girl group mula Korea",
+            "loose": "isang grupo ng mga babae"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "kpop",
+          "word": "BTS",
+          "clues": {
+            "tight": "pitong lalaki, may sariling pangalan ang fandom",
+            "standard": "isang sikat na grupo mula Korea",
+            "loose": "isang grupo na kumakanta"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "kpop",
+          "word": "EXO",
+          "clues": {
+            "tight": "boy group na may konsepto ng kapangyarihan",
+            "standard": "isang grupo ng mga lalaki mula Korea",
+            "loose": "isang sikat na grupo"
+          },
+          "difficultyRating": 2,
+          "region": "national"
+        },
+        {
+          "topicId": "kpop",
+          "word": "Twice",
+          "clues": {
+            "tight": "maraming miyembro, kilala sa cute na kanta",
+            "standard": "isang girl group na sikat sa Asia",
+            "loose": "isang grupo na sumasayaw"
+          },
+          "difficultyRating": 2,
+          "region": "national"
+        }
+      ]
+    },
+    {
+      "topicId": "pagkain",
+      "wordCount": 4,
+      "words": [
+        {
+          "topicId": "pagkain",
+          "word": "Adobo",
+          "clues": {
+            "tight": "ulam na may toyo at suka, matagal lutuin",
+            "standard": "isang ulam na kinakain with rice",
+            "loose": "isang pagkain sa bahay"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "pagkain",
+          "word": "Halo-halo",
+          "clues": {
+            "tight": "malamig na dessert na maraming sangkap",
+            "standard": "kinakain kapag mainit ang panahon",
+            "loose": "isang matamis na bagay"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "pagkain",
+          "word": "Lechon",
+          "clues": {
+            "tight": "buong baboy na iniihaw, pang-fiesta",
+            "standard": "pagkain na nasa gitna ng handaan",
+            "loose": "isang ulam sa okasyon"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "pagkain",
+          "word": "Sinigang",
+          "clues": {
+            "tight": "maasim na sabaw, may gulay at karne",
+            "standard": "mainit na ulam na may sabaw",
+            "loose": "isang ulam na iniinit"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        }
+      ]
+    },
+    {
+      "topicId": "teleserye",
+      "wordCount": 4,
+      "words": [
+        {
+          "topicId": "teleserye",
+          "word": "Ang Probinsyano",
+          "clues": {
+            "tight": "matagal na aksyon na palabas tungkol sa pulis",
+            "standard": "isang teleserye na tumagal ng maraming taon",
+            "loose": "isang palabas sa TV"
+          },
+          "difficultyRating": 2,
+          "region": "national"
+        },
+        {
+          "topicId": "teleserye",
+          "word": "Darna",
+          "clues": {
+            "tight": "babaeng superhero na lumilipad, may bato",
+            "standard": "karakter na maraming gumanap",
+            "loose": "isang tauhan sa TV"
+          },
+          "difficultyRating": 1,
+          "region": "national"
+        },
+        {
+          "topicId": "teleserye",
+          "word": "Mara Clara",
+          "clues": {
+            "tight": "dalawang batang nagkapalit noong sanggol",
+            "standard": "lumang drama tungkol sa magkaaway",
+            "loose": "isang palabas noon"
+          },
+          "difficultyRating": 3,
+          "region": "national"
+        },
+        {
+          "topicId": "teleserye",
+          "word": "Marimar",
+          "clues": {
+            "tight": "babae sa dalampasigan na may aso",
+            "standard": "lumang palabas na sikat na sikat",
+            "loose": "isang teleserye noon"
+          },
+          "difficultyRating": 3,
+          "region": "national"
+        }
+      ]
+    }
+  ],
+  "totalWords": 20
+}

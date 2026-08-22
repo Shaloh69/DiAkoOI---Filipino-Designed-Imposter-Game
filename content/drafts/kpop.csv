@@ -1,0 +1,31 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+kpop,BTS,"pitong lalaki, may sariling pangalan ang fandom",isang sikat na grupo mula Korea,isang grupo na kumakanta,1,national
+kpop,BLACKPINK,"apat na babae, sikat sa buong mundo",isang girl group mula Korea,isang grupo ng mga babae,1,national
+kpop,Twice,"maraming miyembro, kilala sa cute na kanta",isang girl group na sikat sa Asia,isang grupo na sumasayaw,2,national
+kpop,EXO,boy group na may konsepto ng kapangyarihan,isang grupo ng mga lalaki mula Korea,isang sikat na grupo,2,national
+kpop,Red Velvet,girl group na may dalawang magkaibang konsepto,isang grupo ng babae mula Korea,isang grupo na kumakanta,3,national
+kpop,Seventeen,"sobrang daming miyembro, sila rin gumagawa ng sayaw",isang malaking boy group,isang grupo mula Korea,2,national
+kpop,IU,"babaeng solo, umaarte rin sa drama",isang mang-aawit na nag-iisa,isang sikat na tao sa Korea,2,national
+kpop,NewJeans,"bagong girl group, retro ang dating",isang batang grupo ng mga babae,isang bagong grupo,3,national
+kpop,Stray Kids,boy group na sila rin gumagawa ng kanta,isang grupo na malakas ang tugtog,isang grupo mula Korea,3,national
+kpop,ITZY,girl group na malakas ang sayaw,isang batang grupo ng mga babae,isang grupo na sumasayaw,3,national
+kpop,Aespa,girl group na may bersyon sa virtual world,isang grupo ng babae na may konsepto,isang grupo mula Korea,3,national
+kpop,Bigbang,"lumang boy group, kakaunti ang miyembro",isang lumang grupo ng mga lalaki,isang grupo na kumakanta,3,national
+kpop,Girls Generation,"matagal nang girl group, siyam sila noon",isang lumang grupo ng mga babae,isang grupo na kumakanta,3,national
+kpop,Super Junior,"matagal nang boy group, sikat sa Asia",isang lumang grupo ng mga lalaki,isang grupo mula Korea,3,national
+kpop,Gangnam Style,sayaw na parang nakasakay sa kabayo,isang kanta na sumikat sa buong mundo,isang lumang viral na kanta,2,national
+kpop,Jungkook,bunso sa pitong miyembro,isang miyembro ng sikat na boy group,isang mang-aawit mula Korea,3,national
+kpop,Lisa,"miyembro na taga-Thailand, kilala sa rap",isang miyembro ng isang girl group,isang tao sa Kpop,3,national
+kpop,Jennie,miyembro na kilala sa fashion,isang babae sa sikat na girl group,isang tao sa Kpop,3,national
+kpop,Comeback,pagbalik na may bagong kanta,kapag may bagong labas ang grupo,isang bagay na inaabangan ng fans,3,national
+kpop,Lightstick,"hawak ng fans sa concert, may kulay",isang gamit sa panonood ng grupo,isang bagay na dala sa concert,3,national
+kpop,Bias,paboritong miyembro sa isang grupo,ang pinakagusto mo sa grupo,isang salita ng mga fans,3,national
+kpop,Fanchant,sabay-sabay na sigaw habang tumutugtog,kapag sumisigaw ang fans sa kanta,isang ginagawa sa concert,4,national
+kpop,Aegyo,pagiging sobrang cute na sinasadya,pag-arte na parang bata,isang cute na ugali,4,national
+kpop,Trainee,nag-aaral pa bago pumasok sa grupo,isang tao na naghahanda pa lang,isang tao sa entertainment,4,national
+kpop,Debut,unang labas ng grupo sa publiko,ang simula ng isang grupo,isang mahalagang araw,3,national
+kpop,Fandom,pangkat ng tagahanga na may pangalan,grupo ng mga sumusuporta,isang grupo ng tao,3,national
+kpop,Choreography,sabay-sabay na galaw sa kanta,ang sayaw na inuulit sa performance,isang bahagi ng pagtatanghal,3,national
+kpop,Album,koleksyon ng kanta na may photocard,isang labas na maraming kanta,isang binibili ng fans,3,national
+kpop,Idol,artista sa Korea na kumakanta at sumasayaw,isang sikat na tao sa Kpop,isang tao sa entertainment,2,national
+kpop,Concert,"maraming tao, may sayaw at kanta",isang malaking event ng grupo,isang pagtitipon ng tao,2,national
