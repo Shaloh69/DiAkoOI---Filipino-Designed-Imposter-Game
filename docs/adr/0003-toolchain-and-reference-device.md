@@ -33,6 +33,19 @@ skipped. The allowlist lives in `pnpm-workspace.yaml` (`onlyBuiltDependencies`).
 API's Docker image there is no workspace file, so that stage installs with
 `--ignore-scripts` instead — the image never runs tests, so it needs no native test binary.
 
+### Playwright 1.62.1, pinned exactly
+
+`@playwright/test` is pinned to an **exact** version, not a caret range, and the CI
+container image tag must equal it. The image ships only its own release's browsers, so a
+mismatch fails with `Executable doesn't exist at /ms-playwright/...`.
+
+This was not hypothetical: `^1.56.1` floated to 1.62.1 against a `v1.56.1-noble` image and
+took down the `e2e` job. Both files carry a `PLAYWRIGHT PIN 1 of 2` / `2 of 2` comment.
+
+Verified 2026-08-23: `e2e/package.json` `1.62.1`, `pnpm-lock.yaml` resolved `1.62.1`,
+`.github/workflows/ci.yml` `mcr.microsoft.com/playwright:v1.62.1-noble` — and the suite run
+inside that exact image passes.
+
 ### Reference device — Vivo V60 Lite 5G
 
 All A5 performance audits run on this device: named, physically available, and

@@ -3,6 +3,13 @@ import { defineConfig, devices } from '@playwright/test';
 // Playwright drives browsers only. The Flutter app is covered by flutter test,
 // Alchemist goldens and integration_test — never from here
 // (CLAUDE.md §Hard rules, docs/06-TESTING-STRATEGY.md §1).
+//
+// PLAYWRIGHT PIN 2 of 2. @playwright/test in e2e/package.json is pinned to an
+// EXACT version (no caret) because the CI container image
+// mcr.microsoft.com/playwright:v<version>-noble ships only that release's
+// browsers. A caret let the package float to 1.62.1 against a 1.56.1 image and
+// the e2e job failed with "Executable doesn't exist". Change the version and
+// the image tag in .github/workflows/ci.yml together, in the same commit.
 
 const isCI = Boolean(process.env.CI);
 

@@ -177,8 +177,13 @@ jobs:
     # Baselines are platform-locked, so visual tests run in the official
     # Playwright image rather than on the runner's own browsers
     # (docs/06-TESTING-STRATEGY.md §4).
+    #
+    # PLAYWRIGHT PIN 1 of 2. The tag MUST equal the exact @playwright/test
+    # version in e2e/package.json — the image ships only that release's
+    # browsers, and a mismatch fails with "Executable doesn't exist at
+    # /ms-playwright/...". Change both together, in the same commit.
     container:
-      image: mcr.microsoft.com/playwright:v1.56.1-noble
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
     steps:
       - uses: actions/checkout@v5
 
