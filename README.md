@@ -96,6 +96,7 @@ Read in order. Start with `00`.
 | 09 | [`WEB-SPEC`](docs/09-WEB-SPEC.md) | Page-by-page site and console spec |
 | 10 | [`TRADEMARK-SEARCH`](docs/10-TRADEMARK-SEARCH.md) | IPOPHL search protocol |
 | 11 | [`RESOURCES`](docs/11-RESOURCES.md) | Links and competitive landscape |
+| 12 | [`HOSTING`](docs/12-HOSTING.md) | Self-hosting: WSL2, Cloudflare Tunnel, Tailscale, backups |
 
 ---
 
@@ -123,9 +124,13 @@ Full command reference: [`CLAUDE.md`](CLAUDE.md).
 
 ## Three rules that never bend
 
-**1. Selfies never touch disk or network.** In-memory bytes only, discarded on new roster.
-`image_picker` and `camera.takePicture()` both write temp files by default and will
-silently break this. `app/test/privacy/` proves it. Never weaken that test.
+**1. The app never writes a selfie to storage or transmits one.** In-memory bytes only,
+downscaled at capture, discarded on new roster. `image_picker` and `camera.takePicture()`
+both write temp files by default and will silently break this. `app/test/privacy/` proves
+it. Never weaken that test.
+
+That is the guarantee, stated at its true scope — never "photos never touch disk", which
+vendor RAM-extension features make unguaranteeable (`docs/adr/0005-extended-ram-and-selfie-privacy.md`).
 
 **2. All music must be licensed, with the licence recorded.** Every pack in `assets/vibes/`
 ships a `licence.json`. No record, no ship. A credit watermark is not a licence.

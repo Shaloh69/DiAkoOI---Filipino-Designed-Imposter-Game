@@ -23,7 +23,9 @@ site. Keep the iOS folder buildable but do not spend time on it.
 /api          Node + Fastify + Postgres    (/openapi.yaml is the contract)
 /content      word bank CSVs, per topic
 /e2e          Playwright — /site and /admin ONLY
-/docs         numbered specs, 00-11, in reading order
+/docs         numbered specs, 00-12, in reading order
+/docs/12-HOSTING.md  self-hosting topology — WSL2, Cloudflare Tunnel, Tailscale.
+                     Phase 7 only, but see §2b before writing networking code
 /docs/adr     architecture decision records
 CLAUDE.md     this file — MUST keep this exact name, Claude Code loads it by filename
 ```
@@ -47,11 +49,16 @@ docker compose up -d
 
 ## Hard rules
 
-**Selfies never touch disk or network.** In-memory `Uint8List` only, tied to the session,
-discarded on new roster. `image_picker` and `camera.takePicture()` write temp files by
-default — capture from the preview stream instead, or read-then-delete in a `finally`.
+**The app never writes a selfie to storage or transmits one.** In-memory `Uint8List` only,
+downscaled to display resolution at capture, tied to the session, discarded on new roster.
+`image_picker` and `camera.takePicture()` write temp files by default — capture from the
+preview stream instead, or read-then-delete in a `finally`.
 `app/test/privacy/no_disk_write_test.dart` must assert zero new files under temp and
 documents dirs across a full onboarding run. Never weaken this test.
+
+State the guarantee at that exact scope. **Never claim a selfie "never touches disk"** —
+vendor Extended RAM pages process memory to a swap file below our layer, which we cannot
+control. See ADR 0005 and 06-TESTING-STRATEGY.md §8e.
 
 **Music must be licensed, and the licence recorded.** Every pack in `assets/vibes/` ships
 a `licence.json` with source, type, URL, and attribution. No record, no ship. Never add a
@@ -68,6 +75,12 @@ No game logic in widget callbacks.
 **The app works fully offline.** No network call may block starting or finishing a game.
 Word bank and all Vibe Pack audio ship bundled; the server copy is an update, not a
 dependency.
+
+**No hardcoded API base URL. Anywhere, ever.** The beta runs on a Cloudflare Quick Tunnel
+whose hostname rotates on every restart, so a baked-in URL is a dead app. The base URL
+resolves at runtime from `endpoint.json` and falls back silently to bundled content on any
+failure — offline, 404, timeout, malformed. See 12-HOSTING.md §2b. This is Phase 7 work,
+but nothing built in Phases 1-6 may assume a fixed endpoint.
 
 **`01-DESIGN.md` is the source of truth for rules.** Do not invent or "fix" mechanics.
 Several look wrong until you read the rationale — §7a (Mayor), §7b (damage cap), §9b

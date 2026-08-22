@@ -48,6 +48,9 @@ must stay `CLAUDE.md` at the repo root. Everything else lives in `/docs`.
 9. **`09-WEB-SPEC.md`** — page-by-page spec for site and console.
 10. **`04-MUSIC-SOURCING.md`** — the free-track hunt list and per-track workflow.
 11. **`10-TRADEMARK-SEARCH.md`** — the search protocol, ready to run.
+12. **`12-HOSTING.md`** — the self-hosting topology. **Nothing before Phase 7 needs it**,
+    but read §2b before writing any networking code: the API hostname rotates, so the app
+    resolves it at runtime and must never hardcode a base URL.
 
 ---
 
@@ -58,11 +61,14 @@ Flutter mobile app. Use `flutter test` for unit/widget, **Alchemist** for golden
 `integration_test` for E2E. Playwright covers `/site` and `/admin` only. Getting this wrong
 wastes days — see `06-TESTING-STRATEGY.md` §1.
 
-**Selfies must never touch disk or network.** This is the stated privacy differentiator
-(`01-DESIGN.md` §4b). Both `image_picker` and `camera.takePicture()` write a temp file by
-default, silently breaking the promise. Capture from the preview stream into `Uint8List`,
-or read-then-delete inside a `finally`. A required test asserts zero new files across a
-full onboarding run.
+**The app must never write a selfie to storage or transmit one.** This is the stated
+privacy differentiator (`01-DESIGN.md` §4b). Both `image_picker` and `camera.takePicture()`
+write a temp file by default, silently breaking the promise. Capture from the preview
+stream into `Uint8List`, downscale at capture, or read-then-delete inside a `finally`. A
+required test asserts zero new files across a full onboarding run.
+
+Say it at that scope and no wider. "Never touches disk" is **not** guaranteeable — vendor
+Extended RAM pages memory below the app layer (ADR 0005).
 
 **Music must be licensed, and a credit is not a licence.** You cannot ship instrumentals of
 commercial songs — recordings carry two separate copyrights and indie licensing runs
