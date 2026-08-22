@@ -13,7 +13,17 @@ that has been done well already. See `docs/07-TEMPLATES.md`.
 
 Source: <https://github.com/flutter/games> · Upstream commit:
 **`ae636d23deae83fd0e7fec9b862a7fcdf2bcfdd8`** ("Remove IDX/FS remnants from repository",
-#152), adopted 2026-08-22.
+#152, authored 2026-08-06), adopted 2026-08-22.
+
+**How the fork point was verified** (2026-08-23), independently of the local clone:
+
+1. The commit resolves on GitHub's API to that exact SHA, dated 2026-08-06.
+2. Eight files untouched during adoption — the Permanent Marker font, four PNGs, a
+   launcher icon, `launch_background.xml` and `gradle-wrapper.properties` — were hashed
+   with `git hash-object` and compared to the blob SHAs in the upstream tree at that
+   commit. **8 of 8 are byte-identical.** Binary assets and platform boilerplate were
+   chosen deliberately: `dart fix --apply` reformatted most Dart sources, so they would
+   differ for reasons unrelated to provenance.
 
 **Kept:**
 - `lib/audio/` — AudioController with music/SFX split and lifecycle handling. This is

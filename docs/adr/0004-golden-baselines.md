@@ -88,8 +88,12 @@ Every audit line asserting goldens pass now says **in CI** explicitly
 - CI is the sole authority on visual regression. A golden change must be reviewed as a diff
   in CI, never approved because it passed locally.
 - The Flutter version is pinned in two places. They drift silently if edited apart, and the
-  symptom months later is an unexplainable golden diff — hence the cross-referencing
-  comments and the check in Phase 0's closing report.
+  symptom months later is an unexplainable golden diff. Both files carry a
+  `PIN 1 of 2` / `PIN 2 of 2` comment naming the other and saying to change them together.
+
+  Verified 2026-08-23: `docker/goldens.Dockerfile` `ARG FLUTTER_VERSION=3.47.1`,
+  `.github/workflows/ci.yml` `FLUTTER_VERSION: '3.47.1'`, and the built image reports
+  `Flutter 3.47.1 • revision 6655482ec0` — identical.
 - Regenerating baselines requires Docker. On a machine without it, goldens cannot be
   updated at all; that is preferable to updating them wrongly.
 

@@ -12,6 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  # PIN 2 of 2. Must be identical to ARG FLUTTER_VERSION in
+  # docker/goldens.Dockerfile, which generates the golden baselines this job
+  # compares against. Change both together, in the same commit.
+  # See docs/adr/0004-golden-baselines.md.
   FLUTTER_VERSION: '3.47.1'
   NODE_VERSION: '22'
 

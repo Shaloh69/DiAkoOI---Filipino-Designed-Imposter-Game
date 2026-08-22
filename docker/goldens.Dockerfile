@@ -11,7 +11,11 @@
 # See docs/06-TESTING-STRATEGY.md §3 and docs/adr/0003.
 FROM ghcr.io/cirruslabs/flutter:latest
 
-# Must match FLUTTER_VERSION in .github/workflows/ci.yml.
+# PIN 1 of 2. Must be identical to FLUTTER_VERSION in
+# .github/workflows/ci.yml (the `dart` job). Change both together, in the same
+# commit — if they drift, baselines are generated on one Flutter version and
+# compared on another, and the symptom is an unexplainable golden diff months
+# later. See docs/adr/0004-golden-baselines.md.
 ARG FLUTTER_VERSION=3.47.1
 ENV FLUTTER_ROOT=/sdks/flutter
 
