@@ -1,0 +1,75 @@
+# ── Flutter / Dart ──────────────────────────────────────────────
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/build/
+app/.pub-cache/
+app/.pub/
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Generated.xcconfig
+app/android/.gradle/
+app/android/local.properties
+app/android/key.properties
+*.jks
+*.keystore
+
+# Golden test failures — baselines ARE committed, failures are not
+**/failures/
+
+# ── Node / JS ───────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+dist/
+.next/
+.astro/
+out/
+*.tsbuildinfo
+
+# ── Playwright ──────────────────────────────────────────────────
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
+e2e/.cache/
+# NOTE: e2e/**/*-snapshots/ ARE committed. Baselines belong in git
+
+# ── Environment & secrets ───────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ── Docker / DB ─────────────────────────────────────────────────
+postgres-data/
+pgdata/
+*.dump
+*.sql.gz
+
+# ── Audio working files ─────────────────────────────────────────
+# Shipped tracks + licence.json ARE committed. Raw sources are not.
+app/assets/vibes/**/*.wav
+app/assets/vibes/**/*.aiff
+app/assets/vibes/**/raw/
+
+# ── OS / editor ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*~
+
+# ── Local scratch ───────────────────────────────────────────────
+/tmp/
+/scratch/
+coverage/
+lcov.info

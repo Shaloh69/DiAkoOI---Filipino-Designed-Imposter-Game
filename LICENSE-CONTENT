@@ -1,0 +1,72 @@
+CREATIVE COMMONS ATTRIBUTION-NONCOMMERCIAL-SHAREALIKE 4.0 INTERNATIONAL
+(CC BY-NC-SA 4.0)
+
+Copyright (c) 2026 Shem Joshua M. Dumpor / Team Lanzones
+
+Full licence text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+
+WHAT THIS COVERS
+
+  content/                  word bank CSVs, clue authoring style guide
+  app/assets/wordbank/      bundled word bank
+  docs/                     design documentation and specifications
+
+Approximately 2,160 hand-authored Taglish clues across 12 Philippine topics,
+plus the design specification describing the game's rules and systems.
+
+
+WHAT IT DOES NOT COVER
+
+  Source code                  see LICENSE (MIT)
+  app/assets/vibes/*/track.ogg third-party, see each licence.json
+  "DiAkoOi" name and logos     not licensed
+
+
+YOU ARE FREE TO
+
+  Share  — copy and redistribute the material in any medium or format
+  Adapt  — remix, transform, and build upon the material
+
+The licensor cannot revoke these freedoms as long as you follow the terms.
+
+
+UNDER THE FOLLOWING TERMS
+
+  Attribution
+      You must give appropriate credit to Team Lanzones, provide a link to
+      this repository and to the licence, and indicate if changes were made.
+      You may do so in any reasonable manner, but not in any way that suggests
+      the licensor endorses you or your use.
+
+  NonCommercial
+      You may not use the material for commercial purposes.
+
+  ShareAlike
+      If you remix, transform, or build upon the material, you must distribute
+      your contributions under the same licence as the original.
+
+  No additional restrictions
+      You may not apply legal terms or technological measures that legally
+      restrict others from doing anything the licence permits.
+
+
+WHY NONCOMMERCIAL
+
+The word bank is the part of this project that took the real work: clues
+written in natural Taglish, calibrated across three difficulty tiers, and
+culturally reviewed by Filipinos. The engine is just software and is MIT
+licensed precisely because there is no reason to hoard it.
+
+The NonCommercial clause exists so this content cannot be lifted wholesale
+into someone else's paid app. Use it in your own free or open project, credit
+us, and share alike.
+
+For commercial licensing enquiries, open an issue on the repository.
+
+
+CONTRIBUTIONS
+
+By contributing content to this repository you agree that your contribution
+is licensed under these same terms.

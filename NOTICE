@@ -1,0 +1,36 @@
+DiAkoOi
+Copyright (c) 2026 Shem Joshua M. Dumpor / Team Lanzones
+
+This product includes software licensed under the MIT License (see LICENSE)
+and content licensed under CC BY-NC-SA 4.0 (see LICENSE-CONTENT).
+
+
+THIRD-PARTY COMPONENTS
+
+Flutter Casual Games Toolkit
+    https://github.com/flutter/games
+    Copyright (c) Google LLC — BSD 3-Clause
+    The app/ structure derives from templates/basic.
+
+AstroWind
+    https://github.com/onwidget/astrowind — MIT
+
+next-shadcn-dashboard-starter
+    https://github.com/Kiranism/next-shadcn-dashboard-starter — MIT
+
+shadcn/ui
+    https://ui.shadcn.com — MIT
+
+
+BUNDLED AUDIO
+
+Every track in app/assets/vibes/ is third-party licensed under its own terms,
+recorded in the licence.json alongside it, with a licence screenshot archived
+in docs/licences/.
+
+These tracks are NOT covered by this repository's licences. Their original
+terms continue to apply and are reproduced in-app on the credits screen and on
+the public site.
+
+No commercial recording is bundled with this project. See
+docs/03-VIBE-SYSTEM.md section 1 for the sourcing rules.
