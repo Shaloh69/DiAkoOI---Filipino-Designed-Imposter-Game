@@ -10,7 +10,8 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 1 (engine). **Next:** Phase 2 (content pipeline).
+**Last completed:** Phase 2 (content pipeline — A2 AUDIT-INCOMPLETE by design).
+**Next:** Phase 3 (Vibe Packs & design system).
 
 Open pull requests, stacked — `main` is still at the initial specification commit, so each
 branch is based on the one before it and GitHub retargets as they merge:
@@ -19,9 +20,12 @@ branch is based on the one before it and GitHub retargets as they merge:
 |---|---|---|---|
 | [#1](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/1) | `phase/00-foundation` | `main` | CI green |
 | [#2](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/2) | `chore/step-0-housekeeping` | `phase/00-foundation` | CI green |
-| [#3](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/3) | `phase/01-engine` | `chore/step-0-housekeeping` | see PR |
+| [#3](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/3) | `phase/01-engine` | `chore/step-0-housekeeping` | CI green |
+| [#4](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/4) | `phase/02-content` | `phase/01-engine` | see PR |
 
-Phase 2 should branch from `phase/01-engine`.
+Phase 3 should branch from `phase/02-content`.
+
+**The stack is four deep.** Merging the green ones would flatten it.
 
 ### What a fresh session needs to know
 
@@ -90,11 +94,41 @@ No human gate. Fully closeable by machine, and closed.
 - Same seed → byte-identical transcripts
 - 147 tests
 
-### Phase 2 — Content · will be **AUDIT-INCOMPLETE**
+### Phase 2 — Content · **AUDIT-INCOMPLETE**
 
-A2 cannot go green in this run. Build all tooling — CSV validator, JSON bundler, one CSV
-per topic, tests for the validator itself — and generate **candidate drafts into
-`content/drafts/`, not `content/`**. Ship a clearly-labelled ~20-word placeholder bundle so
-Phase 4 has something to run.
+The pipeline is built and green. **The bank is empty**, and only humans can fill it.
 
-A2 stays open until humans ratify `content/STYLE.md` at v1 and finish cultural review.
+| A2 item | Status |
+|---|---|
+| Validator rejects every failure class in §5 (test each) | **PASS** — 23 tests, one per class |
+| `/content/STYLE.md` at **v1**, revision log signed by all three authors | **BLOCKED** — still v0 DRAFT |
+| All Wave 1 topics at ≥ 60 words, zero validation errors | **BLOCKED** — 0 authored words; 150 unreviewed candidates exist in `content/drafts/` |
+| Tier separation: no word where tight and standard read near-identically | **BLOCKED** — checkable only against authored content |
+| Cross-author consistency: sample 10 words per author | **BLOCKED** — needs three authors |
+| Every topic cross-reviewed by an author who didn't write it (§6c) | **BLOCKED** |
+| Playtest calibration: tight survives ≥3 crew clues, loose fails by lap 2 | **BLOCKED** — needs a table |
+| Cultural review complete; flagged items resolved or cut (§7) | **BLOCKED** |
+
+**What a human needs to do next, in order:**
+
+1. **Run the calibration round** (`02-CONTENT-PH.md` §6a) — all three authors write the same
+   10 words, compare, then ratify `content/STYLE.md` as **v1** with a signed revision log.
+   Do this *before* authoring at scale and before touching the drafts.
+2. **Assign topic ownership**, one owner per topic (§6b).
+3. **Review `content/drafts/`** — 150 candidates across the five wave-1 topics. Treat every
+   row as a proposal; deleting is a fine outcome. Approved rows move into
+   `content/<topic>.csv`, which is the only directory that gets bundled.
+4. **Author wave 1 to 60+ words per topic**, then cross-review (§6c) and cultural review (§7).
+
+**Shipping gate:** `app/assets/wordbank/wordbank.json` currently carries
+`"isPlaceholder": true`. It must be regenerated from authored content before release —
+a test asserts that a placeholder bundle is labelled, but nothing yet stops one shipping.
+Worth a release check in Phase 10.
+
+### Phase 3 — Vibe Packs · will be **AUDIT-INCOMPLETE**
+
+Build the full theming system with PLACEHOLDER audio (silent ogg stubs, `licence.json`
+marked PLACEHOLDER). Loader, ThemeExtension, motion profiles, primitives, golden matrix and
+contrast checks are all autonomous. Do the hold-to-reveal blur spike here — Mali-G615 MC2 is
+a two-core GPU and this is the core interaction; report findings and do not guess at numbers
+that need hardware to measure. A3 stays open on real licensed tracks.
