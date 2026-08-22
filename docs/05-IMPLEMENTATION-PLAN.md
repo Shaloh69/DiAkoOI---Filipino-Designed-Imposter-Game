@@ -30,20 +30,26 @@ Prompts for each phase: **08-PROMPTS.md**.
 ## Phase 0 — Foundation
 
 ```
-[ ] Adopt flutter/games templates/basic as /app (07-TEMPLATES.md §1)
-    [ ] Strip AdMob, in_app_purchase, games_services, crashlytics in the FIRST commit
-    [ ] Swap provider → flutter_riverpod; keep lib/src/audio/ and lib/src/style/
-    [ ] Swap lints → very_good_analysis
-[ ] Scaffold /site (AstroWind + Starlight subpath), /admin (Kiranism starter),
+[x] Adopt flutter/games templates/basic as /app (07-TEMPLATES.md §1)
+    [x] Strip AdMob, in_app_purchase, games_services, crashlytics in the FIRST commit
+        — all four ALREADY ABSENT at upstream ae636d23; verified by grep, not removed.
+        Actual residue stripped: a googlemobileads manifest tag and GameLevel's
+        achievementId fields. See docs/adr/0002-templates.md
+    [x] Swap provider → flutter_riverpod; keep audio/ and style/
+        — upstream flattened lib/src/, so these are lib/audio/ and lib/style/
+    [x] Swap lints → very_good_analysis (all 137 findings fixed, not suppressed)
+[x] Scaffold /site (AstroWind + Starlight subpath), /admin (Kiranism starter),
     /api (Fastify), /e2e (Playwright), /content
-[ ] pnpm workspaces for JS; plain dirs for Flutter
-[ ] CI: jobs dart / web / api / e2e / contract, green on empty scaffolds
-[ ] Docker Compose: postgres + api + cloudflared
-[ ] Playwright Docker baseline generation configured
-[ ] docs/adr/0001-stack.md and 0002-templates.md (which template, which commit,
+[x] pnpm workspaces for JS; plain dirs for Flutter
+[x] CI: jobs dart / web / api / e2e / contract — written and validated locally;
+    NOT YET OBSERVED GREEN ON A PR (needs a push; see A0 below)
+[x] Docker Compose: postgres + api + cloudflared
+    — cloudflared moved behind a `tunnel` profile so plain `up -d` settles
+[x] Playwright Docker baseline generation configured (official image in the e2e job)
+[x] docs/adr/0001-stack.md and 0002-templates.md (which template, which commit,
     what was stripped, why)
-[ ] Set applicationId ph.teamlanzones.diakooi; ANDROID ONLY — strip iOS from CI,
-    keep the folder buildable but spend no time on it
+[x] Set applicationId ph.teamlanzones.diakooi; ANDROID ONLY — no iOS job in CI,
+    ios/ folder left buildable and untouched
 [x] Perf target device: Vivo V60 Lite 5G (06-TESTING-STRATEGY.md §8)
 [ ] Confirm the exact variant/chipset in Settings > About; record in docs/adr/0003
 [ ] HUMAN: decide 120Hz vs capped 60Hz frame target; record as an ADR
