@@ -43,7 +43,8 @@ void main() {
       expect(
         result.deltaFor('p2'),
         0,
-        reason: 'named an actual imposter, so loses nothing even in the '
+        reason:
+            'named an actual imposter, so loses nothing even in the '
             'minority (§7)',
       );
       expect(result.deltaFor('p3'), 0, reason: 'the accused crew pays nothing');
@@ -74,8 +75,8 @@ void main() {
           weights: {'p0': 2},
         ),
         roles: makeRoles(players, ['p4']),
-        modifiers: RoundModifiers(
-          playerPickEvents: const [
+        modifiers: const RoundModifiers(
+          playerPickEvents: [
             PlayerPickEvent(
               playerId: 'p0',
               eventId: InterferenceCatalogue.doubleVote,
@@ -135,7 +136,7 @@ void main() {
       expect(result.wasWash, isFalse);
     });
 
-    test('tie the Mayor voted in: the Mayor\'s tile wins', () {
+    test("tie the Mayor voted in: the Mayor's tile wins", () {
       final result = resolveRound(
         // p3 and p4 tie at 1 each. Mayor p2 named p4.
         votes: votesFrom({'p0': 'p3', 'p2': 'p4'}),
@@ -214,16 +215,16 @@ void main() {
       final result = resolveRound(
         votes: votesFrom({'p0': 'p3', 'p1': 'p3', 'p2': 'p4'}),
         roles: makeRoles(players, ['p4']),
-        modifiers: RoundModifiers(
+        modifiers: const RoundModifiers(
           // p0 takes a wrong accusation (-1), Life Drain (-1) and a Taboo
           // slip (-1): -3 before the clamp.
-          playerPickEvents: const [
+          playerPickEvents: [
             PlayerPickEvent(
               playerId: 'p0',
               eventId: InterferenceCatalogue.lifeDrain,
             ),
           ],
-          tabooSlips: const ['p0'],
+          tabooSlips: ['p0'],
         ),
         itemUsages: const [],
         currentLives: makeLives(players),

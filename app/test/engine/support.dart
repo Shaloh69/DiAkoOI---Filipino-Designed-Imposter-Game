@@ -25,7 +25,10 @@ Map<String, int> makeLives(List<Player> players) => {
 };
 
 /// `voterId -> accusedId` as a vote list.
-List<Vote> votesFrom(Map<String, String> pairs, {Map<String, int>? weights}) => [
+List<Vote> votesFrom(
+  Map<String, String> pairs, {
+  Map<String, int>? weights,
+}) => [
   for (final entry in pairs.entries)
     Vote(
       voterId: entry.key,

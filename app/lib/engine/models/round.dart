@@ -135,4 +135,12 @@ abstract class Round with _$Round {
   /// (§9b consistency rule).
   PlayerRole roleOf(String playerId) =>
       isImposter(playerId) ? PlayerRole.imposter : PlayerRole.crew;
+
+  /// What [playerId] sees on their reveal card (§5).
+  ///
+  /// Crew receive the real word; imposters receive the authored vague clue and
+  /// never the word. This is the single place that decision is made, so the
+  /// A1 property test has one function to hold to account.
+  String revealFor(String playerId) =>
+      isImposter(playerId) ? imposterClue : word;
 }

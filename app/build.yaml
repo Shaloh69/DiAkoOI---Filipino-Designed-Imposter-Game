@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Without this, a nested model is emitted as the Dart object rather
+          # than a Map, so `Model.fromJson(model.toJson())` fails even though
+          # `jsonEncode(model)` happens to work. The word-bank bundle and any
+          # saved room round-trip in memory, so toJson must be fully recursive.
+          explicit_to_json: true
+          # Enums are persisted by name, not index, so reordering the
+          # declaration cannot silently change the meaning of stored data.
+          create_to_json: true

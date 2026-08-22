@@ -26,7 +26,8 @@ void main() {
       final lines = entity.readAsLinesSync();
       for (var i = 0; i < lines.length; i++) {
         final line = lines[i];
-        final isImport = line.trimLeft().startsWith('import ') ||
+        final isImport =
+            line.trimLeft().startsWith('import ') ||
             line.trimLeft().startsWith('export ');
         if (!isImport) continue;
         if (line.contains('package:flutter/') ||
