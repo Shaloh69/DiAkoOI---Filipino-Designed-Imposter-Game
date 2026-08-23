@@ -45,6 +45,10 @@ class GameSession {
     this.onboardedCount = 0,
     this.distributedCount = 0,
     this.hostEnded = false,
+    this.roll = const InterferenceRoll(),
+    this.pendingTaboo = const [],
+    this.itemPickup,
+    this.itemUsages = const [],
   });
 
   /// A session before any setup.
@@ -95,6 +99,22 @@ class GameSession {
 
   final bool hostEnded;
 
+  /// What §9 rolled for the current round. Empty when Interference is off,
+  /// which is the default and the whole of rounds 1.
+  final InterferenceRoll roll;
+
+  /// Taboo reconciliations still to adjudicate at end of lap (§9b).
+  ///
+  /// The words are shown to the table only here — during the clue nobody knows
+  /// what to listen for, which is the tension the event is built on.
+  final List<String> pendingTaboo;
+
+  /// A second-pickup decision waiting on the player (§9d).
+  final ItemPickup? itemPickup;
+
+  /// Items played this round, in the order they were used.
+  final List<ItemUsage> itemUsages;
+
   List<Player> get players => [for (final seat in seats) seat.player];
 
   SeatedPlayer? seatFor(String playerId) {
@@ -118,8 +138,19 @@ class GameSession {
   bool canAccuse({required String voterId, required String accusedId}) {
     if (voterId == accusedId) return false;
     if (pendingVotes.any((v) => v.voterId == voterId)) return false;
+    if (isVoteLocked(accusedId)) return false;
+    // §9c Spread the Blame: no more than two players may name the same
+    // suspect. A full no-duplicates ban is unresolvable — N voters across N
+    // tiles gives every tile one vote and a permanent N-way tie.
+    if (roll.roundModifier == InterferenceCatalogue.spreadTheBlame &&
+        accusersOf(accusedId).length >= spreadTheBlameCap) {
+      return false;
+    }
     return true;
   }
+
+  /// §9c Spread the Blame's duplicate cap.
+  static const spreadTheBlameCap = 2;
 
   bool hasVoted(String playerId) =>
       pendingVotes.any((v) => v.voterId == playerId);
@@ -131,6 +162,25 @@ class GameSession {
       tally[vote.accusedId] = (tally[vote.accusedId] ?? 0) + vote.tallyWeight;
     }
     return tally;
+  }
+
+  /// Whether [accusedId] is immune from being named this round (§9b Vote
+  /// Lock). The grid refuses the tap rather than recording a vote it will
+  /// then discard.
+  bool isVoteLocked(String accusedId) =>
+      roll.eventFor(accusedId) == InterferenceCatalogue.voteLock;
+
+  /// Tally weight for one caller's accusation (§9b Double Vote, §9d
+  /// Megaphone). **Weight is tally only — damage is always 1** (§7).
+  int tallyWeightFor(String voterId) {
+    final doubled =
+        roll.eventFor(voterId) == InterferenceCatalogue.doubleVote ||
+        itemUsages.any(
+          (u) =>
+              u.playerId == voterId &&
+              u.itemId == InterferenceCatalogue.itemMegaphone,
+        );
+    return doubled ? 2 : 1;
   }
 
   /// Accusers of one tile, so their thumbnails can stack under it (§7).
@@ -162,6 +212,11 @@ class GameSession {
     int? onboardedCount,
     int? distributedCount,
     bool? hostEnded,
+    InterferenceRoll? roll,
+    List<String>? pendingTaboo,
+    ItemPickup? itemPickup,
+    bool clearItemPickup = false,
+    List<ItemUsage>? itemUsages,
   }) => GameSession(
     phase: phase ?? this.phase,
     settings: settings ?? this.settings,
@@ -181,6 +236,10 @@ class GameSession {
     onboardedCount: onboardedCount ?? this.onboardedCount,
     distributedCount: distributedCount ?? this.distributedCount,
     hostEnded: hostEnded ?? this.hostEnded,
+    roll: roll ?? this.roll,
+    pendingTaboo: pendingTaboo ?? this.pendingTaboo,
+    itemPickup: clearItemPickup ? null : (itemPickup ?? this.itemPickup),
+    itemUsages: itemUsages ?? this.itemUsages,
   );
 }
 
