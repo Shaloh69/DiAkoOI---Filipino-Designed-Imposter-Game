@@ -8,7 +8,9 @@ import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/selfie/selfie_bytes.dart';
 import 'package:diakooi/selfie/selfie_capture.dart';
+import 'package:diakooi/theme/motion.dart';
 import 'package:diakooi/theme/vibe_loader.dart';
+import 'package:diakooi/theme/vibe_theme.dart';
 import 'package:diakooi/theme/vibe_providers.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
 import 'package:diakooi/ui/screens/game_shell.dart';
@@ -34,7 +36,7 @@ void main() {
     library = await loader.loadAll();
   });
 
-  Widget app() => ProviderScope(
+  Widget app({bool disableAnimations = false}) => ProviderScope(
     overrides: [
       // Assets read off disk rather than through rootBundle, which a widget
       // test does not populate for the vibes directory.
@@ -44,11 +46,25 @@ void main() {
       wordBankProvider.overrideWith((ref) async => _bank()),
       selfieCameraProvider.overrideWithValue(_FakeCamera.new),
     ],
-    child: const MaterialApp(home: GameShell()),
+    child: MaterialApp(
+      home: disableAnimations
+          ? Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(disableAnimations: true),
+                child: const GameShell(),
+              ),
+            )
+          : const GameShell(),
+    ),
   );
 
-  Future<void> boot(WidgetTester tester) async {
-    await tester.pumpWidget(app());
+  Future<void> boot(
+    WidgetTester tester, {
+    bool disableAnimations = false,
+  }) async {
+    await tester.pumpWidget(app(disableAnimations: disableAnimations));
     await tester.pumpAndSettle();
   }
 
@@ -454,6 +470,147 @@ void main() {
               (sum, w) => sum + w.weightPercent,
             ),
         100,
+      );
+    });
+  });
+
+  group('reduced motion (A5)', () {
+    testWidgets('disableAnimations reaches the theme and the whole game '
+        'still plays', (tester) async {
+      // The A5 item is "MediaQuery.disableAnimations honoured throughout".
+      // Honoured means two things and this checks both: the flag reaches the
+      // theme, and every screen still works with the motion collapsed. An
+      // animation that was load-bearing would strand the flow here.
+      await tester.binding.setSurfaceSize(const Size(500, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await boot(tester, disableAnimations: true);
+
+      final vibe = Theme.of(
+        tester.element(find.byType(VibeScaffold).first),
+      ).extension<VibeTheme>()!;
+      expect(
+        vibe.reduceMotion,
+        isTrue,
+        reason: 'the platform setting never reached the pack theme',
+      );
+      expect(vibe.beats.stagger, Duration.zero);
+      expect(
+        vibe.palette,
+        isNotNull,
+        reason: 'motion is collapsed, the palette is not (§6)',
+      );
+
+      await seat(tester, count: 3);
+      await tapLabel(tester, 'Deal the first round');
+      await distribute(tester, 3);
+      await discuss(tester);
+      await voteAround(tester, 3);
+      await tapLabel(tester, 'Reveal');
+      await tapLabel(tester, 'Life check');
+      while (find.byType(TextField).evaluate().isNotEmpty) {
+        await tester.enterText(find.byType(TextField), 'Sayaw');
+        await tester.pumpAndSettle();
+        await tapLabel(
+          tester,
+          find
+                  .widgetWithText(VibeButton, 'Served — one more')
+                  .evaluate()
+                  .isNotEmpty
+              ? 'Served — one more'
+              : 'Served',
+        );
+      }
+      await tapLabel(tester, 'End the game here');
+      expect(find.text('Tapos na'), findsOneWidget);
+    });
+
+    testWidgets('no animation blocks input', (tester) async {
+      // Taps land on the frame after they happen, mid-animation, without a
+      // pumpAndSettle anywhere. An animation that swallowed input or had to
+      // finish first would fail here and nowhere else — pumpAndSettle in every
+      // other test hides exactly this.
+      await tester.binding.setSurfaceSize(const Size(500, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await boot(tester);
+      await tapLabel(tester, 'Start — 6 players');
+      await tapLabel(tester, 'Start');
+
+      await tester.enterText(find.byType(TextField), 'Ana');
+      await tester.pump();
+      await tester.tap(find.widgetWithText(VibeButton, 'Next'));
+      await tester.pump();
+
+      // The develop sequence is running now. Tap straight through it.
+      await tester.tap(find.widgetWithText(VibeButton, 'Skip'));
+      await tester.pump();
+      expect(
+        find.widgetWithText(VibeButton, 'Looks good'),
+        findsOneWidget,
+        reason: 'the capture step did not respond during its own animation',
+      );
+
+      await tester.tap(find.widgetWithText(VibeButton, 'Looks good'));
+      await tester.pump();
+      expect(
+        find.text('Player 2 of 6'),
+        findsOneWidget,
+        reason:
+            'the develop had to finish before the next player could be '
+            'seated — the beat is blocking, not decorative',
+      );
+    });
+
+    testWidgets('the reveal is interruptible mid-clear', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(500, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await boot(tester);
+      await seat(tester, count: 3);
+      await tapLabel(tester, 'Deal the first round');
+      await tapLabel(tester, 'I am P1');
+
+      // Press, let it start clearing, release before it finishes, press again.
+      final card = find.byType(RevealCard);
+      var gesture = await tester.startGesture(tester.getCenter(card));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 40));
+      await gesture.up();
+      await tester.pump();
+
+      expect(
+        tester
+            .widget<VibeButton>(
+              find.widgetWithText(VibeButton, 'Done — pass it on'),
+            )
+            .onPressed,
+        isNull,
+        reason: 'a glance that never became legible must not count as read',
+      );
+
+      gesture = await tester.startGesture(tester.getCenter(card));
+      await tester.pump();
+      for (var i = 0; i < 60; i++) {
+        await tester.pump(const Duration(milliseconds: 32));
+        final button = tester.widgetList<VibeButton>(
+          find.widgetWithText(VibeButton, 'Done — pass it on'),
+        );
+        if (button.isNotEmpty && button.first.onPressed != null) break;
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester
+            .widget<VibeButton>(
+              find.widgetWithText(VibeButton, 'Done — pass it on'),
+            )
+            .onPressed,
+        isNotNull,
+        reason:
+            'a re-press after an interrupted hold must still be able to '
+            'complete',
       );
     });
   });
