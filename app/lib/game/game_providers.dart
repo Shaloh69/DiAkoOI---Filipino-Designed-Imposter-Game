@@ -109,6 +109,9 @@ class GameSessionNotifier extends Notifier<GameSession> {
 
   List<Award> get awards => _controller.awards;
 
+  /// Every §3 edge this game has walked. See [GameController.transitionTrail].
+  List<String> get transitionTrail => _controller.transitionTrail;
+
   List<int> currentLapOrder() => _controller.currentLapOrder();
 
   bool get lapsRemaining => _controller.lapsRemaining;
