@@ -162,6 +162,31 @@ class GameSession {
     return tally;
   }
 
+  /// Constraints the table is meant to police this round (§9f).
+  ///
+  /// Round-level constraints always show; player-level ones show only where
+  /// the table is watching. Secret events — Taboo, Liar's Tax, The Fool — are
+  /// deliberately absent: the payoff lives in the round recap.
+  List<InterferenceEventDefinition> get activeBanners {
+    final shown = <InterferenceEventDefinition>[];
+    final modifier = roll.roundModifier;
+    if (modifier != null) {
+      final event = InterferenceCatalogue.byId(modifier);
+      if (event != null && InterferenceCatalogue.showsConstraintBanner(event)) {
+        shown.add(event);
+      }
+    }
+    final seen = <String>{};
+    for (final pick in roll.playerPickEvents) {
+      if (!seen.add(pick.eventId)) continue;
+      final event = InterferenceCatalogue.byId(pick.eventId);
+      if (event != null && InterferenceCatalogue.showsConstraintBanner(event)) {
+        shown.add(event);
+      }
+    }
+    return shown;
+  }
+
   /// Whether [accusedId] is immune from being named this round (§9b Vote
   /// Lock). The grid refuses the tap rather than recording a vote it will
   /// then discard.

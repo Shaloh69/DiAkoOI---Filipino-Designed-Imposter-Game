@@ -1,3 +1,4 @@
+import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/game/game_session.dart';
 import 'package:diakooi/theme/motion.dart';
@@ -90,6 +91,12 @@ class VotingScreen extends ConsumerWidget {
               child: _Tile(
                 seat: seat,
                 livesTotal: session.settings.livesPerPlayer,
+                // The table sees someone is holding SOMETHING, never what
+                // (§9d). Marked is the same shape of signal (§9b).
+                holdsItem: seat.player.hasItem,
+                isMarked:
+                    session.roll.eventFor(seat.id) ==
+                    InterferenceCatalogue.marked,
                 voteCount: tally[seat.id] ?? 0,
                 isSelected: isSelected,
                 hasVoted: hasVoted,
@@ -118,6 +125,8 @@ class _Tile extends StatelessWidget {
     required this.hasVoted,
     required this.accusers,
     required this.onUndo,
+    required this.holdsItem,
+    required this.isMarked,
   });
 
   final SeatedPlayer seat;
@@ -130,6 +139,12 @@ class _Tile extends StatelessWidget {
   final bool hasVoted;
   final List<SeatedPlayer> accusers;
   final VoidCallback? onUndo;
+
+  /// §9d: a badge, not the item. Nobody learns what it is until it is played.
+  final bool holdsItem;
+
+  /// §9b Marked: the table knows interference touched them, not what.
+  final bool isMarked;
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +179,8 @@ class _Tile extends StatelessWidget {
               livesRemaining: seat.player.currentLives,
               livesTotal: livesTotal,
               voteCount: voteCount,
+              isMarked: isMarked,
+              heldItemLabel: holdsItem ? '?' : null,
             ),
           ),
         ),

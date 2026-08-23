@@ -1,6 +1,7 @@
 import 'package:diakooi/content/topics.dart';
 import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/widgets/interference_setup.dart';
 import 'package:diakooi/ui/widgets/topic_mixer.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
   late int? _earlyEnd;
   late int? _clueTimerSeconds;
   late bool _hostIsPlayer;
+  late InterferenceSettings _interference;
   late bool _imposterCountIsAuto;
   late int _imposterCount;
   late TopicMix _mix;
@@ -60,6 +62,7 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
     _earlyEnd = initial?.earlyEndConsequenceThreshold;
     _clueTimerSeconds = initial?.clueTimerSeconds;
     _hostIsPlayer = initial?.hostIsPlayer ?? false;
+    _interference = initial?.interference ?? const InterferenceSettings();
     _imposterCount =
         initial?.imposterCount ??
         RoomSettings.defaultImposterCount(_playerCount);
@@ -97,6 +100,7 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
     earlyEndConsequenceThreshold: _earlyEnd,
     clueTimerSeconds: _clueTimerSeconds,
     hostIsPlayer: _hostIsPlayer,
+    interference: _interference,
   );
 
   @override
@@ -284,6 +288,12 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
               'is information nobody else has.',
               tone: palette.danger,
             ),
+          SizedBox(height: vibe.gutter * 2),
+          const _SectionLabel('Interference'),
+          InterferenceSetup(
+            settings: _interference,
+            onChanged: (value) => setState(() => _interference = value),
+          ),
           if (widget.onOpenProfiling != null) ...[
             SizedBox(height: vibe.gutter),
             VibeButton(

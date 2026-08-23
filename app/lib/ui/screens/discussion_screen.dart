@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:diakooi/content/topics.dart';
 import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/primitives/primitives.dart';
+import 'package:diakooi/ui/screens/taboo_screen.dart';
 import 'package:diakooi/ui/widgets/player_avatar.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +56,13 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     final round = session.round;
     if (round == null) return const SizedBox.shrink();
 
+    // §9b: Taboo is settled at the end of the lap, before the next one and
+    // before voting. The screen takes over until every one is adjudicated.
+    final pending = notifier.tabooToReconcile;
+    if (pending.isNotEmpty && !notifier.lapsRemaining) {
+      return TabooScreen(playerId: pending.first);
+    }
+
     final order = notifier.currentLapOrder();
     final seats = session.seats;
     final speaking = seats[order[_speaker % order.length]];
@@ -64,6 +73,11 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
 
     return VibeScaffold(
       title: TopicCatalogue.nameFor(round.topicId),
+      banner: session.activeBanners.isEmpty
+          ? null
+          : ConstraintBanner(
+              text: session.activeBanners.map((e) => e.name).join(' · '),
+            ),
       subtitle:
           'Roundabout $lapNumber of ${round.roundaboutsRequired} · '
           'one word each',

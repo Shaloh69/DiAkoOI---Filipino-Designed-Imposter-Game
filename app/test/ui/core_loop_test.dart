@@ -296,15 +296,18 @@ void main() {
         findsOneWidget,
         reason: '§2b is default-off',
       );
-      await tester.tap(find.text('No — the host runs the phone'));
+      // Scrolled into view first: the setup list grew when Interference was
+      // added, and a tap on an off-screen control does nothing quietly.
+      await tester.ensureVisible(find.text('No — the host runs the phone'));
       await tester.pumpAndSettle();
+      // Found by its own label rather than by position: the Interference
+      // section added switches below this one, and a positional finder
+      // silently starts tapping a different control.
       await tester.tap(
-        find
-            .byWidgetPredicate(
-              (w) => w is Switch && !w.value,
-              description: 'the host-as-player switch',
-            )
-            .last,
+        find.descendant(
+          of: find.widgetWithText(Row, 'No — the host runs the phone'),
+          matching: find.byType(Switch),
+        ),
       );
       await tester.pumpAndSettle();
       expect(
