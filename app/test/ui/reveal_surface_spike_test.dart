@@ -226,6 +226,43 @@ void main() {
     });
   });
 
+  group('the cross-fade wiring', () {
+    testWidgets('opacity pairs reach the tree across the hold', (tester) async {
+      // This is what stands in for a golden of the reveal's progress states.
+      // Alchemist CI mode flattens opacity compositing, so goldening those
+      // states produced byte-identical baselines — see the note in
+      // test/golden/primitive_matrix_golden_test.dart. Asserting the pair here
+      // proves the cross-fade is wired correctly without a baseline that can
+      // never fail.
+      // A list of records, not a const map: double keys are not permitted in
+      // a const map literal.
+      const cases = [
+        (progress: 0.0, opacities: [0.0, 1.0]),
+        (progress: 0.5, opacities: [0.5, 0.5]),
+        (progress: 1.0, opacities: [1.0, 0.0]),
+      ];
+      for (final entry in cases) {
+        await tester.pumpWidget(
+          harness(
+            technique: RevealTechnique.prerenderedCrossFade,
+            progress: entry.progress,
+          ),
+        );
+        final opacities = tester
+            .widgetList<Opacity>(find.byType(Opacity))
+            .map((o) => o.opacity)
+            .toList();
+        expect(
+          opacities,
+          entry.opacities,
+          reason:
+              'at progress ${entry.progress} the clear and blurred layers '
+              'must be at ${entry.opacities}',
+        );
+      }
+    });
+  });
+
   group('reduced motion (03-VIBE-SYSTEM.md §6)', () {
     testWidgets('collapses a live filter to the cheap technique', (
       tester,

@@ -29,7 +29,13 @@ class VibeTheme extends ThemeExtension<VibeTheme> {
   SpringDescription get spring => SpringDescription.withDampingRatio(
     mass: 1,
     stiffness: motion.stiffness,
-    ratio: reduceMotion ? 1.0 : motion.damping,
+    // Reduced motion CLAMPS the ratio to at least 1 rather than setting it to
+    // 1. The requirement is "never overshoot", and a pack that is already
+    // over-damped — Alon at 1.35 — would otherwise be made *less* damped and
+    // therefore snappier by a setting that exists to calm things down.
+    ratio: reduceMotion
+        ? (motion.damping < 1.0 ? 1.0 : motion.damping)
+        : motion.damping,
   );
 
   /// Base animation duration. Reduced motion shortens it to a plain fade
