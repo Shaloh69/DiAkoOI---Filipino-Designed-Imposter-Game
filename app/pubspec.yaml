@@ -43,8 +43,16 @@ flutter:
     # Emptied in the template-adoption commit; Vibe Packs supply audio from Phase 3.
     - assets/music/
     - assets/sfx/
-    # Vibe Pack audio + themes (docs/03-VIBE-SYSTEM.md). Packs land in Phase 3.
+    # Vibe Pack themes + audio (docs/03-VIBE-SYSTEM.md). Pack ids are
+    # discovered from the asset manifest at runtime, never listed in Dart —
+    # adding a pack must not require a code change (§2).
     - assets/vibes/
+    - assets/vibes/tugtog/
+    - assets/vibes/alon/
+    - assets/vibes/palengke/
+    - assets/vibes/lamig/
+    - assets/vibes/tahimik/
+    - assets/vibes/sayaw/
     # Bundled word bank so the game works with no network (docs/02-CONTENT-PH.md).
     - assets/wordbank/
 

@@ -1,0 +1,39 @@
+{
+  "id": "alon",
+  "displayName": "Alon",
+  "palette": {
+    "bg": "#101619",
+    "surface": "#182126",
+    "surfaceAlt": "#213036",
+    "textPrimary": "#EDF3F5",
+    "textMuted": "#9FB3BB",
+    "crew": "#67E8F9",
+    "imposter": "#FCA5A5",
+    "interference": "#A5B4FC",
+    "danger": "#FB7185"
+  },
+  "type": {
+    "display": "Inter",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "slow",
+    "stiffness": 90,
+    "damping": 1.35,
+    "baseMs": 420
+  },
+  "texture": {
+    "card": "soft-haze",
+    "grainOpacity": 0.04,
+    "crewShape": "rounded",
+    "imposterShape": "notched",
+    "cardRadius": 20.0,
+    "gutter": 10.0
+  },
+  "watermark": {
+    "track": "Alon",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}

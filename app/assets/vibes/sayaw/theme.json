@@ -1,0 +1,39 @@
+{
+  "id": "sayaw",
+  "displayName": "Sayaw",
+  "palette": {
+    "bg": "#160B24",
+    "surface": "#211234",
+    "surfaceAlt": "#2D1946",
+    "textPrimary": "#F7EEFF",
+    "textMuted": "#BFA8D9",
+    "crew": "#5EEAD4",
+    "imposter": "#FDA4AF",
+    "interference": "#F0ABFC",
+    "danger": "#FB7185"
+  },
+  "type": {
+    "display": "Inter",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "energetic",
+    "stiffness": 300,
+    "damping": 0.55,
+    "baseMs": 140
+  },
+  "texture": {
+    "card": "flat",
+    "grainOpacity": 0.0,
+    "crewShape": "rounded",
+    "imposterShape": "notched",
+    "cardRadius": 18.0,
+    "gutter": 8.0
+  },
+  "watermark": {
+    "track": "Sayaw",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}

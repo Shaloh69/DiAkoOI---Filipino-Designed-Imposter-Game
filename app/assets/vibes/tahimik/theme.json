@@ -1,0 +1,39 @@
+{
+  "id": "tahimik",
+  "displayName": "Tahimik",
+  "palette": {
+    "bg": "#F7F1E6",
+    "surface": "#FFFCF6",
+    "surfaceAlt": "#EDE3D2",
+    "textPrimary": "#2B2118",
+    "textMuted": "#5F5344",
+    "crew": "#3F6B4E",
+    "imposter": "#9B3B24",
+    "interference": "#6B4E9B",
+    "danger": "#A32E2E"
+  },
+  "type": {
+    "display": "Inter",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "gentle",
+    "stiffness": 70,
+    "damping": 1.5,
+    "baseMs": 520
+  },
+  "texture": {
+    "card": "paper-grain",
+    "grainOpacity": 0.09,
+    "crewShape": "rounded",
+    "imposterShape": "notched",
+    "cardRadius": 14.0,
+    "gutter": 12.0
+  },
+  "watermark": {
+    "track": "Tahimik",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}
