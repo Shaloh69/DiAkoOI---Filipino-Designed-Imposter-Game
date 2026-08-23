@@ -11,21 +11,18 @@ the run stops.
 ## Handoff — start a fresh session here
 
 **Last completed:** Phase 2 (content pipeline — A2 AUDIT-INCOMPLETE by design).
-**Next:** Phase 3 (Vibe Packs & design system).
+**In progress:** Phase 3 (Vibe Packs & design system).
 
-Open pull requests, stacked — `main` is still at the initial specification commit, so each
-branch is based on the one before it and GitHub retargets as they merge:
+**Stack depth is zero.** PRs #1–#4 are all merged into `main` with merge commits, their
+branches deleted, and no PR is open. Every phase branch from here branches **from `main`**
+and merges back before the next starts. Keep it that way.
 
-| PR | Branch | Base | State |
-|---|---|---|---|
-| [#1](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/1) | `phase/00-foundation` | `main` | CI green |
-| [#2](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/2) | `chore/step-0-housekeeping` | `phase/00-foundation` | CI green |
-| [#3](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/3) | `phase/01-engine` | `chore/step-0-housekeeping` | CI green |
-| [#4](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/4) | `phase/02-content` | `phase/01-engine` | CI green |
-
-Phase 3 should branch from `phase/02-content`.
-
-**The stack is four deep.** Merging the green ones would flatten it.
+> **Merging a stack: do not pass `--delete-branch`.** Doing so on #1 deleted
+> `phase/00-foundation` before GitHub retargeted #2, which auto-**closed** #2 — and GitHub
+> then refuses to reopen it (base branch gone) *and* refuses to retarget it (PR is closed).
+> Recovering meant recreating the deleted branch at its old SHA to break the deadlock.
+> Merge, retarget the child to `main`, wait for its CI, merge, and delete branches at the
+> very end.
 
 ### What a fresh session needs to know
 
@@ -62,7 +59,17 @@ Decisions made during the run that are not obvious from the code:
 | 1 | **Frame target: 120Hz/8.3ms vs capped 60Hz/16.6ms.** Implement as a single config value, never scattered assumptions. Defaulting to 120Hz/8.3ms and flagged provisional | Product owner | **A5** (Phase 5) |
 | 2 | **Trademark search on "DiAkoOi"** — protocol ready in `docs/10-TRADEMARK-SEARCH.md`, ~40 minutes | Human | **Phase 8** |
 | 3 | **Telemetry at launch, yes or no.** Any collection needs a privacy policy URL and a Play Data Safety declaration; shipping with zero telemetry is defensible and simpler | Product owner | **Phase 7** |
-| 4 | **Confirm the Vivo V60 Lite 5G variant/chipset** in Settings → About. The spec table is from published figures, not the physical handset | Whoever holds the device | A5 precision |
+
+**Closed 2026-08-23 — device confirmed.** Vivo V60 Lite **5G**, Dimensity 7360-Turbo
+octa-core @2.5GHz, 8GB physical + 8GB Extended RAM. `docs/06-TESTING-STRATEGY.md` §8 already
+carried this; only this file was stale. Profiling runs with Extended RAM **enabled**, which
+is the shipping default (§8d).
+
+### Awaiting a decision from you
+
+| Proposal | Question | Blocks |
+|---|---|---|
+| [0001 — topic-weight ceiling](docs/proposals/0001-topic-weight-ceiling.md) | No topic can exceed ~66% of draws under the no-repeat window, but the host UI can accept 80% and will silently deliver 67%. Clamp the slider, or allow it and show the effective rate? **Sports Night (Basketball 70%) is already over the line.** | **Phase 4** host setup UI |
 
 ### Known gates for phases not yet started
 
