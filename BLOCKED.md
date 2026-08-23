@@ -10,9 +10,11 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 6 (Interference Mode — A6 AUDIT-INCOMPLETE by design).
-**Next:** Phase 7 (API & self-hosting), branched from `main` once the Phase 6 PR merges.
-**Phase 7 has a hard prerequisite that is not met** — see the hosting note below.
+**Last completed:** Phase 7 (API & self-hosting — A7 AUDIT-INCOMPLETE by design).
+**Next:** Phase 8 (public site), branched from `main` once the Phase 7 PR merges.
+
+**All the code is written; nothing is deployed.** The host setup checklist at the bottom of
+this file is executable start to finish and is the single largest thing waiting on a human.
 
 A3 and A4 both stay AUDIT-INCOMPLETE and neither blocks Phase 6: licensed audio is a human
 gate, and A4's remaining items need a handset, a table, and authored content.
@@ -72,6 +74,14 @@ Decisions made during the run that are not obvious from the code:
 - **ADR 0012** — the reveal state machine is Dart, not Rive, and the file says why. ADR 0008
   put Rive third in a ladder behind a measurement that still needs the handset, and no `.riv`
   artefact exists. The interface is shaped so one drops in without touching a caller.
+- **ADR 0015** — **v1 collects no telemetry.** The endpoint is absent rather than stubbed.
+- **The implementation can be stricter than its own contract, and that is a violation.**
+  Phase 7's contract run found three: `maxLength` counting UTF-16 code units rather than code
+  points (every emoji counted twice), Zod rejecting RFC 3339 zone offsets, and Zod's email
+  check rejecting what the spec accepted. All three would have rejected real user input.
+- **Two regex engines validate every pattern** — Zod in the server, Python in the contract
+  tests — and they disagree about which Unicode characters `\s` matches. Patterns use plain
+  negated classes so both read them identically.
 - **ADR 0014** — the interference roller is **two ordered phases**, because §9c reaches both
   backwards into setup (Double Imposter, No Roundabouts) and forwards into roles (Bodyguard).
   The simulator drives the production roller; it used to carry its own copy, which meant the
@@ -109,7 +119,9 @@ Decisions made during the run that are not obvious from the code:
 | # | Needed | From | Blocks |
 |---|---|---|---|
 | 1 | **Trademark search on "DiAkoOi"** — protocol ready in `docs/10-TRADEMARK-SEARCH.md`, ~40 minutes | Human | **Phase 8** |
-| 2 | **Telemetry at launch, yes or no.** Any collection needs a privacy policy URL and a Play Data Safety declaration; shipping with zero telemetry is defensible and simpler | Product owner | **Phase 7** |
+**Closed 2026-08-24 — telemetry decided: none in v1.** No endpoint, no table, no local
+counters (ADR 0015). Play Data Safety declares "no data collected", which is true and the
+simplest thing to submit. `01-DESIGN.md` §16 is proposed rather than patched — proposal 0003.
 
 **Closed 2026-08-23 — frame target decided.** 120Hz / 8.3ms.
 `app/lib/theme/frame_budget.dart` carries it as a single config value and the provisional
@@ -513,3 +525,202 @@ only because an interference test pumped one card under six packs in a row.
 **Golden count: 11 → 12.** `matrix_interference_card.png` was added; the other eleven came
 back byte-identical, which is the check that nothing else moved. **A Linux run reporting
 fewer than 12 golden groups means they stopped executing.**
+
+### Phase 7 — API & self-hosting · **AUDIT-INCOMPLETE**
+
+Every line of code is written and verified. Nothing is deployed, and deployment was out of
+scope for the phase by instruction.
+
+| A7 item | Status |
+|---|---|
+| `schemathesis run api/openapi.yaml --checks all` passes | **PASS** — 339 cases, **30 consecutive clean runs**. It found six real violations first; see below |
+| Vitest + Supertest cover happy and error paths per endpoint | **PASS** — 64 tests |
+| **Every error shape documented in the spec** | **PASS** — 400/404/405/413/415/429/500/503 per endpoint, plus `default` |
+| Rate limits verified by test, not inspection | **PASS** — reads and writes limited separately, and one test asserts **every** public endpoint is behind a limiter, so a new one added outside it fails rather than shipping unprotected |
+| No selfie-shaped payload accepted by any endpoint | **PASS** — size cap below a camera frame, media types limited to screenshot formats, selfie-named fields rejected, and the route surface asserted so a fourth endpoint fails the test |
+| App falls back silently when `endpoint.json` is unreachable | **PASS** — eleven §2c failure modes asserted individually, plus one asserting the list is complete |
+| No hardcoded API base URL | **PASS** — static scan of `lib/`, with a test proving the check can fail |
+| Telemetry contains no names, photos or device identifiers | **PASS, vacuously and by design** — there is no telemetry (ADR 0015) |
+| **WSL2 + Docker Engine on the host** | **BLOCKED** — see the checklist below. Two concrete gaps, both verified over SSH on 2026-08-24 |
+| **Quick Tunnel running, `endpoint.json` published and fetchable** | **BLOCKED** — needs the host |
+| **External port scan from mobile data with Tailscale OFF** | **BLOCKED** — needs a phone off the tailnet |
+| **Restore drill: rebuild the DB from backup into a clean container** | **BLOCKED** — needs the host |
+| Admin unreachable off-tailnet | **BLOCKED** — needs an outside network |
+| Secrets in env; DB not exposed on `0.0.0.0` | **PARTIAL** — compose binds Postgres to `127.0.0.1` and `ATTACHMENT_KEY` is env-only. Verifying it from outside is the port scan above |
+
+**What the fuzzer found.** Worth reading before trusting any of the above: the contract run
+was not green first time, and the six failures were real. Migrations had never been wired
+into startup, so the schema did not exist and every documented read answered 503. Three
+cases had the implementation **stricter than its own contract** — `maxLength` counting
+UTF-16 code units instead of code points, so every emoji counted twice; Zod rejecting RFC
+3339 zone offsets; Zod's email check rejecting addresses the spec accepted. Two had the
+contract under-specified and the server right. One was neither: an RFC 3339 offset of
+`+22:48` is valid and Postgres `TIMESTAMPTZ` refuses it.
+
+---
+
+## The host — verified state, and what is missing
+
+Checked over SSH on **2026-08-24** as `transfer@desktop-gklhcri`. Read-only; nothing was
+changed.
+
+**Already in place, and better than assumed:**
+
+| | |
+|---|---|
+| Ubuntu WSL2 distro | **present**, version 2 |
+| `systemd=true` in `/etc/wsl.conf` | **present** — §1b requirement already met |
+| Resources visible to WSL | 12 CPUs, 11 GB RAM |
+| `cloudflared` | installed (`C:\Program Files (x86)\cloudflared`) |
+| `tailscale` | installed, host online on the tailnet |
+| Ports 3000, 5432, 8080 | **all free** |
+| Existing containers | `ecocharge-mysql` (127.0.0.1:13306), `engirent-mysql` (0.0.0.0:3307) |
+
+> An earlier note in this file claimed the host had no WSL2 distro. **That was wrong** — it
+> was read off the wrong machine. Ubuntu is present and `wsl.conf` is already configured.
+
+**Two gaps, both real:**
+
+1. **Docker Engine is not installed inside Ubuntu.** The only Docker is Docker Desktop —
+   `docker context ls` shows `desktop-linux` active on `npipe:////./pipe/dockerDesktopLinuxEngine`,
+   and `docker` is not on `PATH` inside the distro. §1b rules Desktop out by name: it needs
+   an interactive login, so after an unattended reboot the stack stays down and the beta is
+   silently offline.
+2. **The Ubuntu distro lives on `C:`**, at
+   `C:\Users\transfer\AppData\Local\wsl\{81d3530a-...}`. `C:` has **22.5 GB free of 255 GB**,
+   while **`D:` has 693 GB free of 1 TB**. Postgres plus encrypted attachments on a 22 GB
+   ceiling is a matter of time, and "use the drive with more space" was the instruction.
+
+> `engirent-mysql` is published on `0.0.0.0:3307` rather than `127.0.0.1`. Not ours and not
+> in scope, but it is reachable from anything that can route to the host, and the A7 port
+> scan will see it. Worth a look while you are in there.
+
+### Host setup — run these in order
+
+**1 · Move the Ubuntu distro to `D:` (do this first — step 2 installs into it)**
+
+```powershell
+wsl --shutdown
+wsl --export Ubuntu D:\wsl\ubuntu-backup.tar
+wsl --unregister Ubuntu
+wsl --import Ubuntu D:\wsl\Ubuntu D:\wsl\ubuntu-backup.tar --version 2
+# --import resets the default user to root; put it back:
+ubuntu config --default-user <your-username>
+```
+
+**2 · Docker Engine inside Ubuntu, not Docker Desktop**
+
+```bash
+wsl -d Ubuntu
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker "$USER"
+# systemd is already enabled in /etc/wsl.conf, so this survives a restart:
+sudo systemctl enable --now docker
+exit
+```
+
+```powershell
+wsl --shutdown          # required for the group change to take effect
+wsl -d Ubuntu -e docker info    # must succeed WITHOUT Docker Desktop running
+```
+
+Quit Docker Desktop entirely and re-run that last command. **If it fails, stop here** — the
+whole point of §1b is that the stack does not depend on Desktop.
+
+**3 · Clone inside the WSL filesystem, never under `/mnt/`**
+
+```bash
+wsl -d Ubuntu
+mkdir -p ~/src && cd ~/src
+git clone https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game.git diakooi
+cd diakooi
+cp .env.example .env
+# Generate the attachment key — without it the API REFUSES attachments
+# rather than storing them unencrypted (01-DESIGN §16b):
+echo "ATTACHMENT_KEY=$(openssl rand -hex 32)" >> .env
+```
+
+`/mnt/d/...` would work and would be slow enough to matter — cross-filesystem I/O in WSL2
+is the documented trap. `~/src` is inside the ext4 volume, which now lives on `D:`.
+
+**4 · Bring it up**
+
+```bash
+docker compose up -d
+docker compose ps                       # postgres healthy, api up
+curl -s localhost:3000/v1/health        # database: "up"
+docker compose logs api | grep migration  # "migrations applied: 001_initial.sql"
+```
+
+**5 · Tunnel and endpoint publication**
+
+```bash
+docker compose --profile tunnel up -d
+./scripts/publish-endpoint.sh           # writes and pushes endpoint.json
+curl -s https://raw.githubusercontent.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/main/endpoint.json
+```
+
+The last command is the one that matters: it is exactly what the app fetches. If it returns
+the current tunnel URL, discovery works end to end.
+
+**6 · Survive a reboot — the step everyone skips**
+
+Task Scheduler, at system startup, running as your user with "run whether logged on or not":
+
+```
+Program:   wsl.exe
+Arguments: -d Ubuntu -e bash -lc "cd ~/src/diakooi && docker compose up -d && docker compose --profile tunnel up -d && ./scripts/publish-endpoint.sh"
+```
+
+Then **actually reboot and check**, from another machine:
+
+```bash
+curl -s https://raw.githubusercontent.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/main/endpoint.json
+```
+
+A tunnel hostname that rotated and was republished is the pass. A stale one means the task
+did not run, and every installed app is stranded until it does.
+
+### A7 verification — run these exactly
+
+**External port scan (§4).** From a phone on **mobile data**, with **Tailscale off**:
+
+```bash
+# Find the public IP from the host first:
+curl -s https://ifconfig.me
+
+# Then from the phone, off the tailnet:
+nmap -Pn -p 22,80,443,3000,3307,5432,13306 <that-ip>
+```
+
+**Only 443 may respond**, and only via Cloudflare. Anything else answering — especially
+3307, which `engirent-mysql` currently publishes on `0.0.0.0` — is a finding.
+
+**Admin unreachable off-tailnet.** Same phone, same conditions:
+
+```bash
+curl -m 10 http://<tailnet-ip>:3001    # must time out, not refuse and not answer
+```
+
+**Restore drill (§5).** Not "the backup exists" — a restore that has actually run:
+
+```bash
+docker compose exec -T postgres pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB" > /tmp/backup.sql
+docker run --rm -d --name restore-test -e POSTGRES_PASSWORD=test -p 15432:5432 postgres:17
+sleep 10
+docker exec -i restore-test psql -U postgres -c 'CREATE DATABASE restored;'
+docker exec -i restore-test psql -U postgres -d restored < /tmp/backup.sql
+docker exec -i restore-test psql -U postgres -d restored -c '\dt'   # tables present?
+docker exec -i restore-test psql -U postgres -d restored -c 'SELECT count(*) FROM feedback;'
+docker rm -f restore-test
+```
+
+`docker compose down -v` destroys named volumes without ceremony (§16c). The drill is the
+only thing that proves the backup is a backup.
+
+### What to report back
+
+- Did `docker info` succeed inside Ubuntu **with Docker Desktop quit**?
+- Did the endpoint URL change and republish across a real reboot?
+- What answered on the port scan, from mobile data, Tailscale off?
+- Did the restore produce a database with the expected tables and rows?
