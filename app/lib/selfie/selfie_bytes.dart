@@ -13,10 +13,9 @@ import 'dart:typed_data';
 /// The app never writes a selfie to storage; that is the claim, and it is the
 /// only claim.
 class SelfieBytes {
-  SelfieBytes({required Uint8List polaroid, required Uint8List gridTile})
-    : _polaroid = polaroid,
-      _gridTile = gridTile;
+  SelfieBytes({required this._polaroid, required this._gridTile});
 
+  // Mutable, not final: shred() overwrites and releases them.
   Uint8List _polaroid;
   Uint8List _gridTile;
   bool _shredded = false;

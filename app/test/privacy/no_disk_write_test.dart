@@ -247,15 +247,16 @@ Future<CapturedFrame> _syntheticFrame({int size = 640}) async {
   final recorder = ui.PictureRecorder();
   final canvas = ui.Canvas(recorder);
   final paint = ui.Paint()..color = const ui.Color(0xFF4ADE80);
-  canvas.drawRect(
-    ui.Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble()),
-    paint,
-  );
-  canvas.drawCircle(
-    ui.Offset(size / 2, size / 2),
-    size / 4,
-    ui.Paint()..color = const ui.Color(0xFFF0A868),
-  );
+  canvas
+    ..drawRect(
+      ui.Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble()),
+      paint,
+    )
+    ..drawCircle(
+      ui.Offset(size / 2, size / 2),
+      size / 4,
+      ui.Paint()..color = const ui.Color(0xFFF0A868),
+    );
   final picture = recorder.endRecording();
   final image = await picture.toImage(size, size);
   try {
