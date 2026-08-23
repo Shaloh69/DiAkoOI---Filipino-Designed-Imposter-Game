@@ -171,6 +171,15 @@ describe('undocumented methods on documented paths', () => {
           // Allow must list exactly what is routable, so a client can act on
           // it rather than guess.
           expect(response.allow).toEqual(allowed);
+
+          if (method === 'HEAD') {
+            // RFC 9110: a HEAD response carries no body. The status and the
+            // Allow header are the whole answer, and asserting a body here
+            // would be asserting that the server break HTTP.
+            expect(response.body).toBe('');
+            return;
+          }
+
           expect(response.body).toEqual({
             error: {
               code: 'METHOD_NOT_ALLOWED',

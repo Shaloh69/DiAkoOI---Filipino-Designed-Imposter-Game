@@ -29,6 +29,13 @@ services:
       NODE_ENV: ${NODE_ENV}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       API_PORT: ${API_PORT}
+      ATTACHMENT_KEY: ${ATTACHMENT_KEY:-}
+      # Contract testing fuzzes an endpoint hundreds of times; the production
+      # default of 60/min would rate-limit the run rather than exercise it.
+      # Raised only here, and the limits themselves are verified separately by
+      # Vitest, which sets the values it asserts.
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-60}
+      FEEDBACK_RATE_LIMIT_MAX: ${FEEDBACK_RATE_LIMIT_MAX:-5}
     ports:
       - "127.0.0.1:${API_PORT}:${API_PORT}"
     volumes:

@@ -99,6 +99,16 @@ natural Taglish. Never generate a generic global word list. See 02-CONTENT-PH.md
 **Playwright never touches the Flutter app.** Browsers only. Flutter visual regression is
 Alchemist goldens.
 
+**A green test proves what it ASSERTS, not what its name implies.** This has bitten twice.
+The Phase 4 reachability test sampled phases too coarsely and missed transitions it claimed
+to cover. The Phase 6 simulation ran 10,000 games in which **no §9b event ever fired**,
+because a non-empty `enabledEventIds` disables everything absent from it. Both were green;
+both were wrong about their coverage.
+
+Where a test's value depends on breadth, **assert the breadth explicitly** — that every case
+fired, every branch executed, every edge was walked. A filter that silently drops one leaves
+the run green.
+
 ## Conventions
 
 - **Dart**: `very_good_analysis`. Feature-first folders. Riverpod. `freezed` +

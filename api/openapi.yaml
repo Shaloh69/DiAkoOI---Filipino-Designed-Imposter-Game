@@ -8,22 +8,53 @@ jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
 
 info:
   title: DiAkoOi API
-  version: 0.1.0
+  version: 0.2.0
   description: >-
-    Feedback, word-bank delivery and aggregate telemetry for DiAkoOi.
-    Nothing here is required to start or finish a game — the app is
-    offline-first and the server copy of the word bank is an update, not a
-    dependency (CLAUDE.md §Hard rules).
+    Feedback and word-bank delivery for DiAkoOi.
+
+
+    **Nothing here is required to start or finish a game.** The app is
+    offline-first, ships a complete word bank, and treats the server copy as
+    an update rather than a dependency (CLAUDE.md §Hard rules). Every endpoint
+    is allowed to be unreachable, and the app must degrade silently when it is
+    (docs/12-HOSTING.md §2c).
+
+
+    **There is no telemetry endpoint, deliberately.** v1 collects nothing —
+    see docs/adr/0015-no-telemetry-in-v1.md. A documented endpoint that
+    returns 501 is a contract to maintain for nothing, so it is absent rather
+    than stubbed.
+
+
+    **No endpoint accepts a photograph of a person.** Selfies live in device
+    memory only and never leave it (01-DESIGN.md §4b). Feedback screenshots
+    are a different consent model entirely — the user chose to send one — and
+    are constrained by media type and size below.
   license:
     name: See LICENSE in the repository
 
 servers:
   - url: http://localhost:3000
     description: Local development
+  # The public base URL rotates on every cloudflared restart and is therefore
+  # NEVER baked into a client. The app resolves it at runtime from
+  # endpoint.json (docs/12-HOSTING.md §2b).
+  - url: https://{tunnel}.trycloudflare.com
+    description: Beta, behind a Cloudflare Quick Tunnel
+    variables:
+      tunnel:
+        default: example
+        description: >-
+          Rotates on every tunnel restart. Read from endpoint.json at runtime;
+          a hardcoded value here would be a dead app.
 
 tags:
   - name: health
     description: Liveness and readiness.
+  - name: feedback
+    description: User-initiated bug reports and suggestions.
+  - name: word-banks
+    description: Content delivery. Always optional — the app ships a bundle.
 
 paths:
   /v1/health:
@@ -42,14 +73,230 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
         default:
-          description: Unexpected error.
+          $ref: '#/components/responses/UnexpectedError'
+
+  /v1/feedback:
+    post:
+      operationId: createFeedback
+      tags: [feedback]
+      summary: Submit a bug report or suggestion
+      description: >-
+        User-initiated and explicitly consented to. The app queues submissions
+        locally when the API is unreachable and retries later, so a client may
+        send a report minutes or days after it was written
+        (docs/12-HOSTING.md §2c).
+
+
+        An optional screenshot may be attached as base64. It is stored
+        content-addressed by SHA-256 for dedup and integrity, and **encrypted
+        at rest** — the hash is not the security control, the encryption is
+        (01-DESIGN.md §16b). Retrieval is via a short-lived signed URL.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackRequest'
+      responses:
+        '201':
+          description: Stored.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/FeedbackResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMedia'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/DatabaseUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /v1/word-banks:
+    get:
+      operationId: listWordBanks
+      tags: [word-banks]
+      summary: List available topics and the current content version
+      description: >-
+        The app compares `contentVersion` against its bundled copy and fetches
+        only what changed. A client that never calls this still plays a
+        complete game.
+      parameters:
+        - $ref: '#/components/parameters/Since'
+      responses:
+        '200':
+          description: The catalogue, or an empty change set.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordBankListResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/DatabaseUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+
+  /v1/word-banks/{topic}:
+    get:
+      operationId: getWordBank
+      tags: [word-banks]
+      summary: Fetch one topic's words and authored clues
+      parameters:
+        - name: topic
+          in: path
+          required: true
+          description: Topic id, as listed by `GET /v1/word-banks`.
+          schema:
+            $ref: '#/components/schemas/TopicId'
+      responses:
+        '200':
+          description: The topic's words.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WordBankResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/DatabaseUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
 
 components:
+  parameters:
+    Since:
+      name: since
+      in: query
+      required: false
+      description: >-
+        Content version the client already holds. When it matches the server's
+        current version the response carries an empty `topics` array rather
+        than a 304, so the client always gets a body it can parse.
+
+
+        The pattern documents what a version actually is — the server
+        generates these and a client only ever echoes one back. It was
+        originally "any string of 1-64 characters", which admitted control
+        characters and NUL bytes the implementation rightly refused; the
+        contract was the thing that was wrong.
+      schema:
+        $ref: '#/components/schemas/ContentVersion'
+
+  responses:
+    ValidationError:
+      description: The request body or parameters failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: No such resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    MethodNotAllowed:
+      description: >-
+        The path exists but not for this method. Distinguished from 404
+        deliberately: a client hitting the wrong verb should not be told the
+        endpoint is missing.
+      headers:
+        Allow:
+          description: Methods this path does accept.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    PayloadTooLarge:
+      description: >-
+        The body exceeded the limit. Attachments are capped well below what a
+        photograph of a person would need.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    UnsupportedMedia:
+      description: Content-Type is not application/json.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    TooManyRequests:
+      description: >-
+        Rate limit exceeded. Every public endpoint is limited; a residential
+        host has no capacity to absorb abuse (docs/12-HOSTING.md §4).
+      headers:
+        Retry-After:
+          description: Seconds until the limit resets.
+          schema:
+            type: integer
+            minimum: 0
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    DatabaseUnavailable:
+      description: >-
+        The database is unreachable. The app treats this exactly like being
+        offline — bundled content, no error dialog (docs/12-HOSTING.md §2c).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalError:
+      description: Unhandled server fault. Never contains internal detail.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    UnexpectedError:
+      description: Any other error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
   schemas:
     Meta:
       type: object
@@ -63,6 +310,20 @@ components:
         timestamp:
           type: string
           format: date-time
+
+    TopicId:
+      type: string
+      description: Stable topic identifier, lowercase.
+      pattern: '^[a-z][a-z0-9_]{1,31}$'
+
+    ContentVersion:
+      type: string
+      description: >-
+        A content generation, as published by the word-bank pipeline. Dates
+        (`2026-08-22`) and labels (`dev-seed`) are both used.
+      minLength: 1
+      maxLength: 64
+      pattern: '^[A-Za-z0-9._-]{1,64}$'
 
     HealthData:
       type: object
@@ -90,6 +351,222 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
 
+    FeedbackAttachment:
+      type: object
+      additionalProperties: false
+      required: [contentType, dataBase64]
+      description: >-
+        A screenshot the user deliberately attached. **Not a selfie** — those
+        never leave device memory (01-DESIGN.md §4b), and the media types here
+        are limited to screenshot formats for that reason.
+      properties:
+        contentType:
+          type: string
+          enum: [image/png, image/jpeg, image/webp]
+        dataBase64:
+          type: string
+          description: >-
+            Base64 of the image bytes. Capped small: a screenshot of a phone
+            screen fits comfortably, a camera photograph does not.
+
+
+            The pattern enforces canonical base64 — four characters per three
+            bytes, with correct padding. `contentEncoding` alone did not:
+            a one-character string satisfied it, decoded to nothing, and the
+            server rightly refused it. The contract was the thing that was
+            wrong, so it is the thing that changed.
+          minLength: 4
+          maxLength: 2800000
+          contentEncoding: base64
+          pattern: >-
+            ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+
+    FeedbackRequest:
+      type: object
+      additionalProperties: false
+      required: [category, message]
+      properties:
+        category:
+          type: string
+          enum: [bug, suggestion, content, other]
+        message:
+          type: string
+          minLength: 1
+          maxLength: 4000
+          # NUL is excluded because Postgres TEXT cannot hold one. Leaving it
+          # out of the contract made the server look stricter than its own
+          # spec; the constraint is real, so it is documented rather than
+          # relaxed. `maxLength` counts CODE POINTS, so an emoji counts once.
+          pattern: '^[^\u0000]*$'
+        appVersion:
+          type: string
+          maxLength: 32
+          pattern: '^[^\u0000]*$'
+        # Device model only, never an identifier. Nothing here distinguishes
+        # one installation from another (01-DESIGN.md §16a).
+        deviceModel:
+          type: string
+          maxLength: 64
+          pattern: '^[^\u0000]*$'
+        contactEmail:
+          type: string
+          # An email `format` keyword is deliberately absent. Validators
+          # enforce it, and it disagreed with the implementation in BOTH
+          # directions: strict enough to reject `0@com`, loose enough to
+          # accept values the pattern below rejects. The pattern is the
+          # single constraint, and it says what this field actually needs
+          # — somewhere to send a reply.
+          maxLength: 254
+          # No `\s` here, deliberately. Two regex engines validate this — Zod
+          # in the server and Python in the contract tests — and they disagree
+          # about which Unicode characters count as whitespace, which showed up
+          # as an intermittent contract failure on a NO-BREAK SPACE. A plain
+          # negated class means both engines read it identically.
+          pattern: '^[^@\u0000]+@[^@\u0000]+$'
+          description: Optional. Supplied only if the user wants a reply.
+        attachment:
+          $ref: '#/components/schemas/FeedbackAttachment'
+        # Set by the client when a queued report is finally delivered, so a
+        # report written offline keeps the time it was written.
+        occurredAt:
+          type: string
+          format: date-time
+
+    FeedbackData:
+      type: object
+      additionalProperties: false
+      required: [id, receivedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        receivedAt:
+          type: string
+          format: date-time
+        attachmentSha256:
+          type: string
+          description: >-
+            Content address of the stored attachment. Dedup and integrity —
+            not a capability, and not sufficient to retrieve it.
+          pattern: '^[a-f0-9]{64}$'
+
+    FeedbackResponse:
+      type: object
+      additionalProperties: false
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/FeedbackData'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    WordBankSummary:
+      type: object
+      additionalProperties: false
+      required: [topicId, wordCount, contentVersion]
+      properties:
+        topicId:
+          $ref: '#/components/schemas/TopicId'
+        wordCount:
+          type: integer
+          minimum: 0
+        contentVersion:
+          $ref: '#/components/schemas/ContentVersion'
+
+    WordBankListData:
+      type: object
+      additionalProperties: false
+      required: [contentVersion, topics]
+      properties:
+        contentVersion:
+          # Null when no bank has been published yet. An empty string was the
+          # first attempt and it is not a version — null says "there is none"
+          # without inventing one, and the contract test caught the difference.
+          oneOf:
+            - $ref: '#/components/schemas/ContentVersion'
+            - type: 'null'
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordBankSummary'
+
+    WordBankListResponse:
+      type: object
+      additionalProperties: false
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/WordBankListData'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
+    ClueSet:
+      type: object
+      additionalProperties: false
+      required: [tight, standard, loose]
+      description: >-
+        Three authored tiers. Nothing here is algorithmically derived —
+        derivation collapses at a table and produces uneven difficulty with no
+        way to tune it (01-DESIGN.md §14).
+      properties:
+        tight:
+          type: string
+          minLength: 1
+          maxLength: 200
+        standard:
+          type: string
+          minLength: 1
+          maxLength: 200
+        loose:
+          type: string
+          minLength: 1
+          maxLength: 200
+
+    WordBankEntry:
+      type: object
+      additionalProperties: false
+      required: [topicId, word, clues]
+      properties:
+        topicId:
+          $ref: '#/components/schemas/TopicId'
+        word:
+          type: string
+          minLength: 1
+          maxLength: 80
+        clues:
+          $ref: '#/components/schemas/ClueSet'
+        difficultyRating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        region:
+          type: string
+          enum: [national, luzon, visayas, mindanao]
+
+    WordBankData:
+      type: object
+      additionalProperties: false
+      required: [topicId, contentVersion, words]
+      properties:
+        topicId:
+          $ref: '#/components/schemas/TopicId'
+        contentVersion:
+          $ref: '#/components/schemas/ContentVersion'
+        words:
+          type: array
+          items:
+            $ref: '#/components/schemas/WordBankEntry'
+
+    WordBankResponse:
+      type: object
+      additionalProperties: false
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/WordBankData'
+        meta:
+          $ref: '#/components/schemas/Meta'
+
     # Documenting the error body is the cheapest way to avoid the most common
     # contract violation (docs/06-TESTING-STRATEGY.md §6).
     ErrorResponse:
@@ -110,3 +587,19 @@ components:
               type: string
               description: Human-readable explanation. Never contains secrets.
               minLength: 1
+            details:
+              type: array
+              description: >-
+                Field-level validation problems, when the code is
+                VALIDATION_FAILED. Absent otherwise.
+              items:
+                type: object
+                additionalProperties: false
+                required: [path, message]
+                properties:
+                  path:
+                    type: string
+                    minLength: 1
+                  message:
+                    type: string
+                    minLength: 1

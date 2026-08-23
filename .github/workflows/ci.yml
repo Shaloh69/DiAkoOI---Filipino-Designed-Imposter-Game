@@ -155,6 +155,23 @@ jobs:
   contract:
     name: contract
     runs-on: ubuntu-latest
+    # The contract job needs a real database. Without one every documented
+    # read answers 503, which schemathesis correctly reports as a server error
+    # — a contract run against a schema-less API tests almost nothing.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: diakooi
+          POSTGRES_PASSWORD: diakooi
+          POSTGRES_DB: diakooi
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U diakooi"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v5
 
@@ -173,17 +190,33 @@ jobs:
 
       - run: pnpm --filter @diakooi/api build
 
-      - name: Start the API
+      # Publishes a small bank so the read endpoints have something to serve.
+      # An operation that only ever returns 404 has not had its 200 tested,
+      # and schemathesis says so in a warning that is easy to skim past.
+      - name: Migrate and seed
         run: |
           node api/dist/server.js &
           for _ in $(seq 1 30); do
             curl -sf http://127.0.0.1:3000/v1/health && break
             sleep 1
           done
+          node api/scripts/seed-dev.mjs
         env:
           NODE_ENV: production
           API_PORT: '3000'
           API_HOST: 127.0.0.1
+          DATABASE_URL: postgresql://diakooi:diakooi@127.0.0.1:5432/diakooi
+          # Quoted, and hex rather than all digits: YAML parsed the bare
+          # digit string as the integer 1, which then failed the 64-hex-
+          # character check and took the process down on boot. A test key,
+          # never a real one.
+          ATTACHMENT_KEY: 'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90'
+          # Fuzzing sends hundreds of requests. The production defaults would
+          # rate-limit the run rather than exercise it, and the limits
+          # themselves are verified by Vitest, which sets the values it
+          # asserts.
+          RATE_LIMIT_MAX: '100000'
+          FEEDBACK_RATE_LIMIT_MAX: '100000'
 
       - name: Install Schemathesis
         run: pip install schemathesis
