@@ -13,8 +13,11 @@ the run stops.
 **Last completed:** Phase 7 (API & self-hosting — A7 AUDIT-INCOMPLETE by design).
 **Next:** Phase 8 (public site), branched from `main` once the Phase 7 PR merges.
 
-**All the code is written; nothing is deployed.** The host setup checklist at the bottom of
-this file is executable start to finish and is the single largest thing waiting on a human.
+**The host is set up and the stack is live.** The checklist that used to sit at the bottom
+of this file has been executed: Docker Engine runs inside WSL2 on `D:`, the API and Postgres
+are up with migrations applied, and the Quick Tunnel is publicly reachable. Two items it
+could not cover remain — an actual reboot to prove the startup task fires, and the external
+port scan, which needs a phone on mobile data. Both are written out below.
 
 A3 and A4 both stay AUDIT-INCOMPLETE and neither blocks Phase 6: licensed audio is a human
 gate, and A4's remaining items need a handset, a table, and authored content.
@@ -559,127 +562,72 @@ contract under-specified and the server right. One was neither: an RFC 3339 offs
 
 ---
 
-## The host — verified state, and what is missing
+## The host — set up, running, and what is still open
 
-Checked over SSH on **2026-08-24** as `transfer@desktop-gklhcri`. Read-only; nothing was
-changed.
+Set up over SSH on **2026-08-24** as `transfer@desktop-gklhcri`. The checklist that used to
+live here has been **executed**; what follows is the resulting state and the two things it
+could not cover.
 
-**Already in place, and better than assumed:**
+### Done
 
-| | |
-|---|---|
-| Ubuntu WSL2 distro | **present**, version 2 |
-| `systemd=true` in `/etc/wsl.conf` | **present** — §1b requirement already met |
-| Resources visible to WSL | 12 CPUs, 11 GB RAM |
-| `cloudflared` | installed (`C:\Program Files (x86)\cloudflared`) |
-| `tailscale` | installed, host online on the tailnet |
-| Ports 3000, 5432, 8080 | **all free** |
-| Existing containers | `ecocharge-mysql` (127.0.0.1:13306), `engirent-mysql` (0.0.0.0:3307) |
+| Step | State | Evidence |
+|---|---|---|
+| Ubuntu distro moved off `C:` | **done** — now `D:\wsl\Ubuntu` | `D:` had 955 GB free at the time; `C:` had 22.5 GB |
+| Docker **Engine** inside Ubuntu (not Desktop) | **done** — 29.7.2 | `hello-world` ran with Docker Desktop fully quit |
+| Repo cloned inside ext4, not `/mnt/` | **done** — `/root/src/diakooi` | the clone is on the ext4 volume, which now lives on `D:` |
+| Real `ATTACHMENT_KEY` and `POSTGRES_PASSWORD` | **done** — `openssl rand -hex 32` | not the `.env.example` values |
+| Stack up, migrations applied | **done** | `/v1/health` returns `database: "up"`; logs show `001_initial.sql` |
+| Quick Tunnel profile | **added** — `--profile quicktunnel` | the compose file shipped only a Named Tunnel; §2a specifies a Quick Tunnel |
+| Tunnel live and publicly reachable | **verified from off the tailnet** | a `curl` of the tunnel host from a different machine returned a healthy body |
+| Task Scheduler startup task | **registered and test-run** | see the caveat below |
 
-> An earlier note in this file claimed the host had no WSL2 distro. **That was wrong** — it
-> was read off the wrong machine. Ubuntu is present and `wsl.conf` is already configured.
+> **The distro was re-imported as `root`.** `wsl --import` resets the default user, so the
+> clone lives at `/root/src/diakooi`, not `~transfer/src`. Anything in older notes that says
+> `~/src/diakooi` means that path.
 
-**Two gaps, both real:**
+### Still open — two things, both needing a human
 
-1. **Docker Engine is not installed inside Ubuntu.** The only Docker is Docker Desktop —
-   `docker context ls` shows `desktop-linux` active on `npipe:////./pipe/dockerDesktopLinuxEngine`,
-   and `docker` is not on `PATH` inside the distro. §1b rules Desktop out by name: it needs
-   an interactive login, so after an unattended reboot the stack stays down and the beta is
-   silently offline.
-2. **The Ubuntu distro lives on `C:`**, at
-   `C:\Users\transfer\AppData\Local\wsl\{81d3530a-...}`. `C:` has **22.5 GB free of 255 GB**,
-   while **`D:` has 693 GB free of 1 TB**. Postgres plus encrypted attachments on a 22 GB
-   ceiling is a matter of time, and "use the drive with more space" was the instruction.
-
-> `engirent-mysql` is published on `0.0.0.0:3307` rather than `127.0.0.1`. Not ours and not
-> in scope, but it is reachable from anything that can route to the host, and the A7 port
-> scan will see it. Worth a look while you are in there.
-
-### Host setup — run these in order
-
-**1 · Move the Ubuntu distro to `D:` (do this first — step 2 installs into it)**
+**1 · The reboot has not happened.** The startup task is registered and was *test-run*
+successfully, which proves the command line is correct. It does **not** prove the task fires
+at system startup, and those are different failure modes — a task can be valid and still
+never trigger, because it runs as the wrong user, or "run whether logged on or not" was not
+ticked, or the machine wakes before the network does. This is the last untested link in the
+chain that keeps the beta online.
 
 ```powershell
-wsl --shutdown
-wsl --export Ubuntu D:\wsl\ubuntu-backup.tar
-wsl --unregister Ubuntu
-wsl --import Ubuntu D:\wsl\Ubuntu D:\wsl\ubuntu-backup.tar --version 2
-# --import resets the default user to root; put it back:
-ubuntu config --default-user <your-username>
+# On the host:
+shutdown /r /t 0
 ```
 
-**2 · Docker Engine inside Ubuntu, not Docker Desktop**
-
-```bash
-wsl -d Ubuntu
-curl -fsSL https://get.docker.com | sudo sh
-sudo usermod -aG docker "$USER"
-# systemd is already enabled in /etc/wsl.conf, so this survives a restart:
-sudo systemctl enable --now docker
-exit
-```
-
-```powershell
-wsl --shutdown          # required for the group change to take effect
-wsl -d Ubuntu -e docker info    # must succeed WITHOUT Docker Desktop running
-```
-
-Quit Docker Desktop entirely and re-run that last command. **If it fails, stop here** — the
-whole point of §1b is that the stack does not depend on Desktop.
-
-**3 · Clone inside the WSL filesystem, never under `/mnt/`**
-
-```bash
-wsl -d Ubuntu
-mkdir -p ~/src && cd ~/src
-git clone https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game.git diakooi
-cd diakooi
-cp .env.example .env
-# Generate the attachment key — without it the API REFUSES attachments
-# rather than storing them unencrypted (01-DESIGN §16b):
-echo "ATTACHMENT_KEY=$(openssl rand -hex 32)" >> .env
-```
-
-`/mnt/d/...` would work and would be slow enough to matter — cross-filesystem I/O in WSL2
-is the documented trap. `~/src` is inside the ext4 volume, which now lives on `D:`.
-
-**4 · Bring it up**
-
-```bash
-docker compose up -d
-docker compose ps                       # postgres healthy, api up
-curl -s localhost:3000/v1/health        # database: "up"
-docker compose logs api | grep migration  # "migrations applied: 001_initial.sql"
-```
-
-**5 · Tunnel and endpoint publication**
-
-```bash
-docker compose --profile tunnel up -d
-./scripts/publish-endpoint.sh           # writes and pushes endpoint.json
-curl -s https://raw.githubusercontent.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/main/endpoint.json
-```
-
-The last command is the one that matters: it is exactly what the app fetches. If it returns
-the current tunnel URL, discovery works end to end.
-
-**6 · Survive a reboot — the step everyone skips**
-
-Task Scheduler, at system startup, running as your user with "run whether logged on or not":
-
-```
-Program:   wsl.exe
-Arguments: -d Ubuntu -e bash -lc "cd ~/src/diakooi && docker compose up -d && docker compose --profile tunnel up -d && ./scripts/publish-endpoint.sh"
-```
-
-Then **actually reboot and check**, from another machine:
+Then, **from a different machine**, once it comes back:
 
 ```bash
 curl -s https://raw.githubusercontent.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/main/endpoint.json
 ```
 
-A tunnel hostname that rotated and was republished is the pass. A stale one means the task
-did not run, and every installed app is stranded until it does.
+A tunnel hostname that rotated **and was republished** is the pass. A stale one means the
+task did not run, and every installed app is stranded until someone logs in.
+
+**2 · The external port scan (§4)** needs a phone on mobile data with Tailscale off. It
+cannot be run from the host, from this session, or from anything on the tailnet — the entire
+point is to see what the host looks like from the open internet. Commands are below.
+
+### The tunnel hostname rotates, and that is the design
+
+Observed directly: WSL idled out, the containers restarted when the distro next woke, and
+the Quick Tunnel came back on a **different hostname**. That is exactly the behaviour
+`CLAUDE.md` bans a hardcoded base URL over, and why `endpoint.json` exists. The app resolves
+it at runtime and falls back silently to bundled content on any failure.
+
+**Consequence for operations:** every restart leaves the published `endpoint.json` stale
+until `scripts/publish-endpoint.sh` runs again. That script is in the startup task, so a
+reboot self-heals — which is precisely why gate 1 above matters.
+
+### The neighbour finding still stands
+
+`engirent-mysql` publishes on `0.0.0.0:3307` rather than `127.0.0.1`. Not ours and not in
+scope, but it is reachable from anything that can route to the host, and the port scan below
+will see it. Worth a look while you are in there.
 
 ### A7 verification — run these exactly
 
