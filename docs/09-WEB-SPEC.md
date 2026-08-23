@@ -162,17 +162,18 @@ the README.
 ### B1. Dashboard — `/`
 
 ```
-[ ] Sessions over time
-[ ] Player-count distribution — validates whether 4-10 really is the sweet spot
-[ ] Topic weight popularity — which mixes hosts actually choose
-[ ] Vibe Pack draw rates and mute rate — is anyone turning the music off?
-[ ] Interference adoption: master toggle and per-sub-toggle rates
-[ ] Average rounds per game, average game length
 [ ] Unread feedback count
+[ ] Word-bank status: current version, per-topic counts against the 60 minimum
+[ ] Content health: topics below minimum, unreviewed drafts
 ```
 
-Every chart should be able to change a design decision. If one can't, cut it. Topic weight
-popularity and mute rate are the two most likely to change what you build next.
+**Every telemetry chart is gone.** v1 collects nothing (ADR 0015), so sessions over time,
+player-count distribution, topic weight popularity, Vibe Pack draw rates and Interference
+adoption have no data behind them and are not built.
+
+The original rule stands for what remains: every panel should be able to change a decision.
+With telemetry removed, feedback and content health are the only two that can — which is
+the honest shape of a dashboard for a beta with no analytics.
 
 ### B2. Feedback triage — `/feedback`
 
@@ -208,12 +209,11 @@ validator ships first as a script so content authoring never blocks on the conso
 [ ] Quality flags: tiers too similar, clue too long, clue contains the word, duplicate
 ```
 
-### B4. Telemetry detail — `/telemetry`
+### B4. Removed — telemetry detail
 
-```
-[ ] Raw aggregate event browser; date-range filter; CSV export
-[ ] Explicit assertion in the UI that no PII is stored here
-```
+There is no `/telemetry` route. v1 collects no telemetry at all (ADR 0015), so a browser
+over aggregate events would have nothing to browse. Recorded as removed rather than deleted
+silently, so a reader of an older draft knows this was a decision.
 
 ### B5. Settings — `/settings`
 

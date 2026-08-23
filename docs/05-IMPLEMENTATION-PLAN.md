@@ -54,7 +54,7 @@ Prompts for each phase: **08-PROMPTS.md**.
 [ ] Confirm the exact variant/chipset in Settings > About; record in docs/adr/0003
 [ ] HUMAN: decide 120Hz vs capped 60Hz frame target; record as an ADR
 [ ] HUMAN: run 10-TRADEMARK-SEARCH.md (~40 min) — blocks Phase 8
-[ ] HUMAN: telemetry at launch, yes/no — blocks Phase 7
+[x] HUMAN: telemetry at launch, yes/no — **DECIDED 2026-08-24: none in v1** (ADR 0015)
 [x] Music sourcing: FREE/CC route decided — see 04-MUSIC-SOURCING.md
 ```
 
@@ -323,8 +323,10 @@ Spec first. `openapi.yaml` before implementation.
 It is the source of truth for the topology, and §7 there is the setup checklist.
 
 ```
-[ ] openapi.yaml: POST /v1/feedback, GET /v1/word-banks, GET /v1/word-banks/{topic},
-    POST /v1/telemetry
+[ ] openapi.yaml: POST /v1/feedback, GET /v1/word-banks, GET /v1/word-banks/{topic}.
+    NO telemetry endpoint — v1 collects nothing (ADR 0015), and it is omitted
+    rather than stubbed: a documented endpoint that 501s is a contract to
+    maintain for nothing
 [ ] Fastify + Zod at every boundary; Postgres schema + migrations
 [ ] Feedback attachments: SHA-256 filenames, encrypted at rest, signed URLs (§16b)
 [ ] Rate limiting on all public endpoints
@@ -358,7 +360,8 @@ It is the source of truth for the topology, and §7 there is the setup checklist
 - [ ] Endpoint discovery proven: app falls back silently with `endpoint.json` unreachable
 - [ ] Admin unreachable off-tailnet — verified from an outside network
 - [ ] No selfie-shaped payload accepted by any endpoint; assert in a test
-- [ ] Telemetry contains no names, photos, or device identifiers
+- [x] Telemetry contains no names, photos, or device identifiers — **vacuous by
+      design**: v1 has no telemetry endpoint and no telemetry table (ADR 0015)
 - [ ] **Restore drill:** rebuild the DB from backup into a clean container
 - [ ] Secrets in env; DB not exposed on 0.0.0.0
 
@@ -397,8 +400,6 @@ Page specs in `09-WEB-SPEC.md`.
 [ ] Next.js + shadcn from the vetted starter (07-TEMPLATES.md §3)
 [ ] Auth: single admin. Tailnet-bound is the real control
 [ ] Feedback triage: list, filter, status, attachment view, notes
-[ ] Telemetry: sessions, player-count distribution, topic weight popularity,
-    Vibe Pack draw rates, Interference adoption, rounds per game
 [ ] Word bank UI on top of the Phase 2 pipeline: CRUD, three-tier editor,
     CSV import/export, versioned atomic publish, quality flags
 ```
