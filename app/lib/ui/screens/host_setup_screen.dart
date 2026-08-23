@@ -1,6 +1,7 @@
 import 'package:diakooi/content/topics.dart';
 import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/screens/event_debug_screen.dart';
 import 'package:diakooi/ui/widgets/interference_setup.dart';
 import 'package:diakooi/ui/widgets/topic_mixer.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
@@ -300,6 +301,16 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
               label: 'Profiling harness (A5)',
               emphasis: VibeEmphasis.quiet,
               onPressed: widget.onOpenProfiling,
+            ),
+            SizedBox(height: vibe.gutter * 0.5),
+            VibeButton(
+              label: 'Every event (A6)',
+              emphasis: VibeEmphasis.quiet,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const EventDebugScreen(),
+                ),
+              ),
             ),
           ],
           SizedBox(height: vibe.gutter * 2),

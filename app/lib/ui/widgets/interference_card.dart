@@ -32,7 +32,7 @@ class InterferenceCard extends StatefulWidget {
 }
 
 class _InterferenceCardState extends State<InterferenceCard>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override

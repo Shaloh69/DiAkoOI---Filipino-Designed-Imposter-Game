@@ -28,7 +28,7 @@ class HandoffBeat extends StatefulWidget {
 }
 
 class _HandoffBeatState extends State<HandoffBeat>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? _controller;
   Object? _lastKey;
 
