@@ -10,9 +10,11 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 3 (Vibe Packs — A3 AUDIT-INCOMPLETE by design).
-CI green on all five jobs, run `32627034581`. PR #5 open against `main`.
-**Next:** Phase 4 (core loop UI), branched from `main` once #5 merges.
+**Last completed:** Phase 4 (core loop UI — A4 AUDIT-INCOMPLETE by design).
+**Next:** Phase 5 (animation pass), branched from `main` once the Phase 4 PR merges.
+
+Phase 3 stays A3 AUDIT-INCOMPLETE: licensed audio is a human gate and Phase 4 did not
+depend on it.
 
 **Stack depth is zero.** PRs #1–#4 are all merged into `main` with merge commits, their
 branches deleted, and no PR is open. Every phase branch from here branches **from `main`**
@@ -48,6 +50,20 @@ Decisions made during the run that are not obvious from the code:
 - **ADR 0008** — the reveal technique is a config value defaulting to a pre-rendered
   cross-fade. The spike could **not** rank the techniques by cost off-device and produced
   no frame-time figure; six measurements still need the handset, listed in the ADR.
+- **ADR 0009** — there is **no router**. The game is one widget switching on `GamePhase`,
+  and the back gesture is swallowed. A back stack over §3 is a way to re-open a screen
+  showing a word the table has already moved past.
+- **ADR 0010** — the selfie comes off `startImageStream`, converted and downscaled in Dart.
+  `image_picker` and `takePicture()` both write a temp file **silently**, so a static check
+  in `test/privacy/` fails the build if either name reappears in `lib/`.
+- **ADR 0011** — the topic mixer derives a **floor** as well as a ceiling. Weights must total
+  100, so dropping one topic pushes mass onto the others and each of those is capped too.
+  Rebalancing allocates points one at a time with per-topic caps; proportion-then-round can
+  both miss 100 and push a topic over the ceiling.
+- **The controller records the §3 edges it walks** (`GameController.transitionTrail`). One
+  call can cross two edges — the round-end check enters and leaves in one step — so sampling
+  the phase after each method silently misses transitions. Two tests hold that trail against
+  `GameMachine.transitions`. Keep them honest rather than relaxing them.
 - **Alchemist CI mode flattens opacity compositing.** Goldening the reveal at three
   progress values produced three byte-identical baselines. Blur alone *does* golden
   correctly — it is the opacity cross-fade that vanishes. Anything animated by opacity
@@ -64,9 +80,13 @@ Decisions made during the run that are not obvious from the code:
 
 | # | Needed | From | Blocks |
 |---|---|---|---|
-| 1 | **Frame target: 120Hz/8.3ms vs capped 60Hz/16.6ms.** Implement as a single config value, never scattered assumptions. Defaulting to 120Hz/8.3ms and flagged provisional | Product owner | **A5** (Phase 5) |
-| 2 | **Trademark search on "DiAkoOi"** — protocol ready in `docs/10-TRADEMARK-SEARCH.md`, ~40 minutes | Human | **Phase 8** |
-| 3 | **Telemetry at launch, yes or no.** Any collection needs a privacy policy URL and a Play Data Safety declaration; shipping with zero telemetry is defensible and simpler | Product owner | **Phase 7** |
+| 1 | **Trademark search on "DiAkoOi"** — protocol ready in `docs/10-TRADEMARK-SEARCH.md`, ~40 minutes | Human | **Phase 8** |
+| 2 | **Telemetry at launch, yes or no.** Any collection needs a privacy policy URL and a Play Data Safety declaration; shipping with zero telemetry is defensible and simpler | Product owner | **Phase 7** |
+
+**Closed 2026-08-23 — frame target decided.** 120Hz / 8.3ms.
+`app/lib/theme/frame_budget.dart` carries it as a single config value and the provisional
+flag is gone. The measurements ADR 0008 lists still need the handset; they now check work
+against a fixed budget instead of deciding what the budget is.
 
 **Closed 2026-08-23 — device confirmed.** Vivo V60 Lite **5G**, Dimensity 7360-Turbo
 octa-core @2.5GHz, 8GB physical + 8GB Extended RAM. `docs/06-TESTING-STRATEGY.md` §8 already
@@ -75,9 +95,14 @@ is the shipping default (§8d).
 
 ### Awaiting a decision from you
 
-| Proposal | Question | Blocks |
-|---|---|---|
-| [0001 — topic-weight ceiling](docs/proposals/0001-topic-weight-ceiling.md) | No topic can exceed ~66% of draws under the no-repeat window, but the host UI can accept 80% and will silently deliver 67%. Clamp the slider, or allow it and show the effective rate? **Sports Night (Basketball 70%) is already over the line.** | **Phase 4** host setup UI |
+Nothing open.
+
+**Closed 2026-08-23 — proposal 0001 accepted, clamp option.**
+[0001 — topic-weight ceiling](docs/proposals/0001-topic-weight-ceiling.md) is marked
+ACCEPTED, `01-DESIGN.md` §13b carries the approved paragraph and §19 records the approval,
+Sports Night is corrected to Basketball 60 / Buhay Pinoy 25 / Brands 15, and all five presets
+are checked against the **derived** ceiling by test rather than a remembered number. ADR 0011
+records the floor that came with it.
 
 ### Known gates for phases not yet started
 
@@ -148,8 +173,8 @@ audio and anything needing the handset.
 
 | A3 item | Status |
 |---|---|
-| `flutter test --tags golden` green in CI on a clean checkout | **PASS** — 11 goldens; CI run `32627034581`, "Golden tests" step succeeded on Linux |
-| Golden matrix: every primitive × every Vibe Pack, in CI | **PASS** — 9 primitives × 6 packs, built from `assets/vibes/` not a Dart list |
+| `flutter test --tags golden` green in CI on a clean checkout | **PASS** — 11 golden groups; CI run `32627034581` was 11 including the Phase 0 `my_button` harness, which Phase 4 replaced with `VibeButton`. Still 11 |
+| Golden matrix: every primitive × every Vibe Pack, in CI | **PASS** — 10 primitives × 6 packs, built from `assets/vibes/` not a Dart list |
 | Every pack passes 4.5:1 body / 3:1 large text contrast | **PASS** — all six, checked per pack |
 | Crew vs imposter distinguishable without colour | **PASS** — shape tokens differ per pack |
 | Watermark legible on every pack, never obstructing content | **PASS** — `textMuted` clears 3:1 on every pack's bg |
@@ -177,8 +202,46 @@ whether the cross-fade holds 8.3ms, whether the downscaled blur is visually acce
 thermal behaviour across ten rounds. The **120Hz vs 60Hz decision is still open** and this
 is the evidence it was waiting for — which means it is still waiting.
 
-### Phase 4 — Core loop UI · will be **AUDIT-INCOMPLETE**
+### Phase 4 — Core loop UI · **AUDIT-INCOMPLETE**
 
-Selfie capture must downscale at capture (ADR 0005). A4 stays open on the human playtest;
-airplane mode, the disk-write test, state-machine reachability and 20-player setup are all
-closeable. Note **proposal 0001** is unresolved and affects the host setup screen.
+The base game is playable end to end. What is blocked is everything needing real people and
+a real handset, which is most of what A4 actually asks.
+
+| A4 item | Status |
+|---|---|
+| **Manual playtest, 5+ real humans** | **BLOCKED** — not simulatable, and both §12 verdicts below depend on it |
+| Airplane mode: full game start to finish | **PASS by construction, unverified on device** — no network call exists in the app; the word bank and every pack load from the asset bundle. Nothing proves it on hardware yet |
+| `no_disk_write_test` passes | **PASS** — 8 tests. Its static half fails the build if `image_picker` or `takePicture(` appears in `lib/`, because a runtime test only catches what it happens to exercise |
+| Manually verify the OS photo library is untouched | **BLOCKED** — needs the handset |
+| Kill and relaunch mid-game → no selfie recoverable from disk | **BLOCKED** — needs the handset |
+| Every FSM transition reachable from the UI; no dead ends | **PASS, with two named exceptions** — the controller records every edge it walks and two tests hold that trail against §3, one driving the controller and one driving the widgets. The two unreached edges both need a round with **zero roundabouts**, which only the §9c No Roundabouts modifier produces. Interference is Phase 5; wiring it will fail these tests and require a deliberate update |
+| Back-button and interruption handled everywhere | **PARTIAL** — the back gesture is swallowed app-wide by `PopScope` (ADR 0009), which is the correct behaviour for §3. Call and notification interruption needs the handset |
+| 20-player setup completes; Large Group Mode engages at 13 | **PASS** — a 20-player game is seated, dealt, discussed and voted through the widgets; Large Group Mode is asserted to engage at 13 and not at 12 |
+| Topic weights visibly produce the intended mix over 10 rounds | **PASS at the engine, unverified at a table** — 6000 draws against a mix set to the ceiling land within 2% of it. Whether a table *notices* is a playtest question |
+| **§12.3 verdict on accuser-pays** — did personal cost flatten discussion into safe consensus picks? | **BLOCKED** — playtest |
+| **§12.4 verdict on two-tap voting** — fast enough at 10+? | **BLOCKED** — playtest |
+
+**The exit condition — "six people play a full game on one device, airplane mode, on real
+content" — is not met and cannot be met by machine.** Two of its three clauses are human,
+and the third is blocked on Phase 2: the bundled bank is still `"isPlaceholder": true`
+machine-generated scaffolding.
+
+**What a human needs to do next, in order:**
+
+1. **Build and install on the V60 Lite.** Confirm the camera path produces a usable selfie —
+   rotation and mirroring are computed from `sensorOrientation` and have never run against
+   real hardware (ADR 0010).
+2. **Airplane mode, full game.** Then kill the app mid-round, relaunch, and check the photo
+   library and app storage for anything recoverable.
+3. **Playtest with 5+ people.** Record total time, per-round time, points of confusion, and
+   any rule asked about twice. The two §12 verdicts come out of this and nothing else.
+
+**Carried into Phase 5.** The §9f constraint banner slot is built and wired through the pass
+interstitial, but nothing fills it. `RoundModifiers` is passed empty at every resolution,
+which is what the defaults already describe: `InterferenceSettings.enabled` is false until a
+host turns it on, and the host setup screen deliberately does not offer that yet. A toggle
+that does nothing invites a host to turn it on and conclude the app is broken.
+
+**One count to watch.** Golden baselines went 11 → 10 → 11 this phase: `my_button.png` was
+removed with the Phase 0 harness it belonged to, and `matrix_vibe_button.png` was added.
+A Linux run reporting fewer than **11** golden groups means they stopped executing.
