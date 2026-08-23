@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:diakooi/content/topics.dart';
+import 'package:diakooi/content/word_bank.dart';
 import 'package:diakooi/engine/engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -244,6 +248,108 @@ void main() {
                 'silently draw from an empty topic',
           );
         }
+      }
+    });
+  });
+
+  group('against the bank the app actually ships', () {
+    // Phase 4 tested the mixer against a synthetic bank holding every topic,
+    // and every preset was invalid against the real one — a mix totalling 44,
+    // Start disabled, no game startable at all. A test whose fixture is more
+    // complete than reality proves nothing about reality.
+    late List<String> available;
+
+    setUpAll(() {
+      final bank = WordBank.fromJson(
+        jsonDecode(File(WordBank.assetPath).readAsStringSync())
+            as Map<String, dynamic>,
+      );
+      available = [
+        for (final topic in TopicCatalogue.topics)
+          if (bank.topicIds.contains(topic.id)) topic.id,
+      ];
+      expect(
+        available,
+        isNotEmpty,
+        reason: 'the shipped bank fills no catalogue topic at all',
+      );
+    });
+
+    test('the default mix is startable', () {
+      final mix = TopicMix.fromPreset(
+        TopicPresets.barkadaClassic.weights,
+        allTopicIds: available,
+      );
+      expect(
+        mix.isValid,
+        isTrue,
+        reason:
+            'the host setup screen opens on this mix — if it is invalid the '
+            'Start button is disabled and the app cannot start a game',
+      );
+      expect(mix.total, 100);
+    });
+
+    test('every preset loads into a startable mix', () {
+      for (final preset in TopicPresets.all) {
+        final mix = TopicMix.fromPreset(
+          preset.weights,
+          allTopicIds: available,
+        );
+        expect(mix.total, 100, reason: preset.name);
+        expect(mix.isValid, isTrue, reason: preset.name);
+        expect(
+          mix.enabledCount,
+          greaterThan(0),
+          reason: '${preset.name} produced an empty draw',
+        );
+      }
+    });
+
+    test('a preset keeps its emphasis where the bank can express it', () {
+      // Gutom is Pagkain 60 / Brands 20 / Buhay Pinoy 20. On a bank without
+      // Brands the shape survives: Pagkain still leads Buhay Pinoy.
+      final mix = TopicMix.fromPreset(
+        TopicPresets.gutom.weights,
+        allTopicIds: available,
+      );
+      if (available.contains('pagkain') && available.contains('buhaypinoy')) {
+        expect(
+          mix.weightOf('pagkain'),
+          greaterThan(mix.weightOf('buhaypinoy')),
+          reason: 'renormalising must preserve relative emphasis, not flatten',
+        );
+      }
+    });
+
+    test('a preset whose topics are all missing still yields a draw', () {
+      final mix = TopicMix.fromPreset(
+        const [TopicWeight(topicId: 'nonexistent', weightPercent: 100)],
+        allTopicIds: available,
+      );
+      expect(mix.total, 100);
+      expect(mix.isValid, isTrue);
+      expect(
+        mix.enabledCount,
+        available.length,
+        reason: 'an even spread over what exists beats refusing to load',
+      );
+    });
+
+    test('the mix a preset produces is accepted by RoomSettings', () {
+      for (final preset in TopicPresets.all) {
+        final mix = TopicMix.fromPreset(
+          preset.weights,
+          allTopicIds: available,
+        );
+        expect(
+          () => RoomSettings.validated(
+            playerCount: 6,
+            topicWeights: mix.toWeights(),
+          ),
+          returnsNormally,
+          reason: preset.name,
+        );
       }
     });
   });

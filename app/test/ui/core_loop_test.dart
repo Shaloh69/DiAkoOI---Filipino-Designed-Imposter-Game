@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:diakooi/content/topics.dart';
@@ -370,6 +371,65 @@ void main() {
             'handing someone a forfeit they had no say in (§7)',
       );
       expect(find.widgetWithText(VibeButton, 'Reveal'), findsNothing);
+    });
+  });
+
+  group('the bank the app actually ships', () {
+    testWidgets('host setup opens on a startable mix', (tester) async {
+      // The synthetic bank the other tests use holds every catalogue topic.
+      // The shipped one holds five, and against it every preset produced a
+      // mix totalling 44 — invalid under §13b, Start disabled, no game
+      // startable. A fixture more complete than reality proves nothing about
+      // reality, so this one reads the real asset off disk.
+      await tester.binding.setSurfaceSize(const Size(500, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final shipped = WordBank.fromJson(
+        jsonDecode(File(WordBank.assetPath).readAsStringSync())
+            as Map<String, dynamic>,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            vibeLibraryProvider.overrideWith((ref) async => library),
+            vibeRngProvider.overrideWithValue(SeededRng(1)),
+            gameRngProvider.overrideWithValue(SeededRng(1)),
+            wordBankProvider.overrideWith((ref) async => shipped),
+            selfieCameraProvider.overrideWithValue(_FakeCamera.new),
+          ],
+          child: const MaterialApp(home: GameShell()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final start = tester.widget<VibeButton>(
+        find.widgetWithText(VibeButton, 'Start — 6 players'),
+      );
+      expect(
+        start.onPressed,
+        isNotNull,
+        reason:
+            'Start is disabled, which means the default topic mix does not '
+            'total 100 against the bank this build ships',
+      );
+
+      // And the mix it opens on is one the engine will accept.
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(GameShell)),
+      );
+      await tapLabel(tester, 'Start — 6 players');
+      expect(
+        container
+            .read(gameSessionProvider)
+            .settings
+            .topicWeights
+            .fold<int>(
+              0,
+              (sum, w) => sum + w.weightPercent,
+            ),
+        100,
+      );
     });
   });
 

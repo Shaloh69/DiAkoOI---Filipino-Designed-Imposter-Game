@@ -48,7 +48,11 @@ class TopicMixer extends StatelessWidget {
             separatorBuilder: (_, _) => SizedBox(width: vibe.gutter),
             itemBuilder: (context, index) {
               final preset = TopicPresets.all[index];
-              final usable = preset.weights.every(
+              // At least one topic present, not all of them. A preset is a
+              // shape and TopicMix.fromPreset renormalises it over whatever
+              // the bank can fill; requiring every topic disabled all five
+              // presets against the shipped placeholder bank.
+              final usable = preset.weights.any(
                 (w) => topics.any((t) => t.id == w.topicId),
               );
               return ActionChip(
