@@ -584,11 +584,25 @@ Round 3 → roll 0.55 → K-Pop
 - Weights must total 100%. Any topic at 0% is excluded entirely.
 - **Presets** so nobody has to fiddle: *Barkada Classic* (even spread), *Stan Mode*
   (K-Pop 60 / OPM 20 / Internet 20), *Tita Mode* (Teleserye 40 / Aktor 30 / OPM 30),
-  *Gutom* (Pagkain 60 / Brands 20 / Buhay Pinoy 20), *Sports Night* (Basketball 70 /
-  Buhay Pinoy 30).
+  *Gutom* (Pagkain 60 / Brands 20 / Buhay Pinoy 20), *Sports Night* (Basketball 60 /
+  Buhay Pinoy 25 / Brands 15).
 - **No-repeat window:** a word cannot repeat within a session, and the same topic cannot
   be drawn more than twice in a row regardless of weight — otherwise a 60% weight produces
   visible streaks that feel broken even though the maths is right.
+- **Ceiling.** The window imposes an arithmetic limit the weights cannot exceed: after two
+  consecutive draws a topic *must* yield, so **no topic can exceed two draws in three —
+  about 66.7%** — however it is weighted. The one exception is a mix with a single eligible
+  topic, where there is nothing else to draw and the window cannot apply.
+
+  **The host slider clamps at this ceiling.** It is derived from the no-repeat window and
+  the number of enabled topics, never hardcoded — disabling topics changes it, and a
+  constant would be silently wrong. A slider that stops communicates the constraint
+  wordlessly; a UI that accepts a setting it cannot honour is worse than one that stops,
+  and a host mid-lobby with people waiting is not reading explanatory text.
+
+  Engine behaviour and the measurements behind the ceiling:
+  `docs/adr/0007-topic-draw-deficit-weighting.md`. Approved from
+  `docs/proposals/0001-topic-weight-ceiling.md` on 2026-08-23.
 - Rolled with the same seeded RNG as everything else, so games stay reproducible in tests.
 
 ### 13c. Regional note
@@ -738,3 +752,15 @@ regulatory sense. Photos transmitted between users are, triggering Apple's UGC
 requirements — filtering, reporting, blocking, published terms — plus rules on images of
 identifiable people on a server. **Monogram-only in networked play sidesteps all of it**,
 which is the recommended v2 position and the reason §4b is scoped rather than absolute.
+
+---
+
+## 19. Revision history
+
+This document is **propose-don't-patch**: changes are raised in `docs/proposals/` and
+applied here only once approved. Each approved change is recorded below so a reader can see
+what moved and why without reading the git log.
+
+| Date | Change | Approval |
+|---|---|---|
+| 2026-08-23 | **§13b — topic-weight ceiling.** Documented the arithmetic ceiling the no-repeat window imposes (~66.7%, two draws in three), specified that the host slider **clamps** at it, and required the ceiling be derived from the enabled topic count rather than hardcoded. Corrected the **Sports Night** preset from Basketball 70 / Buhay Pinoy 30 — which was over the ceiling and would have silently delivered ~67% — to Basketball 60 / Buhay Pinoy 25 / Brands 15. The other four presets were checked against the derived ceiling and needed no change. | [proposal 0001](proposals/0001-topic-weight-ceiling.md), approved |

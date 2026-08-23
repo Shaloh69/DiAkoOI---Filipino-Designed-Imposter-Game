@@ -1,4 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The selfie is optional: Skip is a first-class path (01-DESIGN.md §4),
+         so a refused permission drops the player to a monogram rather than
+         blocking onboarding. Declared not required so the app still installs
+         on a device without a front camera.
+
+         There is deliberately no storage permission and no microphone. The app
+         never writes a selfie to storage (§4b), and asking for a permission it
+         does not need would undercut the one claim it makes. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
     <application
         android:label="DiAkoOi"
         android:name="${applicationName}"

@@ -29,15 +29,41 @@ import 'package:diakooi/engine/rng/seeded_rng.dart';
 ///
 /// The window imposes a hard ceiling of two-in-three, so **any single topic
 /// weighted above ~66% cannot be honoured** and will land at the ceiling. That
-/// is inherent to the rule, not a defect in this selector. See
-/// `docs/adr/0007-topic-draw-deficit-weighting.md`.
+/// is inherent to the rule, not a defect in this selector. The host slider
+/// clamps at [ceilingFor] so the setting can never be made in the first place
+/// (01-DESIGN.md §13b). See `docs/adr/0007-topic-draw-deficit-weighting.md`.
 abstract final class TopicSelector {
   /// How many consecutive draws of one topic are allowed before it is excluded
   /// from the next draw (§13b).
   static const maxConsecutive = 2;
 
-  /// The highest share any one topic can reach under [maxConsecutive].
-  static const double achievableCeiling = maxConsecutive / (maxConsecutive + 1);
+  /// The highest share any one topic can reach, given how many topics are
+  /// eligible to be drawn.
+  ///
+  /// **Derived, never hardcoded.** After [maxConsecutive] draws in a row a
+  /// topic must yield, so it cannot exceed `C / (C + 1)` of all draws — about
+  /// 66.7% at C = 2. Raising [maxConsecutive] to 3 would move this to 75%
+  /// automatically, and a constant would then be silently wrong.
+  ///
+  /// The exception is a mix with a **single** eligible topic: there is nothing
+  /// else to draw, so the window cannot apply and the ceiling is 100%. A host
+  /// who disables every topic but one changes the ceiling, which is the other
+  /// reason this takes an argument rather than being a constant.
+  ///
+  /// Returned as a fraction of 1. The host UI clamps its slider to this
+  /// (01-DESIGN.md §13b, proposal 0001).
+  static double ceilingFor(int eligibleTopicCount) {
+    if (eligibleTopicCount <= 1) return 1;
+    return maxConsecutive / (maxConsecutive + 1);
+  }
+
+  /// [ceilingFor] as a whole percentage, floored.
+  ///
+  /// Floored rather than rounded: 66% is honourable, 67% is not, and a slider
+  /// that stops one point short of the true limit is preferable to one that
+  /// stops one point past it.
+  static int ceilingPercentFor(int eligibleTopicCount) =>
+      (ceilingFor(eligibleTopicCount) * 100).floor();
 
   /// Draws the next topic id.
   ///

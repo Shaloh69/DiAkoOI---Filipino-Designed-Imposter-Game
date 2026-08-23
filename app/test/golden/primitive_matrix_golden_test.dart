@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:alchemist/alchemist.dart';
 import 'package:diakooi/theme/vibe_pack.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
+import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -227,6 +228,37 @@ Future<void> main() async {
             width: 200,
             height: 140,
             child: RevealCard(content: 'Jollibee', revealProgress: 0),
+          ),
+        ),
+      ),
+    );
+
+    // The one button style in the game, in all three emphases plus disabled.
+    // Every colour, radius and padding on it resolves from the pack, so a
+    // hardcoded value here would be visible across six baselines at once —
+    // which is the entire reason the matrix exists.
+    unawaited(
+      goldenTest(
+        'VibeButton',
+        fileName: 'matrix_vibe_button',
+        builder: () => matrixFor(
+          'VibeButton',
+          (pack) => SizedBox(
+            width: 200,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VibeButton(label: 'Deal', onPressed: () {}),
+                const SizedBox(height: 8),
+                VibeButton(
+                  label: 'End the game',
+                  emphasis: VibeEmphasis.quiet,
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 8),
+                const VibeButton(label: 'Waiting on 3', onPressed: null),
+              ],
+            ),
           ),
         ),
       ),

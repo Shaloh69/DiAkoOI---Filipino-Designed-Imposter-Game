@@ -41,6 +41,8 @@ cd app && flutter analyze                   # must be clean
 cd app && dart run tool/content_cli.dart validate --dir ../content
 cd app && dart run tool/content_cli.dart stats    --dir ../content
 cd app && dart run tool/content_cli.dart bundle   --dir ../content
+# `bundle` exits 1 while /content is unauthored — it refuses to overwrite the
+# shipped bank with an empty one. That is the correct behaviour, not a break.
 
 cd site && pnpm dev | pnpm build
 cd admin && pnpm dev | pnpm build | pnpm lint

@@ -7,7 +7,7 @@
 import 'dart:developer' as dev;
 
 import 'package:diakooi/providers.dart';
-import 'package:diakooi/router.dart';
+import 'package:diakooi/ui/screens/game_shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,32 +43,21 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final palette = ref.watch(paletteProvider);
-
-    // Read once so music starts immediately rather than on first screen that
-    // happens to need audio. Mirrors the template's `lazy: false`.
+    // Read once so music starts immediately rather than on the first screen
+    // that happens to need audio.
     ref.watch(audioControllerProvider);
 
-    return MaterialApp.router(
+    // **No router.** A pass-and-play game is one device following one state
+    // machine; a navigation stack would let a back gesture return to a screen
+    // showing a word the table has already moved past. GameShell renders the
+    // §3 phase and nothing else.
+    //
+    // The theme is deliberately not set here either: every colour comes from
+    // the active Vibe Pack, and GameShell installs it once the pack is drawn.
+    return const MaterialApp(
       title: 'DiAkoOi',
-      theme:
-          ThemeData.from(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: palette.darkPen,
-              surface: palette.backgroundMain,
-            ),
-            textTheme: TextTheme(bodyMedium: TextStyle(color: palette.ink)),
-          ).copyWith(
-            filledButtonTheme: FilledButtonThemeData(
-              style: FilledButton.styleFrom(
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-      routerConfig: router,
+      home: GameShell(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

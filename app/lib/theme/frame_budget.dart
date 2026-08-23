@@ -6,14 +6,13 @@
 /// rounding error; it is a factor of two on every animation decision in
 /// Phase 5.
 ///
-/// **This value is PROVISIONAL.** The 120Hz-vs-60Hz decision is a human one and
-/// is still open (`BLOCKED.md`). It is deliberately a single constant rather
-/// than a number repeated across animation code, so changing it is one edit
-/// rather than an archaeology exercise.
+/// **Decided 2026-08-23: 120Hz / 8.3ms.** A party game passed hand to hand is
+/// judged almost entirely on feel, and 120Hz is why the reference phone feels
+/// expensive.
 ///
-/// The evidence that decision is waiting on is in
-/// `docs/adr/0008-hold-to-reveal-technique.md` — and is itself waiting on the
-/// physical handset.
+/// It stays a single constant so A5 can flip it if real hardware disagrees
+/// after the §8b mitigations have been tried — but the default is now a
+/// decision, not a placeholder. Never scatter the assumption.
 library;
 
 /// A frame-rate target and the per-frame budget it implies.
@@ -21,8 +20,9 @@ enum FrameTarget {
   /// The reference panel's native rate. Provisional default.
   hz120(120, 8.3),
 
-  /// The §8a fallback: legitimate if the reveal blur cannot hold 8.3ms, but a
-  /// capped app on a 120Hz panel reads as noticeably less premium.
+  /// The §8a fallback: legitimate if the reveal blur cannot hold 8.3ms on
+  /// hardware, but a capped app on a 120Hz panel reads as noticeably less
+  /// premium. Not the current target.
   hz60(60, 16.6);
 
   const FrameTarget(this.hz, this.budgetMs);
@@ -37,18 +37,12 @@ enum FrameTarget {
 
 /// The active frame target.
 abstract final class FrameBudget {
-  /// **Provisional.** Defaults to the panel's native 120Hz per §8a's
-  /// recommendation; a party game passed hand to hand is judged almost
-  /// entirely on feel.
+  /// The panel's native rate. Change here and nowhere else.
   ///
-  /// Change here and nowhere else.
+  /// A5 may lower this to [FrameTarget.hz60] if the reveal cannot hold 8.3ms
+  /// on hardware after the §8b mitigations — that is the documented escape
+  /// hatch, not an expected outcome.
   static const FrameTarget target = FrameTarget.hz120;
-
-  /// Whether the target is still awaiting the human decision.
-  ///
-  /// Surfaced so a performance report can say so rather than presenting a
-  /// provisional budget as settled.
-  static const bool isProvisional = true;
 
   static double get budgetMs => target.budgetMs;
 

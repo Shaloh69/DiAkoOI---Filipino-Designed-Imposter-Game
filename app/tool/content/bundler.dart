@@ -20,12 +20,29 @@ const int bundleFormatVersion = 1;
 /// sends as `?since=` when asking the server whether anything is newer.
 /// [isPlaceholder] marks a bundle that is NOT authored content, so nothing
 /// downstream can mistake scaffolding for the real bank.
+///
+/// **Throws on empty input** unless [allowEmpty] is set. `content/` holds
+/// header-only CSVs until the authoring in 02-CONTENT-PH.md §6 lands, so
+/// running the documented bundle command against it produced a valid, empty
+/// bundle that silently replaced the shipped bank — leaving the app with
+/// nothing to draw from, offline, with no server in the loop to notice. There
+/// is no situation in which writing an empty bundle is what someone meant.
 Map<String, dynamic> buildBundle(
   List<ContentRow> rows, {
   required String contentVersion,
   bool isPlaceholder = false,
+  bool allowEmpty = false,
   String? note,
 }) {
+  if (rows.isEmpty && !allowEmpty) {
+    throw ArgumentError.value(
+      rows,
+      'rows',
+      'refusing to build an empty bundle — it would blank the offline '
+          'fallback. Pass allowEmpty only if that is genuinely the intent',
+    );
+  }
+
   final byTopic = <String, List<Map<String, dynamic>>>{};
   for (final row in rows) {
     byTopic.putIfAbsent(row.topicId, () => []).add(row.toBundleJson());
