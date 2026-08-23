@@ -11,7 +11,8 @@ the run stops.
 ## Handoff — start a fresh session here
 
 **Last completed:** Phase 3 (Vibe Packs — A3 AUDIT-INCOMPLETE by design).
-**Next:** Phase 4 (core loop UI).
+CI green on all five jobs, run `32627034581`. PR #5 open against `main`.
+**Next:** Phase 4 (core loop UI), branched from `main` once #5 merges.
 
 **Stack depth is zero.** PRs #1–#4 are all merged into `main` with merge commits, their
 branches deleted, and no PR is open. Every phase branch from here branches **from `main`**
@@ -147,7 +148,7 @@ audio and anything needing the handset.
 
 | A3 item | Status |
 |---|---|
-| `flutter test --tags golden` green in CI on a clean checkout | **PASS** — 11 goldens, generated in Docker, verified running on Linux |
+| `flutter test --tags golden` green in CI on a clean checkout | **PASS** — 11 goldens; CI run `32627034581`, "Golden tests" step succeeded on Linux |
 | Golden matrix: every primitive × every Vibe Pack, in CI | **PASS** — 9 primitives × 6 packs, built from `assets/vibes/` not a Dart list |
 | Every pack passes 4.5:1 body / 3:1 large text contrast | **PASS** — all six, checked per pack |
 | Crew vs imposter distinguishable without colour | **PASS** — shape tokens differ per pack |
