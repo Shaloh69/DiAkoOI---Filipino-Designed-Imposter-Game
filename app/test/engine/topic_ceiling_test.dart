@@ -1,5 +1,4 @@
 import 'package:diakooi/engine/engine.dart';
-import 'package:diakooi/engine/selection/topic_presets.dart';
 import 'package:test/test.dart';
 
 /// The topic-weight ceiling (01-DESIGN.md §13b, proposal 0001).
