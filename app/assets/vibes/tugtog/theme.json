@@ -1,0 +1,39 @@
+{
+  "id": "tugtog",
+  "displayName": "Tugtog",
+  "palette": {
+    "bg": "#0E1116",
+    "surface": "#171B22",
+    "surfaceAlt": "#1F242D",
+    "textPrimary": "#F2F4F8",
+    "textMuted": "#A8B2C1",
+    "crew": "#4ADE80",
+    "imposter": "#F0A868",
+    "interference": "#C084FC",
+    "danger": "#F87171"
+  },
+  "type": {
+    "display": "Chillax",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "bouncy",
+    "stiffness": 180,
+    "damping": 0.62,
+    "baseMs": 240
+  },
+  "texture": {
+    "card": "paper-grain",
+    "grainOpacity": 0.06,
+    "crewShape": "rounded",
+    "imposterShape": "notched",
+    "cardRadius": 16.0,
+    "gutter": 8.0
+  },
+  "watermark": {
+    "track": "Tugtog",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}

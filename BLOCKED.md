@@ -10,22 +10,20 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 2 (content pipeline — A2 AUDIT-INCOMPLETE by design).
-**Next:** Phase 3 (Vibe Packs & design system).
+**Last completed:** Phase 3 (Vibe Packs — A3 AUDIT-INCOMPLETE by design).
+CI green on all five jobs, run `32627034581`. PR #5 open against `main`.
+**Next:** Phase 4 (core loop UI), branched from `main` once #5 merges.
 
-Open pull requests, stacked — `main` is still at the initial specification commit, so each
-branch is based on the one before it and GitHub retargets as they merge:
+**Stack depth is zero.** PRs #1–#4 are all merged into `main` with merge commits, their
+branches deleted, and no PR is open. Every phase branch from here branches **from `main`**
+and merges back before the next starts. Keep it that way.
 
-| PR | Branch | Base | State |
-|---|---|---|---|
-| [#1](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/1) | `phase/00-foundation` | `main` | CI green |
-| [#2](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/2) | `chore/step-0-housekeeping` | `phase/00-foundation` | CI green |
-| [#3](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/3) | `phase/01-engine` | `chore/step-0-housekeeping` | CI green |
-| [#4](https://github.com/Shaloh69/DiAkoOI---Filipino-Designed-Imposter-Game/pull/4) | `phase/02-content` | `phase/01-engine` | CI green |
-
-Phase 3 should branch from `phase/02-content`.
-
-**The stack is four deep.** Merging the green ones would flatten it.
+> **Merging a stack: do not pass `--delete-branch`.** Doing so on #1 deleted
+> `phase/00-foundation` before GitHub retargeted #2, which auto-**closed** #2 — and GitHub
+> then refuses to reopen it (base branch gone) *and* refuses to retarget it (PR is closed).
+> Recovering meant recreating the deleted branch at its old SHA to break the deadlock.
+> Merge, retarget the child to `main`, wait for its CI, merge, and delete branches at the
+> very end.
 
 ### What a fresh session needs to know
 
@@ -47,6 +45,13 @@ Decisions made during the run that are not obvious from the code:
 - **ADR 0007** — the topic draw weights by deficit, not raw weight, to satisfy both §13b
   rules at once. Any topic weighted above ~66% is arithmetically unreachable under the
   no-repeat window.
+- **ADR 0008** — the reveal technique is a config value defaulting to a pre-rendered
+  cross-fade. The spike could **not** rank the techniques by cost off-device and produced
+  no frame-time figure; six measurements still need the handset, listed in the ADR.
+- **Alchemist CI mode flattens opacity compositing.** Goldening the reveal at three
+  progress values produced three byte-identical baselines. Blur alone *does* golden
+  correctly — it is the opacity cross-fade that vanishes. Anything animated by opacity
+  needs a widget-tree assertion, not a golden.
 - Two version pins are cross-referenced and must change together: Flutter
   (`docker/goldens.Dockerfile` ↔ `ci.yml`) and Playwright (`e2e/package.json` ↔ the CI
   container image). Both drifted once and broke CI.
@@ -62,7 +67,17 @@ Decisions made during the run that are not obvious from the code:
 | 1 | **Frame target: 120Hz/8.3ms vs capped 60Hz/16.6ms.** Implement as a single config value, never scattered assumptions. Defaulting to 120Hz/8.3ms and flagged provisional | Product owner | **A5** (Phase 5) |
 | 2 | **Trademark search on "DiAkoOi"** — protocol ready in `docs/10-TRADEMARK-SEARCH.md`, ~40 minutes | Human | **Phase 8** |
 | 3 | **Telemetry at launch, yes or no.** Any collection needs a privacy policy URL and a Play Data Safety declaration; shipping with zero telemetry is defensible and simpler | Product owner | **Phase 7** |
-| 4 | **Confirm the Vivo V60 Lite 5G variant/chipset** in Settings → About. The spec table is from published figures, not the physical handset | Whoever holds the device | A5 precision |
+
+**Closed 2026-08-23 — device confirmed.** Vivo V60 Lite **5G**, Dimensity 7360-Turbo
+octa-core @2.5GHz, 8GB physical + 8GB Extended RAM. `docs/06-TESTING-STRATEGY.md` §8 already
+carried this; only this file was stale. Profiling runs with Extended RAM **enabled**, which
+is the shipping default (§8d).
+
+### Awaiting a decision from you
+
+| Proposal | Question | Blocks |
+|---|---|---|
+| [0001 — topic-weight ceiling](docs/proposals/0001-topic-weight-ceiling.md) | No topic can exceed ~66% of draws under the no-repeat window, but the host UI can accept 80% and will silently deliver 67%. Clamp the slider, or allow it and show the effective rate? **Sports Night (Basketball 70%) is already over the line.** | **Phase 4** host setup UI |
 
 ### Known gates for phases not yet started
 
@@ -126,10 +141,44 @@ can fill it.
 a test asserts that a placeholder bundle is labelled, but nothing yet stops one shipping.
 Worth a release check in Phase 10.
 
-### Phase 3 — Vibe Packs · will be **AUDIT-INCOMPLETE**
+### Phase 3 — Vibe Packs · **AUDIT-INCOMPLETE**
 
-Build the full theming system with PLACEHOLDER audio (silent ogg stubs, `licence.json`
-marked PLACEHOLDER). Loader, ThemeExtension, motion profiles, primitives, golden matrix and
-contrast checks are all autonomous. Do the hold-to-reveal blur spike here — Mali-G615 MC2 is
-a two-core GPU and this is the core interaction; report findings and do not guess at numbers
-that need hardware to measure. A3 stays open on real licensed tracks.
+The theming system is complete and works without real tracks. What is blocked is licensed
+audio and anything needing the handset.
+
+| A3 item | Status |
+|---|---|
+| `flutter test --tags golden` green in CI on a clean checkout | **PASS** — 11 goldens; CI run `32627034581`, "Golden tests" step succeeded on Linux |
+| Golden matrix: every primitive × every Vibe Pack, in CI | **PASS** — 9 primitives × 6 packs, built from `assets/vibes/` not a Dart list |
+| Every pack passes 4.5:1 body / 3:1 large text contrast | **PASS** — all six, checked per pack |
+| Crew vs imposter distinguishable without colour | **PASS** — shape tokens differ per pack |
+| Watermark legible on every pack, never obstructing content | **PASS** — `textMuted` clears 3:1 on every pack's bg |
+| Adding a 7th pack requires zero Dart changes (prove it) | **PASS** — loaded at runtime from a directory that did not exist at author time |
+| Reduced motion collapses profiles; palette still applies | **PASS** |
+| Layout holds at 320dp and 200% text scale | **PASS** — all six packs |
+| **Every shipped track has a valid `licence.json`** | **BLOCKED** — all six are `isPlaceholder: true` with no track |
+
+**What a human needs to do:**
+
+1. **Source six licensed tracks** per `04-MUSIC-SOURCING.md`, streamer-safe and Content-ID
+   free (`03-VIBE-SYSTEM.md` §1). Commission from a Filipino artist is worth pricing.
+2. **Commit a real `licence.json` per pack** — source, type, URL, acquired date, attribution
+   — and set `isPlaceholder` to false. A test then requires a track file to be present.
+3. **Keep the licence screenshot on file** for A10.
+
+> **The six packs currently ship no audio at all.** `trackFile` is null and a test enforces
+> that a placeholder pack has no track. That is deliberate: no `ffmpeg` or `oggenc` was
+> available, and a hand-made fake silent `.ogg` in a licence-audited folder would be
+> something pretending to be a licensed asset — and would also hide a real pack whose
+> filename was mistyped.
+
+**Still needing the handset** (see ADR 0008): frame times for each reveal technique,
+whether the cross-fade holds 8.3ms, whether the downscaled blur is visually acceptable, and
+thermal behaviour across ten rounds. The **120Hz vs 60Hz decision is still open** and this
+is the evidence it was waiting for — which means it is still waiting.
+
+### Phase 4 — Core loop UI · will be **AUDIT-INCOMPLETE**
+
+Selfie capture must downscale at capture (ADR 0005). A4 stays open on the human playtest;
+airplane mode, the disk-write test, state-machine reachability and 20-player setup are all
+closeable. Note **proposal 0001** is unresolved and affects the host setup screen.

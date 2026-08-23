@@ -1,0 +1,39 @@
+{
+  "id": "palengke",
+  "displayName": "Palengke",
+  "palette": {
+    "bg": "#FAF7F0",
+    "surface": "#FFFFFF",
+    "surfaceAlt": "#F0E9DC",
+    "textPrimary": "#1A1710",
+    "textMuted": "#5A5344",
+    "crew": "#0B6E4F",
+    "imposter": "#B23A0F",
+    "interference": "#1D4ED8",
+    "danger": "#B91C1C"
+  },
+  "type": {
+    "display": "Inter",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "snappy",
+    "stiffness": 260,
+    "damping": 0.85,
+    "baseMs": 160
+  },
+  "texture": {
+    "card": "flat",
+    "grainOpacity": 0.0,
+    "crewShape": "rounded",
+    "imposterShape": "notched",
+    "cardRadius": 10.0,
+    "gutter": 6.0
+  },
+  "watermark": {
+    "track": "Palengke",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}

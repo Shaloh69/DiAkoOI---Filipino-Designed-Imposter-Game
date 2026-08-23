@@ -1,0 +1,39 @@
+{
+  "id": "lamig",
+  "displayName": "Lamig",
+  "palette": {
+    "bg": "#0B0D10",
+    "surface": "#121519",
+    "surfaceAlt": "#1A1F25",
+    "textPrimary": "#E8EDF2",
+    "textMuted": "#9AA5B1",
+    "crew": "#7DD3FC",
+    "imposter": "#E2E8F0",
+    "interference": "#93C5FD",
+    "danger": "#F87171"
+  },
+  "type": {
+    "display": "Inter",
+    "body": "Inter",
+    "scaleRatio": 1.25
+  },
+  "motion": {
+    "profile": "precise",
+    "stiffness": 320,
+    "damping": 1.0,
+    "baseMs": 180
+  },
+  "texture": {
+    "card": "flat",
+    "grainOpacity": 0.0,
+    "crewShape": "square",
+    "imposterShape": "chamfered",
+    "cardRadius": 4.0,
+    "gutter": 8.0
+  },
+  "watermark": {
+    "track": "Lamig",
+    "artist": "Placeholder Artist",
+    "position": "bottomCenter"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "PLACEHOLDER — no track sourced yet",
+  "type": "PLACEHOLDER",
+  "url": "https://example.invalid/placeholder",
+  "attribution": "Placeholder — Alon (Hazy bedroom-pop drift)",
+  "acquired": null,
+  "isPlaceholder": true,
+  "_note": "This pack ships a SILENT stub, not a licensed track. A pack with isPlaceholder true must never reach a release build. See docs/03-VIBE-SYSTEM.md §1 and 04-MUSIC-SOURCING.md."
+}
