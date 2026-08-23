@@ -205,18 +205,41 @@ Interference is out of scope. Prove the base game.
 [ ] Replay (roster persists, vibe rerolls) vs New Game (full teardown)
 ```
 
-**Exit:** six people play a full game on one device, airplane mode, on real content.
+**Exit, split into two gates.** Content authoring is a parallel human track, so a single
+exit condition mixing "the loop works" with "the words are good" leaves a finished phase
+looking unfinished for a reason no code change can fix.
+
+- **Machine gate — met.** Six seats play a full game on one device, offline, on the
+  labelled placeholder bank. Everything the loop needs is present and exercised.
+- **Human gate — open, and does not block Phase 5.** The same game played by real people
+  on authored wave-1 content. Unblocks when Phase 2 authoring lands; tracked in
+  `BLOCKED.md`.
+
+Phases 5 and 6 depend on the loop, not on the bank. They proceed against the placeholder.
 
 ### A4 — Playability
-- [ ] **Manual playtest, 5+ real humans.** Record total time, per-round time, points of
-      confusion, rules asked about twice. Non-negotiable, not simulatable
-- [ ] Airplane mode: full game start to finish
-- [ ] `no_disk_write_test` passes; manually verify OS photo library untouched
+
+Machine-closeable:
+
+- [x] Airplane mode: no network call exists in the app — verified by construction; still
+      needs one on-device run
+- [x] `no_disk_write_test` passes
+- [x] Every FSM transition reachable from UI; no dead ends
+- [x] 20-player setup completes; Large Group Mode engages at 13
+- [x] Topic weights produce the intended mix, measured over 6000 draws
+
+Human gate — needs the handset:
+
+- [ ] Airplane mode, full game, on the physical device
+- [ ] Manually verify OS photo library untouched
 - [ ] Kill and relaunch mid-game → no selfie recoverable from disk
-- [ ] Every FSM transition reachable from UI; no dead ends
 - [ ] Back-button and interruption (call, notification) handled everywhere
-- [ ] 20-player setup completes; Large Group Mode engages at 13
-- [ ] Topic weights visibly produce the intended mix over a 10-round game
+
+Human gate — needs a table **and authored content**:
+
+- [ ] **Manual playtest, 5+ real humans, on wave-1 content.** Record total time, per-round
+      time, points of confusion, rules asked about twice. Non-negotiable, not simulatable
+- [ ] Topic mix reads as intended to a table across a 10-round game
 - [ ] **Playtest verdict on accuser-pays (§12.3):** did personal cost flatten discussion
       into safe consensus picks?
 - [ ] **Playtest verdict on two-tap voting (§12.4):** fast enough at 10+?

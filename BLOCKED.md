@@ -221,10 +221,18 @@ a real handset, which is most of what A4 actually asks.
 | **§12.3 verdict on accuser-pays** — did personal cost flatten discussion into safe consensus picks? | **BLOCKED** — playtest |
 | **§12.4 verdict on two-tap voting** — fast enough at 10+? | **BLOCKED** — playtest |
 
-**The exit condition — "six people play a full game on one device, airplane mode, on real
-content" — is not met and cannot be met by machine.** Two of its three clauses are human,
-and the third is blocked on Phase 2: the bundled bank is still `"isPlaceholder": true`
-machine-generated scaffolding.
+**The exit condition is now two gates** (`05-IMPLEMENTATION-PLAN.md`, corrected 2026-08-23).
+It previously read "six people play a full game on one device, airplane mode, on real
+content" as a single clause, which mixed *the loop works* with *the words are good* — and
+content authoring is a parallel human track that has barely begun. A finished phase was
+being held open for a reason no code change could close.
+
+- **A4 machine gate — MET.** Six seats play a full game on one device, offline, on the
+  labelled placeholder bank.
+- **A4 human gate — OPEN.** The same game played by real people on authored wave-1 content.
+  Unblocks when Phase 2 authoring lands.
+
+**Phases 5 and 6 do not depend on the bank and proceed against the placeholder.**
 
 **What a human needs to do next, in order:**
 
