@@ -206,7 +206,11 @@ jobs:
           API_PORT: '3000'
           API_HOST: 127.0.0.1
           DATABASE_URL: postgresql://diakooi:diakooi@127.0.0.1:5432/diakooi
-          ATTACHMENT_KEY: 0000000000000000000000000000000000000000000000000000000000000001
+          # Quoted, and hex rather than all digits: YAML parsed the bare
+          # digit string as the integer 1, which then failed the 64-hex-
+          # character check and took the process down on boot. A test key,
+          # never a real one.
+          ATTACHMENT_KEY: 'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90'
           # Fuzzing sends hundreds of requests. The production defaults would
           # rate-limit the run rather than exercise it, and the limits
           # themselves are verified by Vitest, which sets the values it
