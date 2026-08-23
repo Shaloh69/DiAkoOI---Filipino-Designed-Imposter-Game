@@ -66,6 +66,31 @@ class GameSessionNotifier extends Notifier<GameSession> {
 
   void markRevealSeen() => _run((c) => c.markRevealSeen());
 
+  // ── Interference (§9) ───────────────────────────────────────────────
+
+  void offerItem(String playerId) => _run((c) => c.offerItem(playerId));
+
+  void takeOfferedItem() => _run((c) => c.takeOfferedItem());
+
+  void declineOfferedItem() => _run((c) => c.declineOfferedItem());
+
+  void useItem({
+    required String playerId,
+    required ItemUsePhase phase,
+    String? targetPlayerId,
+  }) => _run(
+    (c) => c.useItem(
+      playerId: playerId,
+      phase: phase,
+      targetPlayerId: targetPlayerId,
+    ),
+  );
+
+  void reconcileTaboo({required String playerId, required bool slipped}) =>
+      _run((c) => c.reconcileTaboo(playerId: playerId, slipped: slipped));
+
+  List<String> get tabooToReconcile => _controller.tabooToReconcile;
+
   void beginDiscussion() => _run((c) => c.beginDiscussion());
 
   void completeLap() => _run((c) => c.completeLap());

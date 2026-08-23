@@ -460,7 +460,7 @@ class _DangerHalo extends StatefulWidget {
 }
 
 class _DangerHaloState extends State<_DangerHalo>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? _controller;
 
   @override

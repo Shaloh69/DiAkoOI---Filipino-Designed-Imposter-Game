@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:alchemist/alchemist.dart';
 import 'package:diakooi/theme/vibe_pack.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
+import 'package:diakooi/ui/widgets/interference_card.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -258,6 +259,28 @@ Future<void> main() async {
                 const SizedBox(height: 8),
                 const VibeButton(label: 'Waiting on 3', onPressed: null),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // The §9e interference language, side by side with the reveal card it
+    // must never be confused with. Goldened across every pack because that is
+    // what proves the distinction survives a palette where the accent sits
+    // close to the surface — the case where colour alone would fail (§6).
+    unawaited(
+      goldenTest(
+        'InterferenceCard',
+        fileName: 'matrix_interference_card',
+        builder: () => matrixFor(
+          'InterferenceCard',
+          (pack) => const SizedBox(
+            width: 240,
+            child: InterferenceCard(
+              title: 'This round',
+              body: 'Mercy Round',
+              footnote: 'No life is lost this round, from any source.',
             ),
           ),
         ),

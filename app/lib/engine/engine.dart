@@ -10,6 +10,8 @@
 /// Near-Unanimous) especially. Do not "fix" them.
 library;
 
+export 'interference/item_system.dart';
+export 'interference/roller.dart';
 export 'machine/game_machine.dart';
 export 'models/content.dart';
 export 'models/enums.dart';

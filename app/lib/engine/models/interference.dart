@@ -40,6 +40,45 @@ abstract class InterferenceEventDefinition with _$InterferenceEventDefinition {
 /// Ids are stable strings: they are persisted in `enabledEventIds` and appear
 /// in saved rounds.
 abstract final class InterferenceCatalogue {
+  /// Constraints the table must never be told about (§9f).
+  ///
+  /// The player sees their own — a Taboo player is shown their banned words
+  /// privately — but no banner announces them, because the whole point is that
+  /// nobody knows what to listen for. The payoff lands in the round recap,
+  /// where the "oh, *that* is what happened" moment lives.
+  static const secretEventIds = <String>[taboo, liarsTax, theFool];
+
+  /// Whether an event puts a persistent banner in front of the table (§9f).
+  ///
+  /// Roughly a third of the pool cannot be detected by the app at all, so the
+  /// banner is how the table is armed to police it. Round-level constraints
+  /// always show; player-level ones show only where the table is meant to be
+  /// watching, which is exactly the social and retroactive events that are not
+  /// secret.
+  static bool showsConstraintBanner(InterferenceEventDefinition event) {
+    if (secretEventIds.contains(event.id)) return false;
+    if (event.category == EventCategory.roundStart) {
+      return event.enforcement != EventEnforcement.app;
+    }
+    return event.enforcement == EventEnforcement.social;
+  }
+
+  /// §9c Spread the Blame: no more than this many players may name the same
+  /// suspect.
+  ///
+  /// **Two, not one.** A hard no-duplicates ban is mathematically
+  /// unresolvable — N voters across N tiles gives every tile exactly one vote
+  /// and therefore a permanent N-way tie. A cap of 2 keeps the forced-spread
+  /// feel while still producing a plurality.
+  static const spreadTheBlameCap = 2;
+
+  /// §9c Near-Unanimous: the share of players that must name the same target.
+  ///
+  /// **A threshold, not true unanimity.** Under true unanimity a lone imposter
+  /// simply names someone nobody else did and guarantees themselves a free
+  /// round, every round.
+  static const nearUnanimousThreshold = 0.75;
+
   // -- §9b Player-Pick Events -------------------------------------------
   static const bonusLife = 'bonus_life';
   static const lifeDrain = 'life_drain';

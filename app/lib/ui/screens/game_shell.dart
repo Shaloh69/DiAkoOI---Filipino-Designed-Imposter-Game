@@ -11,6 +11,7 @@ import 'package:diakooi/ui/screens/onboarding_screen.dart';
 import 'package:diakooi/ui/screens/resolution_screen.dart';
 import 'package:diakooi/ui/screens/summary_screen.dart';
 import 'package:diakooi/ui/screens/voting_screen.dart';
+import 'package:diakooi/ui/widgets/interference_card.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,7 +124,13 @@ class _RoundStart extends ConsumerWidget {
       title: 'Round ${session.currentRoundIndex + 1}',
       subtitle: 'New word, new imposter. Only the lives carry over.',
       footer: VibeButton(label: 'Deal', onPressed: onContinue),
-      child: const SizedBox.shrink(),
+      // §9e: the whole table registers that the round is bent before anyone
+      // picks up the phone. Nothing when Interference is off.
+      child: Center(
+        child: session.roll.roundModifier == null
+            ? const SizedBox.shrink()
+            : InterferenceRoundFlash(modifierId: session.roll.roundModifier!),
+      ),
     );
   }
 }

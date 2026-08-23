@@ -31,7 +31,7 @@ class DevelopSequence extends StatefulWidget {
 }
 
 class DevelopSequenceState extends State<DevelopSequence>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController? _controller;
 
   /// Where the three beats sit in the combined timeline.

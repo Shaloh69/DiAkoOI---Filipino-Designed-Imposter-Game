@@ -41,7 +41,7 @@ class HoldToReveal extends StatefulWidget {
 }
 
 class _HoldToRevealState extends State<HoldToReveal>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   RevealMachine? _machine;
 
   @override
@@ -49,6 +49,11 @@ class _HoldToRevealState extends State<HoldToReveal>
     super.didChangeDependencies();
     // Built here rather than in initState because it needs the theme, and a
     // pack change mid-session must rebuild it with the new motion profile.
+    //
+    // That rebuild is why this uses TickerProviderStateMixin rather than the
+    // Single variant: the Single mixin asserts on a second ticker even after
+    // the first is disposed, and a Vibe Pack reroll on Play Again is exactly
+    // a second ticker.
     final vibe = context.vibe;
     _machine?.dispose();
     _machine = RevealMachine(

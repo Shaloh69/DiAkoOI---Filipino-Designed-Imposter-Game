@@ -151,6 +151,7 @@ class GameController {
     // round-end check.
     _enter(GamePhase.roundStart);
 
+    _slips.clear();
     final roundIndex = _session.currentRoundIndex;
 
     final topicId = TopicSelector.draw(
@@ -168,10 +169,37 @@ class GameController {
       entry: entry,
       settings: _session.settings,
     );
+
+    // §9c phase one: the modifier is drawn BEFORE assignment, because Double
+    // Imposter raises the count and No Roundabouts suppresses part of the
+    // player-pick pool. Null whenever Interference is off or round 1.
+    final modifier = InterferenceRoller.rollModifier(
+      settings: _session.settings,
+      roundIndex: roundIndex,
+      rng: rng,
+    );
+
     final imposters = ImposterAssigner.assign(
       players: _session.players,
-      count: ImposterAssigner.countForRound(settings: _session.settings),
+      count: InterferenceRoller.imposterCountFor(
+        settings: _session.settings,
+        roundModifier: modifier,
+      ),
       rng: rng,
+    );
+
+    // §9c phase two: everything that needs roles, Bodyguard above all.
+    final roll = InterferenceRoller.rollDetails(
+      settings: _session.settings,
+      players: _session.players,
+      imposterIds: imposters,
+      roundIndex: roundIndex,
+      roundModifier: modifier,
+      rng: rng,
+      tabooWordPool: [
+        for (final e in wordBank)
+          if (e.topicId == topicId) e.word,
+      ],
     );
 
     _session = _session.copyWith(
@@ -187,7 +215,16 @@ class GameController {
         imposterClue: clue.clue,
         clueTierUsed: clue.tier,
         imposterPlayerIds: imposters,
-        roundaboutsRequired: _session.settings.effectiveRoundabouts,
+        roundModifier: modifier,
+        playerPickEvents: [
+          for (final event in roll.playerPickEvents)
+            event.copyWith(
+              payload: roll.tabooWords[event.playerId] ?? const [],
+            ),
+        ],
+        // Extra Roundabout and No Roundabouts both land here rather than on
+        // the settings: a modifier bends one round, never the room (§9c).
+        roundaboutsRequired: _roundaboutsFor(modifier),
       ),
       usedWords: [..._session.usedWords, entry.word],
       topicHistory: [..._session.topicHistory, topicId],
@@ -195,6 +232,10 @@ class GameController {
       clearSelectedVoter: true,
       distributedCount: 0,
       pendingForfeits: const [],
+      roll: roll,
+      pendingTaboo: const [],
+      itemUsages: const [],
+      clearItemPickup: true,
       // Roles are redrawn every round, so "rounds as imposter" accrues here
       // rather than at resolution — a round that ends in a wash still counted.
       seats: [
@@ -211,6 +252,16 @@ class GameController {
             seat,
       ],
     );
+  }
+
+  /// Roundabouts this round, after the two §9c modifiers that change them.
+  int _roundaboutsFor(String? modifier) {
+    final base = _session.settings.effectiveRoundabouts;
+    return switch (modifier) {
+      InterferenceCatalogue.noRoundabouts => 0,
+      InterferenceCatalogue.extraRoundabout => base + 1,
+      _ => base,
+    };
   }
 
   // ── WORD_DISTRIBUTION ─────────────────────────────────────────────────
@@ -306,7 +357,13 @@ class GameController {
     _session = _session.copyWith(
       pendingVotes: [
         ..._session.pendingVotes,
-        Vote(voterId: voterId, accusedId: accusedId),
+        Vote(
+          voterId: voterId,
+          accusedId: accusedId,
+          // Tally only. A Double Vote or Megaphone player backing a wrong
+          // target still loses exactly 1 life (§7, §9b, §9d).
+          tallyWeight: _session.tallyWeightFor(voterId),
+        ),
       ],
       clearSelectedVoter: true,
     );
@@ -320,6 +377,105 @@ class GameController {
         if (vote.voterId != voterId) vote,
     ],
   );
+
+  // ── INTERFERENCE (§9) ─────────────────────────────────────────────────
+
+  /// The §9b event on one player this round, or null.
+  String? eventFor(String playerId) => _session.roll.eventFor(playerId);
+
+  /// The banned words a Taboo player sees privately (§9b).
+  List<String> tabooWordsFor(String playerId) =>
+      _session.roll.tabooWords[playerId] ?? const [];
+
+  /// Offers an item without taking it, so the reveal card can put the §9d
+  /// use-or-lose choice in front of the player rather than deciding for them.
+  void offerItem(String playerId) {
+    final itemId = _session.roll.itemGrants[playerId];
+    if (itemId == null) return;
+    final seat = _session.seatFor(playerId);
+    if (seat == null) return;
+
+    final pickup = ItemSystem.offer(player: seat.player, itemId: itemId);
+    if (pickup.needsDecision) {
+      _session = _session.copyWith(itemPickup: pickup);
+      return;
+    }
+    _replacePlayer(ItemSystem.take(player: seat.player, itemId: itemId));
+  }
+
+  /// Resolves the §9d prompt by dropping what was held and taking the new one.
+  void takeOfferedItem() {
+    final pickup = _session.itemPickup;
+    if (pickup == null) return;
+    final seat = _session.seatFor(pickup.playerId);
+    if (seat == null) return;
+    _replacePlayer(
+      ItemSystem.take(player: seat.player, itemId: pickup.offeredItemId),
+    );
+    _session = _session.copyWith(clearItemPickup: true);
+  }
+
+  /// Resolves the §9d prompt by keeping what was held.
+  void declineOfferedItem() =>
+      _session = _session.copyWith(clearItemPickup: true);
+
+  /// Plays the held item (§9d).
+  ///
+  /// Role-dependent effects resolve against the holder's role **in the round
+  /// they use it**, not the round they picked it up, since roles re-roll.
+  void useItem({
+    required String playerId,
+    required ItemUsePhase phase,
+    String? targetPlayerId,
+  }) {
+    final seat = _session.seatFor(playerId);
+    final held = seat?.player.heldItem;
+    if (seat == null || held == null) return;
+
+    final resolved = ItemSystem.resolveOnUse(itemId: held, rng: rng);
+    _replacePlayer(ItemSystem.clear(seat.player));
+    _session = _session.copyWith(
+      itemUsages: [
+        ..._session.itemUsages,
+        ItemUsage(
+          playerId: playerId,
+          itemId: resolved,
+          roleAtUse: _session.round?.roleOf(playerId) ?? PlayerRole.crew,
+          phase: phase,
+          targetPlayerId: targetPlayerId,
+        ),
+      ],
+    );
+  }
+
+  /// Taboo players still awaiting reconciliation at end of lap (§9b).
+  List<String> get tabooToReconcile => [
+    for (final entry in _session.roll.tabooWords.entries)
+      if (!_session.pendingTaboo.contains(entry.key)) entry.key,
+  ];
+
+  /// The host's Clean / Slipped call (§9b).
+  ///
+  /// Adjudicated by the table out loud, because the app cannot hear the room.
+  /// A slip costs a life, subject to the §7b clamp like any other loss.
+  void reconcileTaboo({required String playerId, required bool slipped}) {
+    _session = _session.copyWith(
+      pendingTaboo: [..._session.pendingTaboo, playerId],
+    );
+    if (slipped) _slips.add(playerId);
+  }
+
+  final List<String> _slips = [];
+  List<String> get _tabooSlips => List.unmodifiable(_slips);
+
+  void _replacePlayer(Player player) {
+    _session = _session.copyWith(
+      seats: [
+        for (final seat in _session.seats)
+          if (seat.id == player.id) seat.copyWith(player: player) else seat,
+      ],
+    );
+  }
 
   // ── RESOLUTION ────────────────────────────────────────────────────────
 
@@ -343,8 +499,17 @@ class GameController {
       roles: {
         for (final seat in _session.seats) seat.id: round.roleOf(seat.id),
       },
-      modifiers: const RoundModifiers(),
-      itemUsages: const [],
+      // §9f stacking precedence lives inside resolveRound: player-pick, then
+      // round-start, then items, then the §7b clamp — with contradictions
+      // resolving toward whichever effect protects a player.
+      modifiers: RoundModifiers(
+        roundModifier: round.roundModifier,
+        playerPickEvents: round.playerPickEvents,
+        bodyguardPlayerId: _session.roll.bodyguardPlayerId,
+        tabooSlips: _tabooSlips,
+        stealTargets: _session.roll.stealTargets,
+      ),
+      itemUsages: _session.itemUsages,
       currentLives: {
         for (final seat in _session.seats) seat.id: seat.player.currentLives,
       },

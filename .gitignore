@@ -77,3 +77,7 @@ Thumbs.db
 /scratch/
 coverage/
 lcov.info
+
+# Kotlin compile daemon scratch — session files and error logs.
+# Committed by accident once; they are build output, not source.
+app/android/.kotlin/

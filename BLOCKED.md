@@ -10,8 +10,9 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 5 (animation pass — A5 AUDIT-INCOMPLETE by design).
-**Next:** Phase 6 (Interference Mode), branched from `main` once the Phase 5 PR merges.
+**Last completed:** Phase 6 (Interference Mode — A6 AUDIT-INCOMPLETE by design).
+**Next:** Phase 7 (API & self-hosting), branched from `main` once the Phase 6 PR merges.
+**Phase 7 has a hard prerequisite that is not met** — see the hosting note below.
 
 A3 and A4 both stay AUDIT-INCOMPLETE and neither blocks Phase 6: licensed audio is a human
 gate, and A4's remaining items need a handset, a table, and authored content.
@@ -71,6 +72,14 @@ Decisions made during the run that are not obvious from the code:
 - **ADR 0012** — the reveal state machine is Dart, not Rive, and the file says why. ADR 0008
   put Rive third in a ladder behind a measurement that still needs the handset, and no `.riv`
   artefact exists. The interface is shaped so one drops in without touching a caller.
+- **ADR 0014** — the interference roller is **two ordered phases**, because §9c reaches both
+  backwards into setup (Double Imposter, No Roundabouts) and forwards into roles (Bodyguard).
+  The simulator drives the production roller; it used to carry its own copy, which meant the
+  A1 properties tested the copy.
+- **Five widgets used the wrong ticker mixin.** Any widget that rebuilds an
+  `AnimationController` in `didChangeDependencies` needs `TickerProviderStateMixin`, not the
+  Single variant — the Single one asserts on a second ticker even after the first is disposed,
+  and a Vibe Pack reroll on Play Again is exactly a second ticker.
 - **ADR 0013** — every animation is timed in **beats**, each a multiple of the pack's
   `baseMs`. A static check in `test/ui/motion_test.dart` fails the build on a literal
   `Duration(...)` outside a five-file exemption list. Adding an exemption means editing that
@@ -271,7 +280,7 @@ which is what the defaults already describe: `InterferenceSettings.enabled` is f
 host turns it on, and the host setup screen deliberately does not offer that yet. A toggle
 that does nothing invites a host to turn it on and conclude the app is broken.
 
-**One count to watch.** Golden baselines went 11 → 10 → 11 this phase: `my_button.png` was
+**One count to watch (superseded — now 12, see Phase 6).** Golden baselines went 11 → 10 → 11 this phase: `my_button.png` was
 removed with the Phase 0 harness it belonged to, and `matrix_vibe_button.png` was added.
 A Linux run reporting fewer than **11** golden groups means they stopped executing.
 
@@ -441,3 +450,66 @@ Attach both JSON files and answer these:
 - Did the bouncy pack and the precise pack differ materially?
 - Did the app survive all four backgrounding cases **with selfies intact**?
 - Did resuming stutter, and for roughly how long?
+
+### Phase 6 — Interference Mode · **AUDIT-INCOMPLETE**
+
+Every event is built, rollable, resolvable and reachable from a debug menu. The one thing
+outstanding is the question only a table can answer.
+
+| A6 item | Status |
+|---|---|
+| Every event triggerable via debug menu, verified end to end | **PASS** — host setup → "Every event (A6)", debug and profile builds only. A widget test taps all 38 and asserts each renders; "Nothing" is asserted to render *nothing*, since that is the §9b outcome keeping rolls uncertain |
+| Simulation: 10,000 games, all events on — no unbounded loss, no unreachable state, no crash | **PASS** — and genuinely all events this time; see the note below |
+| **Spread the Blame produces a resolvable plurality** at 3, 10, 20 | **PASS, with a correction** — the cap makes a plurality *reachable*, not guaranteed. Ten voters spread two-per-tile is a legal ballot and a real five-way tie, which the Mayor breaks. Both pinned, plus the arithmetic showing why the cap is 2 and not 1 |
+| **Near-Unanimous cannot be unilaterally blocked** by imposters alone | **PASS** — checked at 4, 6, 10 and 20 with the default imposter counts |
+| **Mercy Round blocks every damage source** | **PASS** — vote, Life Drain, Steal a Life and a Taboo slip stacked in one round, all zero |
+| Every `enforcement: 'social'` event shows a constraint banner | **PASS** — and the three secret constraints are asserted *not* to |
+| Every event has `requiresColocation` set — audit is a query | **PASS** — `InterferenceRoller.eligible()` is that query |
+| Interference visual language clearly distinct from the calm reveal card | **PASS** — chamfered vs rounded, pack interference accent, goldened across all six packs |
+| **Playtest: is a full-chaos session legible, or noise?** | **BLOCKED** — needs a table, and it is the question the whole phase exists to answer |
+
+**The simulation was not what it looked like.** The existing 10k run in `properties_test.dart`
+lists only round-start events in `enabledEventIds`, and a non-empty list means everything
+absent is *disabled* — so **no §9b event had ever fired in it**. It was right about what it
+claimed and wrong about what it appeared to cover. The new run enables both catalogues
+explicitly, and a second test asserts every event actually fired at least once across 4,000
+games, because a pool filter that silently drops one leaves the simulation green while
+covering less than it claims.
+
+**The simulator now drives the production roller.** It had its own copy of the rolling logic,
+which meant the A1 properties were asserted against the simulator's idea of §9 rather than the
+app's. A simulation that reimplements what it tests proves only that the copy agrees with
+itself.
+
+**Three of my own assertions were wrong and the code was right.** All three are kept as
+documentation rather than quietly corrected:
+
+1. Spread the Blame guarantees a plurality — it does not, and cannot.
+2. A tie under Spread the Blame always resolves — not when the Mayor is one of the accused
+   (§7a), which that modifier makes far more likely than normal voting does.
+3. Double Imposter rerolls at 3 players with 1 imposter — it fires, producing two imposters
+   against one crew member. That is proposal 0002 finding 3, now pinned with a note to update
+   the proposal rather than delete the test.
+
+**One real bug, and it would have shipped.** All five Phase 5 animation widgets rebuild their
+`AnimationController` in `didChangeDependencies` so a pack change re-times them, and all five
+used `SingleTickerProviderStateMixin` — which asserts on a second ticker even after the first
+is disposed. **A Vibe Pack reroll on Play Again is exactly that**, so the second game of every
+session would have crashed. Nothing in the Phase 5 suite changed theme mid-widget; it surfaced
+only because an interference test pumped one card under six packs in a row.
+
+**What a human needs to do:**
+
+1. **Play a full-chaos session.** Everything on, probability high, 6+ people. The question is
+   whether it reads as a game bending or as noise — and if it is noise, which events to move
+   off `defaultEnabled` rather than which to delete.
+2. **Watch the Taboo reconciliation specifically.** It is the one event whose penalty the app
+   cannot adjudicate, and the design bets that showing the words *after* the lap keeps the
+   tension while making the call fair. That bet is untested at a table.
+3. **Decide proposal 0002.** Interference does not change the shape of the Rounds/word-bank
+   ceiling, but it does make the imposter-floor question concrete: Double Imposter can now put
+   two imposters against one crew member at a small table.
+
+**Golden count: 11 → 12.** `matrix_interference_card.png` was added; the other eleven came
+back byte-identical, which is the check that nothing else moved. **A Linux run reporting
+fewer than 12 golden groups means they stopped executing.**
