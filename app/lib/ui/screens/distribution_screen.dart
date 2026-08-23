@@ -1,5 +1,6 @@
 import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/motion/handoff.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
 import 'package:diakooi/ui/widgets/hold_to_reveal.dart';
 import 'package:diakooi/ui/widgets/player_avatar.dart';
@@ -59,13 +60,24 @@ class _DistributionScreenState extends ConsumerState<DistributionScreen> {
         ),
         // PassInterstitial carries the §9f constraint banner slot. Nothing
         // fills it in the base game; Interference Mode does, in Phase 5.
-        child: PassInterstitial(
-          nextPlayerName: seat.player.name,
-          avatar: PlayerAvatar(seat: seat, size: 140, tilt: 0.02),
-          paceHint: session.settings.largeGroupMode
-              // §2a — a nudge, never a timer. Thirteen people is a long lap.
-              ? 'Big table. Keep clues to a few words.'
-              : null,
+        child: HandoffBeat(
+          // The beat is keyed on who the phone is going to, so it fires once
+          // per handoff and never on an unrelated rebuild.
+          beatKey: '${round.id}-${seat.id}',
+          child: PassInterstitial(
+            nextPlayerName: seat.player.name,
+            avatar: HandoffHero(
+              tag: handoffHeroTag(
+                playerId: seat.id,
+                roundIndex: round.roundIndex,
+              ),
+              child: PlayerAvatar(seat: seat, size: 140, tilt: 0.02),
+            ),
+            paceHint: session.settings.largeGroupMode
+                // §2a — a nudge, never a timer. Thirteen people is a long lap.
+                ? 'Big table. Keep clues to a few words.'
+                : null,
+          ),
         ),
       );
     }
@@ -84,13 +96,16 @@ class _DistributionScreenState extends ConsumerState<DistributionScreen> {
               }
             : null,
       ),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: vibe.gutter),
-          child: HoldToReveal(
-            content: notifier.revealFor(seat.id),
-            isImposter: round.isImposter(seat.id),
-            onFirstReveal: () => setState(() => _hasRead = true),
+      child: HandoffBeat(
+        beatKey: '${round.id}-${seat.id}-card',
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: vibe.gutter),
+            child: HoldToReveal(
+              content: notifier.revealFor(seat.id),
+              isImposter: round.isImposter(seat.id),
+              onFirstReveal: () => setState(() => _hasRead = true),
+            ),
           ),
         ),
       ),

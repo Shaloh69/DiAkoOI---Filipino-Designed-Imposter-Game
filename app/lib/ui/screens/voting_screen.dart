@@ -1,5 +1,6 @@
 import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/game/game_session.dart';
+import 'package:diakooi/theme/motion.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
 import 'package:diakooi/ui/widgets/player_avatar.dart';
@@ -70,7 +71,11 @@ class VotingScreen extends ConsumerWidget {
               ? !hasVoted
               : session.canAccuse(voterId: voterId, accusedId: seat.id);
 
-          return Opacity(
+          return AnimatedOpacity(
+            // Tiles dim as they stop being valid targets rather than blinking
+            // out, so the grid reads as narrowing rather than as redrawing.
+            duration: vibe.beats.tally,
+            curve: vibe.beats.arrive,
             opacity: selectable || isSelected ? 1 : 0.35,
             child: GestureDetector(
               onTap: selectable
@@ -134,26 +139,43 @@ class _Tile extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: vibe.cardRadius,
-            border: Border.all(
-              color: isSelected ? palette.interference : Colors.transparent,
-              width: 3,
+        // The tile lifts under the caller's finger. Scale rather than colour,
+        // so the cue survives a pack whose accents are close together.
+        AnimatedScale(
+          scale: isSelected && !vibe.reduceMotion ? 1.04 : 1,
+          duration: vibe.beats.micro,
+          curve: vibe.beats.arrive,
+          child: AnimatedContainer(
+            duration: vibe.beats.tally,
+            curve: vibe.beats.arrive,
+            // foregroundDecoration, not decoration: a bordered Container
+            // insets its child by the border width, which shrank the tile
+            // enough to overflow its own column.
+            foregroundDecoration: BoxDecoration(
+              borderRadius: vibe.cardRadius,
+              border: Border.all(
+                color: isSelected ? palette.interference : Colors.transparent,
+                width: 3,
+              ),
+            ),
+            child: PlayerTile(
+              name: seat.player.name,
+              avatar: PlayerAvatar(seat: seat, size: 64, framed: false),
+              livesRemaining: seat.player.currentLives,
+              livesTotal: livesTotal,
+              voteCount: voteCount,
             ),
           ),
-          child: PlayerTile(
-            name: seat.player.name,
-            avatar: PlayerAvatar(seat: seat, size: 64, framed: false),
-            livesRemaining: seat.player.currentLives,
-            livesTotal: livesTotal,
-            voteCount: voteCount,
-          ),
         ),
-        if (hasVoted)
-          Positioned(
-            right: 0,
-            top: 0,
+        Positioned(
+          right: 0,
+          top: 0,
+          child: AnimatedScale(
+            // The ballot mark lands rather than appearing, so the host sees
+            // the vote register without having to read the counter.
+            scale: hasVoted ? 1 : 0,
+            duration: vibe.beats.micro,
+            curve: vibe.beats.arrive,
             child: GestureDetector(
               onTap: onUndo,
               child: Container(
@@ -166,6 +188,7 @@ class _Tile extends StatelessWidget {
               ),
             ),
           ),
+        ),
         if (accusers.isNotEmpty)
           Positioned(
             left: vibe.gutter * 0.5,
@@ -173,14 +196,16 @@ class _Tile extends StatelessWidget {
             child: Row(
               children: [
                 // Who pointed, stacked under the tile. Accuser-pays only means
-                // something if the table can see who is exposed.
-                for (final accuser in accusers.take(4))
+                // something if the table can see who is exposed, so each
+                // thumbnail arrives on its own beat rather than the row
+                // appearing whole.
+                for (var i = 0; i < accusers.length && i < 4; i++)
                   Padding(
                     padding: EdgeInsets.only(right: vibe.gutter * 0.25),
-                    child: PlayerAvatar(
-                      seat: accuser,
-                      size: 22,
-                      framed: false,
+                    child: _StackedAccuser(
+                      key: ValueKey(accusers[i].id),
+                      seat: accusers[i],
+                      index: i,
                     ),
                   ),
                 if (accusers.length > 4)
@@ -196,6 +221,40 @@ class _Tile extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// One accuser thumbnail, dropping into the stack under a tile.
+///
+/// Each is staggered by its position, so a near-unanimous vote lands as a
+/// visible cascade rather than as a row that was suddenly there.
+class _StackedAccuser extends StatelessWidget {
+  const _StackedAccuser({required this.seat, required this.index, super.key});
+
+  final SeatedPlayer seat;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final vibe = context.vibe;
+    final avatar = PlayerAvatar(seat: seat, size: 22, framed: false);
+    if (vibe.reduceMotion) return avatar;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: vibe.beats.tally + vibe.beats.stagger * index,
+      curve: vibe.beats.arrive,
+      // Clamped: a bouncy pack's curve overshoots past 1 and Opacity asserts
+      // on that. The overshoot belongs on the transform, not the alpha.
+      builder: (context, t, child) => Opacity(
+        opacity: t.clamp(0.0, 1.0),
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * -10),
+          child: child,
+        ),
+      ),
+      child: avatar,
     );
   }
 }
