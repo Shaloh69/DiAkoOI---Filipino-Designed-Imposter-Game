@@ -56,6 +56,11 @@ Future<void> main() async {
       // with the pack being measured.
       'lib/profiling/profiling_screen.dart':
           'a measurement drive rate, not an animation',
+      // Network timeouts and a cache TTL. They answer to how long a socket
+      // may hang and how fast a tunnel rotates, not to how a pack feels — a
+      // slow pack must not mean a longer timeout.
+      'lib/net/endpoint_resolver.dart':
+          'network timeouts and a cache TTL, not animation timings',
     };
 
     test('lib/ holds no literal animation duration outside the theme', () {
