@@ -22,5 +22,6 @@ export 'resolution/life_check.dart';
 export 'resolution/resolve_round.dart';
 export 'rng/seeded_rng.dart';
 export 'selection/round_setup.dart';
+export 'selection/topic_presets.dart';
 export 'selection/topic_selector.dart';
 export 'selection/turn_order.dart';

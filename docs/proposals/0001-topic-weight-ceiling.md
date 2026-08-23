@@ -1,6 +1,19 @@
 # Proposal 0001 — the topic-weight ceiling needs to be visible to the host
 
-**Status:** PROPOSED — awaiting a decision. **Raised:** 2026-08-23, from Phase 1.
+**Status:** **ACCEPTED — Option A (clamp), 2026-08-23.** **Raised:** 2026-08-23, from Phase 1.
+
+> **Decision.** The slider clamps at the ceiling. Option B was rejected on the grounds that a
+> UI accepting a setting it cannot honour is worse than one that stops, and a host mid-lobby
+> with people waiting is not reading explanatory text — a slider that stops communicates the
+> constraint wordlessly.
+>
+> Two conditions attached, both implemented in Phase 4:
+> 1. the ceiling is **derived** from the enabled topic count and the no-repeat window, never
+>    hardcoded — it changes when a host disables topics;
+> 2. **Sports Night** is corrected to Basketball 60 / Buhay Pinoy 25 / Brands 15, and all
+>    five presets are verified against the derived ceiling rather than assumed.
+>
+> Applied to `01-DESIGN.md` §13b; see its revision history.
 **Touches:** `01-DESIGN.md` §13b (host-facing rule) and Phase 4's host setup UI.
 
 > `01-DESIGN.md` is propose-don't-patch. Nothing here has been applied.
