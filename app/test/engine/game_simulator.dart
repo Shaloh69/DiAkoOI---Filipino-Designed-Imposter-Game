@@ -6,6 +6,12 @@ import 'package:diakooi/engine/engine.dart';
 /// Everything it does goes through the public engine API and the injected
 /// [SeededRng]. It adds no rules of its own beyond standing in for the players
 /// and the host — which is exactly the part a unit test cannot supply.
+///
+/// **Interference is rolled by [InterferenceRoller], the production code.**
+/// It used to be rolled by a copy living here, which meant the A1 properties
+/// were asserted against the simulator's idea of §9 rather than the app's. A
+/// simulation that reimplements what it is testing proves only that the copy
+/// agrees with itself.
 
 /// One simulated game.
 class SimulatedGame {
@@ -15,6 +21,8 @@ class SimulatedGame {
     required this.transcript,
     required this.perRoundDeltas,
     required this.suddenDeathRounds,
+    required this.roundModifiers,
+    required this.playerPickEvents,
   });
 
   final List<Round> rounds;
@@ -30,6 +38,16 @@ class SimulatedGame {
   /// Indices of rounds where Sudden Death was the modifier — the sole
   /// legitimate way to lose more than 2 lives (§7b).
   final Set<int> suddenDeathRounds;
+
+  /// The §9c modifier each round drew, null where nothing fired.
+  final List<String?> roundModifiers;
+
+  /// The §9b events each round landed, in round order.
+  final List<List<PlayerPickEvent>> playerPickEvents;
+
+  /// Lives at the end. Named so a test does not have to know that [players]
+  /// is already the final state.
+  List<Player> get finalPlayers => players;
 }
 
 /// Simulates a whole game.
@@ -60,6 +78,8 @@ SimulatedGame simulateGame({
   final rounds = <Round>[];
   final perRoundDeltas = <List<LifeDelta>>[];
   final suddenDeathRounds = <int>{};
+  final roundModifiers = <String?>[];
+  final playerPickEvents = <List<PlayerPickEvent>>[];
   final usedWords = <String>[];
   final topicHistory = <String>[];
 
@@ -79,40 +99,48 @@ SimulatedGame simulateGame({
     );
     usedWords.add(entry.word);
 
-    // Interference is suppressed during round 1 (§3, §9f).
-    String? modifier;
-    if (GameMachine.interferenceAllowed(
-      roundIndex: roundIndex,
-      settings: settings,
-    )) {
-      if (forcedRoundModifiers != null) {
-        modifier =
-            forcedRoundModifiers[roundIndex % forcedRoundModifiers.length];
-      } else if (settings.interference.roundStartEnabled) {
-        final pool = [
-          for (final e in InterferenceCatalogue.roundStartEvents)
-            if (settings.interference.isEventEnabled(
-              e.id,
-              defaultEnabled: e.defaultEnabled,
-            ))
-              e.id,
-        ];
-        if (pool.isNotEmpty) modifier = rng.pick(pool);
-      }
-    }
+    // §9c phase one, through the production roller. `forcedRoundModifiers`
+    // still pins a modifier for tests that need one specific event.
+    final modifier =
+        forcedRoundModifiers != null &&
+            GameMachine.interferenceAllowed(
+              roundIndex: roundIndex,
+              settings: settings,
+            )
+        ? forcedRoundModifiers[roundIndex % forcedRoundModifiers.length]
+        : InterferenceRoller.rollModifier(
+            settings: settings,
+            roundIndex: roundIndex,
+            rng: rng,
+          );
     if (modifier == InterferenceCatalogue.suddenDeath) {
       suddenDeathRounds.add(roundIndex);
     }
+    roundModifiers.add(modifier);
 
-    final imposterCount = ImposterAssigner.countForRound(
-      settings: settings,
-      roundModifier: modifier,
-    );
     final imposters = ImposterAssigner.assign(
       players: players,
-      count: imposterCount,
+      count: InterferenceRoller.imposterCountFor(
+        settings: settings,
+        roundModifier: modifier,
+      ),
       rng: rng,
     );
+
+    // §9c phase two: everything that needs to know the roles.
+    final roll = InterferenceRoller.rollDetails(
+      settings: settings,
+      players: players,
+      imposterIds: imposters,
+      roundIndex: roundIndex,
+      roundModifier: modifier,
+      rng: rng,
+      tabooWordPool: [
+        for (final e in bank)
+          if (e.topicId == topicId) e.word,
+      ],
+    );
+    playerPickEvents.add(roll.playerPickEvents);
 
     final clue = WordSelector.clueFor(entry: entry, settings: settings);
 
@@ -129,7 +157,12 @@ SimulatedGame simulateGame({
       clueTierUsed: clue.tier,
       imposterPlayerIds: imposters,
       roundModifier: modifier,
-      roundaboutsRequired: settings.effectiveRoundabouts,
+      roundaboutsRequired: switch (modifier) {
+        InterferenceCatalogue.noRoundabouts => 0,
+        InterferenceCatalogue.extraRoundabout =>
+          settings.effectiveRoundabouts + 1,
+        _ => settings.effectiveRoundabouts,
+      },
     );
 
     // Stand in for the table: everyone names somebody who is not themselves.
@@ -144,62 +177,22 @@ SimulatedGame simulateGame({
         ),
     ];
 
-    // A player-pick event on a random player, when the toggle is on.
-    final pickEvents = <PlayerPickEvent>[];
-    if (settings.interference.playerPickEnabled &&
-        GameMachine.interferenceAllowed(
-          roundIndex: roundIndex,
-          settings: settings,
-        )) {
-      for (final player in players) {
-        if (rng.nextDouble() >= settings.interference.playerPickProbability) {
-          continue;
-        }
-        var pool = InterferenceCatalogue.playerPickEvents;
-        // §9f suppression: No Roundabouts removes every lap-dependent event.
-        if (modifier == InterferenceCatalogue.noRoundabouts) {
-          pool = [
-            for (final e in pool)
-              if (!e.requiresRoundabout) e,
-          ];
-        }
-        pickEvents.add(
-          PlayerPickEvent(playerId: player.id, eventId: rng.pick(pool).id),
-        );
-      }
-    }
-
-    // Steal a Life needs a victim resolved before the pure function runs.
-    final steals = <String, String>{};
-    for (final event in pickEvents) {
-      if (event.eventId != InterferenceCatalogue.stealLife) continue;
-      final candidates = [
-        for (final p in players)
-          if (p.id != event.playerId) p,
-      ];
-      if (candidates.isNotEmpty) {
-        steals[event.playerId] = rng.pick(candidates).id;
-      }
-    }
-
-    // Bodyguard picks a random crew member, who is never told (§9c).
-    String? bodyguard;
-    if (modifier == InterferenceCatalogue.bodyguard) {
-      final crew = [
-        for (final p in players)
-          if (!imposters.contains(p.id)) p,
-      ];
-      if (crew.isNotEmpty) bodyguard = rng.pick(crew).id;
-    }
+    // A slice of Taboo players are adjudicated as having slipped, so the
+    // retroactive path is exercised rather than always coming back Clean.
+    final tabooSlips = [
+      for (final id in roll.tabooWords.keys)
+        if (rng.nextDouble() < 0.5) id,
+    ];
 
     final resolution = resolveRound(
       votes: votes,
       roles: {for (final p in players) p.id: round.roleOf(p.id)},
       modifiers: RoundModifiers(
         roundModifier: modifier,
-        playerPickEvents: pickEvents,
-        bodyguardPlayerId: bodyguard,
-        stealTargets: steals,
+        playerPickEvents: roll.playerPickEvents,
+        bodyguardPlayerId: roll.bodyguardPlayerId,
+        tabooSlips: tabooSlips,
+        stealTargets: roll.stealTargets,
       ),
       itemUsages: const [],
       currentLives: {for (final p in players) p.id: p.currentLives},
@@ -262,5 +255,7 @@ SimulatedGame simulateGame({
     transcript: buffer.toString(),
     perRoundDeltas: perRoundDeltas,
     suddenDeathRounds: suddenDeathRounds,
+    roundModifiers: roundModifiers,
+    playerPickEvents: playerPickEvents,
   );
 }

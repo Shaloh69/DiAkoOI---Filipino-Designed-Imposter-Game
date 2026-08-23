@@ -143,14 +143,12 @@ class GameSession {
     // suspect. A full no-duplicates ban is unresolvable — N voters across N
     // tiles gives every tile one vote and a permanent N-way tie.
     if (roll.roundModifier == InterferenceCatalogue.spreadTheBlame &&
-        accusersOf(accusedId).length >= spreadTheBlameCap) {
+        accusersOf(accusedId).length >=
+            InterferenceCatalogue.spreadTheBlameCap) {
       return false;
     }
     return true;
   }
-
-  /// §9c Spread the Blame's duplicate cap.
-  static const spreadTheBlameCap = 2;
 
   bool hasVoted(String playerId) =>
       pendingVotes.any((v) => v.voterId == playerId);

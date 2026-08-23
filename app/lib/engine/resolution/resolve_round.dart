@@ -147,7 +147,7 @@ List<Vote> _legalVotes(List<Vote> votes, RoundModifiers modifiers) {
     // tile one vote and a permanent N-way tie.
     if (modifiers.has(InterferenceCatalogue.spreadTheBlame)) {
       final used = counts[vote.accusedId] ?? 0;
-      if (used >= 2) continue;
+      if (used >= InterferenceCatalogue.spreadTheBlameCap) continue;
       counts[vote.accusedId] = used + 1;
     }
     legal.add(vote);
@@ -181,7 +181,9 @@ String? _resolveTarget({
       modifiers,
     ).where((v) => v.accusedId == tied.first).length;
     if (voterCount == 0) return null;
-    if (headcount / voterCount < 0.75) return null;
+    if (headcount / voterCount < InterferenceCatalogue.nearUnanimousThreshold) {
+      return null;
+    }
   }
 
   if (tied.length == 1) return tied.first;

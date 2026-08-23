@@ -40,6 +40,22 @@ abstract class InterferenceEventDefinition with _$InterferenceEventDefinition {
 /// Ids are stable strings: they are persisted in `enabledEventIds` and appear
 /// in saved rounds.
 abstract final class InterferenceCatalogue {
+  /// §9c Spread the Blame: no more than this many players may name the same
+  /// suspect.
+  ///
+  /// **Two, not one.** A hard no-duplicates ban is mathematically
+  /// unresolvable — N voters across N tiles gives every tile exactly one vote
+  /// and therefore a permanent N-way tie. A cap of 2 keeps the forced-spread
+  /// feel while still producing a plurality.
+  static const spreadTheBlameCap = 2;
+
+  /// §9c Near-Unanimous: the share of players that must name the same target.
+  ///
+  /// **A threshold, not true unanimity.** Under true unanimity a lone imposter
+  /// simply names someone nobody else did and guarantees themselves a free
+  /// round, every round.
+  static const nearUnanimousThreshold = 0.75;
+
   // -- §9b Player-Pick Events -------------------------------------------
   static const bonusLife = 'bonus_life';
   static const lifeDrain = 'life_drain';
