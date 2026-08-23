@@ -1,7 +1,9 @@
 import 'package:diakooi/content/topics.dart';
 import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/game/game_providers.dart';
+import 'package:diakooi/theme/motion.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/motion/handoff.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
 import 'package:diakooi/ui/widgets/player_avatar.dart';
 import 'package:diakooi/ui/widgets/vibe_scaffold.dart';
@@ -54,7 +56,15 @@ class ResolutionScreen extends ConsumerWidget {
             child: Column(
               children: [
                 if (target != null)
-                  PlayerAvatar(seat: target, size: 160, tilt: 0.03),
+                  _Weighted(
+                    child: HandoffHero(
+                      tag: handoffHeroTag(
+                        playerId: target.id,
+                        roundIndex: round.roundIndex,
+                      ),
+                      child: PlayerAvatar(seat: target, size: 160, tilt: 0.03),
+                    ),
+                  ),
                 SizedBox(height: vibe.gutter),
                 Text(
                   'The word was',
@@ -88,17 +98,61 @@ class ResolutionScreen extends ConsumerWidget {
             ),
           ),
           SizedBox(height: vibe.gutter * 2),
-          for (final seat in session.seats)
+          for (var i = 0; i < session.seats.length; i++)
             _DeltaRow(
-              name: seat.player.name,
+              name: session.seats[i].player.name,
               // Roles are shown now and only now — during play the grid must
               // not leak them.
-              isImposter: round.isImposter(seat.id),
-              delta: resolution.deltaFor(seat.id),
-              wasCapped: resolution.cappedPlayerIds.contains(seat.id),
+              isImposter: round.isImposter(session.seats[i].id),
+              delta: resolution.deltaFor(session.seats[i].id),
+              wasCapped: resolution.cappedPlayerIds.contains(
+                session.seats[i].id,
+              ),
+              index: i,
             ),
         ],
       ),
+    );
+  }
+}
+
+/// The target arriving with weight (Phase 5, item 5).
+///
+/// Overshoots slightly on a bouncy pack and settles flat on a precise one, so
+/// the moment the round turns on carries the pack's own character rather than
+/// a house style.
+class _Weighted extends StatelessWidget {
+  const _Weighted({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final vibe = context.vibe;
+    if (vibe.reduceMotion) {
+      return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: vibe.beats.weight,
+        builder: (context, t, child) =>
+            Opacity(opacity: t.clamp(0.0, 1.0), child: child),
+        child: child,
+      );
+    }
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: vibe.beats.weight,
+      curve: vibe.beats.arrive,
+      builder: (context, t, child) => Opacity(
+        opacity: t.clamp(0.0, 1.0),
+        child: Transform.scale(
+          // Comes in oversized and settles, which reads as landing rather
+          // than as growing.
+          scale: 1 + (1 - t) * (vibe.motion.overshoots ? 0.35 : 0.18),
+          child: child,
+        ),
+      ),
+      child: child,
     );
   }
 }
@@ -109,6 +163,7 @@ class _DeltaRow extends StatelessWidget {
     required this.isImposter,
     required this.delta,
     required this.wasCapped,
+    required this.index,
   });
 
   final String name;
@@ -116,62 +171,101 @@ class _DeltaRow extends StatelessWidget {
   final int delta;
   final bool wasCapped;
 
+  /// Position in the list, which sets the stagger. The table reads the
+  /// consequences one at a time rather than all at once.
+  final int index;
+
   @override
   Widget build(BuildContext context) {
     final vibe = context.vibe;
     final palette = vibe.palette;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: vibe.gutter * 0.4),
-      child: Row(
-        children: [
-          Container(
-            width: 10,
-            height: 10,
-            decoration: ShapeDecoration(
-              // Shape as well as colour, so the role reads without relying on
-              // an accent pair that may be poor for colour-blind players (§6).
-              shape: vibe.roleShape(
-                isImposter: isImposter,
+    return _Staggered(
+      index: index,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: vibe.gutter * 0.4),
+        child: Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              decoration: ShapeDecoration(
+                // Shape as well as colour, so the role reads without
+                // relying on an accent pair that may be poor for
+                // colour-blind players (§6).
+                shape: vibe.roleShape(
+                  isImposter: isImposter,
+                  color: vibe.accentFor(isImposter: isImposter),
+                ),
                 color: vibe.accentFor(isImposter: isImposter),
               ),
-              color: vibe.accentFor(isImposter: isImposter),
             ),
-          ),
-          SizedBox(width: vibe.gutter),
-          Expanded(
-            child: Text(
-              name,
-              style: TextStyle(
-                color: palette.textPrimary,
-                fontSize: 16,
-                fontFamily: vibe.pack.type.body,
-              ),
-            ),
-          ),
-          if (wasCapped)
-            Padding(
-              padding: EdgeInsets.only(right: vibe.gutter),
+            SizedBox(width: vibe.gutter),
+            Expanded(
               child: Text(
-                'capped',
+                name,
                 style: TextStyle(
-                  color: palette.textMuted,
-                  fontSize: 12,
+                  color: palette.textPrimary,
+                  fontSize: 16,
                   fontFamily: vibe.pack.type.body,
                 ),
               ),
             ),
-          Text(
-            delta == 0 ? '—' : (delta > 0 ? '+$delta' : '$delta'),
-            style: TextStyle(
-              color: delta < 0 ? palette.danger : palette.textMuted,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              fontFamily: vibe.pack.type.display,
+            if (wasCapped)
+              Padding(
+                padding: EdgeInsets.only(right: vibe.gutter),
+                child: Text(
+                  'capped',
+                  style: TextStyle(
+                    color: palette.textMuted,
+                    fontSize: 12,
+                    fontFamily: vibe.pack.type.body,
+                  ),
+                ),
+              ),
+            Text(
+              delta == 0 ? '—' : (delta > 0 ? '+$delta' : '$delta'),
+              style: TextStyle(
+                color: delta < 0 ? palette.danger : palette.textMuted,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: vibe.pack.type.display,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// Arrives on its own beat, offset by position.
+class _Staggered extends StatelessWidget {
+  const _Staggered({required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final vibe = context.vibe;
+    if (vibe.reduceMotion) return child;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: vibe.beats.tally + vibe.beats.stagger * index,
+      curve: vibe.beats.arrive,
+      // Clamped: an overshooting curve — easeOutBack on a bouncy pack —
+      // returns values past 1, and Opacity asserts on those. The overshoot is
+      // wanted on the transform and never on the alpha.
+      builder: (context, t, child) => Opacity(
+        opacity: t.clamp(0.0, 1.0),
+        child: Transform.translate(
+          offset: Offset((1 - t) * 16, 0),
+          child: child,
+        ),
+      ),
+      child: child,
     );
   }
 }
@@ -262,7 +356,16 @@ class _LifeCheckScreenState extends ConsumerState<LifeCheckScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Center(child: PlayerAvatar(seat: seat, size: 140, tilt: -0.04)),
+          // The framing §8 asks for: the portrait lands on the heavy beat and
+          // the pack's danger colour breathes behind it. Nobody is being
+          // punished by the app — the table is being handed a moment.
+          Center(
+            child: _Weighted(
+              child: _DangerHalo(
+                child: PlayerAvatar(seat: seat, size: 140, tilt: -0.04),
+              ),
+            ),
+          ),
           SizedBox(height: vibe.gutter * 2),
           TextField(
             controller: _controller,
@@ -337,6 +440,68 @@ class _LifeBoard extends ConsumerWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// A slow pulse in the pack's danger colour behind the player who owes a
+/// forfeit (§8).
+///
+/// Loops, because this screen waits on someone typing and a one-shot would
+/// leave the framing over before the moment is. Reduced motion drops the
+/// pulse and keeps the colour: the signal survives, the movement does not.
+class _DangerHalo extends StatefulWidget {
+  const _DangerHalo({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_DangerHalo> createState() => _DangerHaloState();
+}
+
+class _DangerHaloState extends State<_DangerHalo>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller?.dispose();
+    _controller = AnimationController(
+      vsync: this,
+      duration: context.beats.weight,
+    );
+    if (!context.vibe.reduceMotion) _controller!.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final vibe = context.vibe;
+    return AnimatedBuilder(
+      animation: _controller!,
+      builder: (context, child) {
+        final t = vibe.reduceMotion ? 0.5 : _controller!.value;
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: vibe.palette.danger.withValues(alpha: 0.18 + t * 0.22),
+                blurRadius: 24 + t * 18,
+                spreadRadius: 2 + t * 6,
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
+      child: widget.child,
     );
   }
 }

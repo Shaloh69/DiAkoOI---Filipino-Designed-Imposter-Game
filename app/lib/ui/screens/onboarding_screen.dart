@@ -2,6 +2,7 @@ import 'package:diakooi/game/game_providers.dart';
 import 'package:diakooi/selfie/selfie_bytes.dart';
 import 'package:diakooi/selfie/selfie_capture.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
+import 'package:diakooi/ui/motion/develop_animation.dart';
 import 'package:diakooi/ui/primitives/primitives.dart';
 import 'package:diakooi/ui/widgets/player_avatar.dart';
 import 'package:diakooi/ui/widgets/selfie_capture_view.dart';
@@ -135,13 +136,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             Expanded(
               child: Center(
-                child: PolaroidFrame(
-                  caption: _name,
-                  size: 200,
-                  tilt: -0.03,
-                  child: _pending == null
-                      ? MonogramBadge(name: _name, size: 200)
-                      : Image.memory(_pending!.polaroid, fit: BoxFit.cover),
+                // The develop runs over whichever subject there is. A photo
+                // that develops while a monogram simply appears would tell the
+                // table which one the app considers real (§4).
+                child: DevelopSequence(
+                  key: ValueKey(_pending),
+                  child: PolaroidFrame(
+                    caption: _name,
+                    size: 200,
+                    tilt: -0.03,
+                    child: _pending == null
+                        ? MonogramBadge(name: _name, size: 200)
+                        : Image.memory(_pending!.polaroid, fit: BoxFit.cover),
+                  ),
                 ),
               ),
             ),

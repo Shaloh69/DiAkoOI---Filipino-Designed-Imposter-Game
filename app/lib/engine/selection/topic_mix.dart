@@ -17,14 +17,51 @@ import 'package:diakooi/engine/selection/topic_selector.dart';
 class TopicMix {
   const TopicMix(this.weights);
 
+  /// Loads a §13b preset over the topics that are actually offered.
+  ///
+  /// **A preset is a shape, not a set of absolute percentages.** Only topics
+  /// the word bank can fill are offered, so a preset naming twelve topics on a
+  /// bank holding five must be renormalised — copying its numbers across
+  /// verbatim leaves a mix totalling 44, which fails the §13b "must total 100"
+  /// rule and disables Start. That is exactly what shipped in Phase 4: every
+  /// preset was invalid against the placeholder bank, and it went unnoticed
+  /// because the tests supplied an idealised bank holding every topic.
+  ///
+  /// Renormalising keeps the preset's *relative* emphasis, which is the part a
+  /// host chose. Stan Mode on a bank holding only K-Pop is 100% K-Pop, and
+  /// that is the honest reading of what Stan Mode meant.
+  ///
+  /// A preset whose topics are all missing falls back to an even spread rather
+  /// than an empty mix — an empty draw has no answer.
   factory TopicMix.fromPreset(
     List<TopicWeight> preset, {
     required List<String> allTopicIds,
   }) {
+    if (allTopicIds.isEmpty) return const TopicMix([]);
+
     final byId = {for (final w in preset) w.topicId: w.weightPercent};
+    final present = [
+      for (final id in allTopicIds)
+        if ((byId[id] ?? 0) > 0) id,
+    ];
+    // Nothing the preset asked for is available. An even spread over what
+    // there is beats refusing to load it.
+    final targets = present.isEmpty ? allTopicIds : present;
+
+    final allocated = _allocate(
+      shares: [
+        for (final id in targets) (byId[id] ?? 1).toDouble(),
+      ],
+      total: 100,
+      cap: TopicSelector.ceilingPercentFor(targets.length),
+    );
+    final resolved = {
+      for (var i = 0; i < targets.length; i++) targets[i]: allocated[i],
+    };
+
     return TopicMix([
       for (final id in allTopicIds)
-        TopicWeight(topicId: id, weightPercent: byId[id] ?? 0),
+        TopicWeight(topicId: id, weightPercent: resolved[id] ?? 0),
     ]);
   }
 

@@ -15,6 +15,7 @@ class HostSetupScreen extends StatefulWidget {
     required this.onStart,
     required this.availableTopicIds,
     this.initial,
+    this.onOpenProfiling,
     super.key,
   });
 
@@ -25,6 +26,10 @@ class HostSetupScreen extends StatefulWidget {
   final Set<String> availableTopicIds;
 
   final RoomSettings? initial;
+
+  /// Opens the A5 profiling harness. Null in release builds, where the screen
+  /// does not exist.
+  final VoidCallback? onOpenProfiling;
 
   @override
   State<HostSetupScreen> createState() => _HostSetupScreenState();
@@ -279,6 +284,14 @@ class _HostSetupScreenState extends State<HostSetupScreen> {
               'is information nobody else has.',
               tone: palette.danger,
             ),
+          if (widget.onOpenProfiling != null) ...[
+            SizedBox(height: vibe.gutter),
+            VibeButton(
+              label: 'Profiling harness (A5)',
+              emphasis: VibeEmphasis.quiet,
+              onPressed: widget.onOpenProfiling,
+            ),
+          ],
           SizedBox(height: vibe.gutter * 2),
           const _SectionLabel('Topics'),
           TopicMixer(
