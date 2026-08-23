@@ -61,9 +61,13 @@ export const registerWordBankRoutes = (
       );
       const current = version.rows[0]?.content_version;
       if (current === undefined) {
-        // No published bank yet. An empty catalogue is the honest answer, and
-        // the client already has a complete one bundled.
-        return sendData(request, reply, { contentVersion: '', topics: [] });
+        // No published bank yet. Null rather than an empty string: "" is not
+        // a version, and a client comparing it against its bundled version
+        // would be comparing against a value that never existed.
+        return sendData(request, reply, {
+          contentVersion: null,
+          topics: [],
+        });
       }
 
       // A matching `since` returns an empty topics array rather than a 304:

@@ -6,6 +6,33 @@ import { parseKey, seal, sha256Hex } from '../lib/crypto.js';
 import { ErrorCode, sendData, sendError } from '../lib/envelope.js';
 import { feedbackRequestSchema } from '../lib/schemas.js';
 
+/**
+ * Postgres SQLSTATE class 22 is "data exception" — a value the database
+ * cannot represent. That is the CLIENT's problem, not an outage, and
+ * reporting it as one sends a caller away to retry something that will never
+ * work while hiding a real bug behind a plausible message.
+ */
+const isDataException = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  typeof (error as { code: unknown }).code === 'string' &&
+  (error as { code: string }).code.startsWith('22');
+
+/**
+ * Normalises any RFC 3339 instant to UTC.
+ *
+ * The contract says `format: date-time`, which permits offsets up to ±23:59.
+ * Postgres TIMESTAMPTZ does not — `+22:48` is a valid timestamp the database
+ * refuses. The offset carries nothing we need beyond the instant, so it is
+ * converted rather than rejected.
+ */
+const toUtc = (value: string | undefined): string | null => {
+  if (value === undefined) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+};
+
 interface Deps {
   readonly pool: Pool | null;
   readonly attachmentKeyHex: string | undefined;
@@ -94,7 +121,15 @@ export const registerFeedbackRoute = (
             sealed.authTag,
           ],
         );
-      } catch {
+      } catch (error) {
+        if (isDataException(error)) {
+          return sendError(
+            reply,
+            400,
+            ErrorCode.validationFailed,
+            'The attachment contained a value the server cannot store.',
+          );
+        }
         return sendError(
           reply,
           503,
@@ -119,7 +154,7 @@ export const registerFeedbackRoute = (
           body.appVersion ?? null,
           body.deviceModel ?? null,
           body.contactEmail ?? null,
-          body.occurredAt ?? null,
+          toUtc(body.occurredAt),
           attachmentSha256 ?? null,
         ],
       );
@@ -136,7 +171,15 @@ export const registerFeedbackRoute = (
         },
         201,
       );
-    } catch {
+    } catch (error) {
+      if (isDataException(error)) {
+        return sendError(
+          reply,
+          400,
+          ErrorCode.validationFailed,
+          'The report contained a value the server cannot store.',
+        );
+      }
       return sendError(
         reply,
         503,

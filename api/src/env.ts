@@ -34,5 +34,19 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
-export const parseEnv = (source: NodeJS.ProcessEnv = process.env): Env =>
-  envSchema.parse(source);
+/**
+ * Parses process.env, treating an empty value as absent.
+ *
+ * Compose writes `VAR: ${VAR:-}` as an empty string rather than omitting the
+ * key, and `''` is not `undefined` to Zod — so an unset optional secret failed
+ * validation and took the container down on boot. Blank means "not set" here,
+ * which is what every shell that produced it meant.
+ */
+export const parseEnv = (source: NodeJS.ProcessEnv = process.env): Env => {
+  const cleaned: NodeJS.ProcessEnv = {};
+  for (const [key, value] of Object.entries(source)) {
+    if (value === undefined || value === '') continue;
+    cleaned[key] = value;
+  }
+  return envSchema.parse(cleaned);
+};

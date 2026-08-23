@@ -27,6 +27,10 @@ COPY package.json ./
 # Production deps only — fastify, pg, zod. No build scripts involved.
 RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts && pnpm store prune
 COPY --from=build /app/dist ./dist
+# The .sql migrations are data, not TypeScript, so `tsc` does not carry them
+# into dist/. Without this the image starts, finds no schema, and answers 503
+# to every documented read — which looks like a database outage and is not.
+COPY --from=build /app/src/migrations ./dist/migrations
 
 # Attachments are content-addressed and encrypted at rest (docs/01-DESIGN.md
 # §16b). The compose file mounts a volume here.

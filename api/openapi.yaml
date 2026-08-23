@@ -203,10 +203,15 @@ components:
         Content version the client already holds. When it matches the server's
         current version the response carries an empty `topics` array rather
         than a 304, so the client always gets a body it can parse.
+
+
+        The pattern documents what a version actually is — the server
+        generates these and a client only ever echoes one back. It was
+        originally "any string of 1-64 characters", which admitted control
+        characters and NUL bytes the implementation rightly refused; the
+        contract was the thing that was wrong.
       schema:
-        type: string
-        minLength: 1
-        maxLength: 64
+        $ref: '#/components/schemas/ContentVersion'
 
   responses:
     ValidationError:
@@ -311,6 +316,15 @@ components:
       description: Stable topic identifier, lowercase.
       pattern: '^[a-z][a-z0-9_]{1,31}$'
 
+    ContentVersion:
+      type: string
+      description: >-
+        A content generation, as published by the word-bank pipeline. Dates
+        (`2026-08-22`) and labels (`dev-seed`) are both used.
+      minLength: 1
+      maxLength: 64
+      pattern: '^[A-Za-z0-9._-]{1,64}$'
+
     HealthData:
       type: object
       additionalProperties: false
@@ -354,9 +368,18 @@ components:
           description: >-
             Base64 of the image bytes. Capped small: a screenshot of a phone
             screen fits comfortably, a camera photograph does not.
-          minLength: 1
+
+
+            The pattern enforces canonical base64 — four characters per three
+            bytes, with correct padding. `contentEncoding` alone did not:
+            a one-character string satisfied it, decoded to nothing, and the
+            server rightly refused it. The contract was the thing that was
+            wrong, so it is the thing that changed.
+          minLength: 4
           maxLength: 2800000
           contentEncoding: base64
+          pattern: >-
+            ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
 
     FeedbackRequest:
       type: object
@@ -370,18 +393,36 @@ components:
           type: string
           minLength: 1
           maxLength: 4000
+          # NUL is excluded because Postgres TEXT cannot hold one. Leaving it
+          # out of the contract made the server look stricter than its own
+          # spec; the constraint is real, so it is documented rather than
+          # relaxed. `maxLength` counts CODE POINTS, so an emoji counts once.
+          pattern: '^[^\u0000]*$'
         appVersion:
           type: string
           maxLength: 32
+          pattern: '^[^\u0000]*$'
         # Device model only, never an identifier. Nothing here distinguishes
         # one installation from another (01-DESIGN.md §16a).
         deviceModel:
           type: string
           maxLength: 64
+          pattern: '^[^\u0000]*$'
         contactEmail:
           type: string
-          format: email
+          # An email `format` keyword is deliberately absent. Validators
+          # enforce it, and it disagreed with the implementation in BOTH
+          # directions: strict enough to reject `0@com`, loose enough to
+          # accept values the pattern below rejects. The pattern is the
+          # single constraint, and it says what this field actually needs
+          # — somewhere to send a reply.
           maxLength: 254
+          # No `\s` here, deliberately. Two regex engines validate this — Zod
+          # in the server and Python in the contract tests — and they disagree
+          # about which Unicode characters count as whitespace, which showed up
+          # as an intermittent contract failure on a NO-BREAK SPACE. A plain
+          # negated class means both engines read it identically.
+          pattern: '^[^@\u0000]+@[^@\u0000]+$'
           description: Optional. Supplied only if the user wants a reply.
         attachment:
           $ref: '#/components/schemas/FeedbackAttachment'
@@ -430,9 +471,7 @@ components:
           type: integer
           minimum: 0
         contentVersion:
-          type: string
-          minLength: 1
-          maxLength: 64
+          $ref: '#/components/schemas/ContentVersion'
 
     WordBankListData:
       type: object
@@ -440,9 +479,12 @@ components:
       required: [contentVersion, topics]
       properties:
         contentVersion:
-          type: string
-          minLength: 1
-          maxLength: 64
+          # Null when no bank has been published yet. An empty string was the
+          # first attempt and it is not a version — null says "there is none"
+          # without inventing one, and the contract test caught the difference.
+          oneOf:
+            - $ref: '#/components/schemas/ContentVersion'
+            - type: 'null'
         topics:
           type: array
           items:
@@ -509,9 +551,7 @@ components:
         topicId:
           $ref: '#/components/schemas/TopicId'
         contentVersion:
-          type: string
-          minLength: 1
-          maxLength: 64
+          $ref: '#/components/schemas/ContentVersion'
         words:
           type: array
           items:
