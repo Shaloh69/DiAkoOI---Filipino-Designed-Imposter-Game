@@ -1,0 +1,61 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+lugar,Boracay,puting buhangin at station one hanggang tatlo,isla na pinupuntahan tuwing bakasyon,isang lugar sa timog,1,national
+lugar,Baguio,malamig at may Burnham Park,lungsod na pinupuntahan kapag summer,isang lugar sa hilaga,1,luzon
+lugar,Palawan,may underground river at El Nido,probinsya na sikat sa dagat,isang lugar na maganda,1,national
+lugar,Vigan,may kalesa at lumang bahay na bato,lungsod na parang noong unang panahon,isang lugar sa hilaga,2,luzon
+lugar,Intramuros,pader na gawa ng mga Kastila sa Maynila,lumang parte ng kabisera,isang lugar sa lungsod,2,luzon
+lugar,Mayon,bulkan na perpekto ang hugis,bundok na umuusok minsan,isang matangkad na bagay,1,luzon
+lugar,Chocolate Hills,libo-libong burol na kayumanggi kapag tag-init,maraming maliliit na bundok,isang tanawin,1,visayas
+lugar,Siargao,sikat sa surfing at Cloud Nine,isla na pinupuntahan ng mga surfer,isang isla,2,mindanao
+lugar,Cebu,may Magellan's Cross at lechon,malaking lungsod sa gitna ng bansa,isang lugar na sikat,1,visayas
+lugar,Davao,kilala sa durian at Mount Apo,malaking lungsod sa timog,isang lugar sa timog,1,mindanao
+lugar,Banaue,hagdan-hagdang palayan na libong taon na,payapang lugar na may bukid sa bundok,isang lugar sa bundok,2,luzon
+lugar,Taal,bulkan na nasa loob ng lawa,maliit na bulkan malapit sa Maynila,isang lugar na may tubig,2,luzon
+lugar,Bohol,may tarsier at Loboc River,isla na maraming turista,isang lugar sa gitna,2,visayas
+lugar,Sagada,may hanging coffins at Echo Valley,malamig na lugar na may kweba,isang lugar sa bundok,3,luzon
+lugar,Coron,may shipwreck diving at Kayangan Lake,lugar na malinaw ang tubig,isang lugar na maganda,2,luzon
+lugar,Batanes,pinakahilagang probinsya na may bahay na bato,malayong lugar na maraming damo,isang lugar na malayo,3,luzon
+lugar,Ilocos,may Bangui windmills at empanada,probinsya sa hilagang baybayin,isang lugar sa hilaga,2,luzon
+lugar,Zamboanga,tinatawag na Asia's Latin City,lungsod sa timog na may sariling wika,isang lugar sa timog,3,mindanao
+lugar,Iloilo,kilala sa Dinagyang at La Paz batchoy,lungsod sa kanluran ng Visayas,isang lugar sa gitna,2,visayas
+lugar,Bacolod,kilala sa MassKara at chicken inasal,lungsod na masaya ang tao,isang lugar sa gitna,2,visayas
+lugar,Tagaytay,may tanawin ng bulkan at bulalo,malamig na lugar malapit sa Maynila,isang lugar na malamig,1,luzon
+lugar,Subic,dating base militar ng Amerikano,lugar na may duty free,isang lugar sa hilaga,3,luzon
+lugar,Corregidor,isla na may lumang kanyon at tunnel,isla na may kasaysayan ng digmaan,isang isla,3,luzon
+lugar,Cagayan de Oro,kilala sa white water rafting,lungsod sa hilagang bahagi ng timog,isang lugar sa timog,3,mindanao
+lugar,General Santos,kilala sa tuna at kay Manny,lungsod sa dulong timog,isang lugar sa timog,3,mindanao
+lugar,Camiguin,maliit na isla na maraming bulkan,maliit na isla sa timog,isang isla,4,mindanao
+lugar,Siquijor,isla na sinasabing may mangkukulam,maliit na isla na misteryoso,isang isla,3,visayas
+lugar,Puerto Princesa,kabisera ng probinsyang may ilog sa ilalim,lungsod sa isla sa kanluran,isang lungsod,3,luzon
+lugar,Quiapo,may simbahan ng Itim na Nazareno,lugar sa Maynila na maraming tao,isang lugar sa lungsod,2,luzon
+lugar,Divisoria,pinakamurang bilihan sa Maynila,lugar na pinamimilihan ng mura,isang palengke,1,luzon
+lugar,Luneta,parke na may monumento ni Rizal,malaking parke sa Maynila,isang parke,2,luzon
+lugar,Makati,maraming matataas na gusali at opisina,lugar na maraming negosyo,isang lugar sa lungsod,1,luzon
+lugar,BGC,bagong lungsod na malinis ang kalsada,lugar na mamahalin tumira,isang lugar sa lungsod,2,luzon
+lugar,Quezon City,pinakamalaking lungsod sa kabisera,malaking lugar sa Metro Manila,isang lungsod,1,luzon
+lugar,Antipolo,may simbahan sa itaas at tanawin ng ilaw,lugar na inaakyat kapag Mahal na Araw,isang lugar sa bundok,3,luzon
+lugar,Pampanga,tinatawag na culinary capital,probinsya na masarap magluto,isang probinsya,2,luzon
+lugar,Bulacan,kilala sa minasa at kasaysayan ng himagsikan,probinsya malapit sa kabisera,isang probinsya,3,luzon
+lugar,Laguna,may mainit na bukal at Pagsanjan Falls,probinsya na may talon,isang probinsya,2,luzon
+lugar,Batangas,kilala sa kape at lomi,probinsya na malapit sa dagat,isang probinsya,2,luzon
+lugar,Cavite,tinaguriang historical capital,probinsya malapit sa kabisera,isang probinsya,3,luzon
+lugar,Rizal,probinsyang ipinangalan sa bayani,lugar sa gilid ng Metro Manila,isang probinsya,3,luzon
+lugar,Bicol,kilala sa maanghang at gata,rehiyon sa dulo ng malaking isla,isang lugar,2,luzon
+lugar,Samar,kilala sa San Juanico Bridge,isla sa silangan ng gitna,isang isla,3,visayas
+lugar,Leyte,pinagdaungan ni MacArthur,isla sa silangan ng gitna,isang isla,3,visayas
+lugar,Marawi,lungsod na may lawa at kasaysayan ng labanan,lungsod sa timog na Muslim,isang lungsod,4,mindanao
+lugar,Cotabato,lungsod sa timog na malapit sa ilog,lugar sa dulong timog,isang lugar sa timog,4,mindanao
+lugar,Basilan,isla na kilala sa lansones,maliit na isla sa timog,isang isla,4,mindanao
+lugar,Sulu,kapuluan sa pinakadulong timog,malayong isla sa timog,isang isla,4,mindanao
+lugar,Aklan,probinsyang kinabibilangan ng sikat na isla,probinsya na may sikat na dalampasigan,isang probinsya,3,visayas
+lugar,Antique,probinsya sa kanlurang bahagi ng isla,probinsya sa gitna ng bansa,isang probinsya,4,visayas
+lugar,Dumaguete,tinatawag na City of Gentle People,maliit na lungsod na may unibersidad,isang lungsod,4,visayas
+lugar,Naga,kilala sa Peñafrancia festival,lungsod sa bahagi ng maanghang,isang lungsod,4,luzon
+lugar,Legazpi,lungsod na katapat ng perpektong bulkan,lungsod na may tanawin ng bundok,isang lungsod,3,luzon
+lugar,Baler,kilala sa surfing at kasaysayan ng Kastila,lugar sa silangan na may alon,isang lugar sa dagat,3,luzon
+lugar,La Union,tinatawag na Elyu ng mga surfer,lugar sa hilaga na may dagat,isang lugar sa dagat,3,luzon
+lugar,Pagudpud,dalampasigan sa dulong hilaga,lugar na malayo sa hilaga,isang lugar sa dagat,3,luzon
+lugar,Anawangin,cove na may pine tree malapit sa dagat,lugar na kinakampingan,isang lugar sa dagat,4,luzon
+lugar,Hundred Islands,maraming maliliit na isla sa Pangasinan,lugar na maraming maliliit na isla,isang lugar sa dagat,3,luzon
+lugar,Kalibo,kilala sa Ati-Atihan,bayan na may sikat na pista,isang bayan,3,visayas
+lugar,Marikina,kilala sa gawang sapatos,lugar sa Metro Manila na may ilog,isang lugar sa lungsod,3,luzon

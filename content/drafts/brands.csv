@@ -1,0 +1,62 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+brands,Jollibee,pulang bubuyog na may spaghetti at chickenjoy,paboritong kainan ng bata,isang kainan,1,national
+brands,Chowking,kainan na Chinese ang lasa at may halo-halo,kainan sa mall na may pancit,isang kainan,2,national
+brands,Mang Inasal,kilala sa unli rice at inihaw na manok,kainan na may walang katapusang kanin,isang kainan,1,national
+brands,Goldilocks,kilala sa mamon at ube cake,tindahan ng cake at pasalubong,isang tindahan,2,national
+brands,Red Ribbon,tindahan ng cake na pula ang laso sa logo,tindahan ng cake sa mall,isang tindahan,2,national
+brands,Lucky Me,kilala sa pancit canton at instant mami,pagkain na niluluto sa mainit na tubig,isang pagkain,1,national
+brands,Argentina,de lata na corned beef sa asul na lata,pagkain sa lata,isang pagkain sa lata,2,national
+brands,Century Tuna,de lata na isda na pang-diet daw,pagkain sa lata na isda,isang pagkain sa lata,2,national
+brands,555,de lata na sardinas sa pulang sarsa,murang ulam sa lata,isang pagkain sa lata,3,national
+brands,Ligo,de lata na sardinas na kilala sa green mango,murang ulam sa lata,isang pagkain sa lata,3,national
+brands,Nescafe,kape na tatlo sa isang sachet,inumin na pampagising,isang inumin,1,national
+brands,Kopiko,kilala sa kendi at kape na kayumanggi,kendi na may lasa ng kape,isang matamis,2,national
+brands,Milo,tsokolate na pang-atleta daw,inumin ng bata sa umaga,isang inumin,1,national
+brands,Bear Brand,gatas na may oso sa lata,gatas na pinapainom sa bata,isang inumin,1,national
+brands,Alaska,gatas na kilala sa basketball camp,gatas sa lata o kahon,isang inumin,2,national
+brands,Nido,gatas sa lata na may pugad sa logo,gatas ng bata,isang inumin,2,national
+brands,Datu Puti,suka at toyo na puti ang lalagyan,pampalasa sa pagluluto,isang sangkap,1,national
+brands,Silver Swan,toyo na may ibon sa logo,pampalasa na maitim,isang sangkap,2,national
+brands,Knorr,kilala sa cubes at sinigang mix,pampalasa sa sabaw,isang sangkap,2,national
+brands,Magnolia,gatas at ice cream na matagal na,tatak ng ice cream at gatas,isang tatak ng pagkain,3,national
+brands,Selecta,ice cream na sikat sa supermarket,malamig na matamis sa tub,isang matamis,1,national
+brands,Piattos,chips na may butas sa gitna,meryenda na crunchy,isang meryenda,1,national
+brands,Nova,chips na multigrain daw,meryenda na chips,isang meryenda,2,national
+brands,Chippy,chips na barbecue ang lasa sa asul na supot,meryenda na mahaba ang hugis,isang meryenda,2,national
+brands,Boy Bawang,mais na may lasa ng bawang,meryenda na matigas,isang meryenda,2,national
+brands,Oishi,tatak ng prawn crackers at ribbed,meryenda na maraming klase,isang meryenda,2,national
+brands,Rebisco,kilala sa crackers na pang-baon,biskwit na pang-almusal,isang biskwit,2,national
+brands,Skyflakes,biskwit na tuyo at pang-tabing dagat,biskwit na walang lasa,isang biskwit,2,national
+brands,Cream-O,biskwit na may cream sa gitna,biskwit na matamis,isang biskwit,3,national
+brands,Choc Nut,matamis na mani sa maliit na balot,matamis na durog ang texture,isang matamis,2,national
+brands,White Rabbit,kendi na may balot na natutunaw sa bibig,kendi na gatas ang lasa,isang kendi,3,national
+brands,Ricoa,kilala sa flat tops at curly tops,tsokolate na maliliit,isang matamis,3,national
+brands,San Miguel,serbesa na pinakasikat dito,inumin ng matatanda tuwing may okasyon,isang inumin,1,national
+brands,Red Horse,serbesa na malakas at may kabayo sa logo,inumin na nakakalasing agad,isang inumin,2,national
+brands,Emperador,alak na kayumanggi sa bote,inumin na malakas,isang inumin,3,national
+brands,Tanduay,alak na gawa sa tubo,inumin na malakas at mura,isang inumin,3,national
+brands,C2,inumin na tsaa sa bote na makulay,malamig na inumin sa tindahan,isang inumin,2,national
+brands,Zesto,inumin sa maliit na kahon na pang-baon,inumin ng bata sa eskwelahan,isang inumin,3,national
+brands,Safeguard,sabon na kontra mikrobyo daw,sabon sa banyo,isang gamit sa banyo,1,national
+brands,Palmolive,shampoo na berde na naaamoy pa daw kinabukasan,panghugas ng buhok,isang gamit sa banyo,2,national
+brands,Creamsilk,pampalambot ng buhok sa maliit na sachet,ginagamit pagkatapos maghugas ng buhok,isang gamit sa banyo,2,national
+brands,Colgate,pampalinis ng ngipin na tinatawag na ganito lahat,ginagamit sa umaga sa bibig,isang gamit sa banyo,1,national
+brands,Tide,panlaba na pulis ang endorser noon,ginagamit sa paglalaba,isang gamit sa bahay,2,national
+brands,Champion,panlaba na may bula sa sachet,pang-alis ng dumi sa damit,isang gamit sa bahay,3,national
+brands,Downy,pampabango ng damit pagkatapos labhan,ginagamit sa huling banlaw,isang gamit sa bahay,2,national
+brands,Zonrox,pampaputi ng damit na malakas ang amoy,ginagamit para maging puti ang tela,isang gamit sa bahay,3,national
+brands,Baygon,pampatay ng ipis at lamok,panlaban sa insekto,isang gamit sa bahay,2,national
+brands,Katinko,pamahid na mainit para sa sakit ng ulo,pamahid sa balat kapag masakit,isang gamot,3,national
+brands,Efficascent,langis na pamahid kapag pagod ang katawan,langis na malamig sa balat,isang gamot,3,national
+brands,Biogesic,gamot sa lagnat na sikat,tableta kapag masama ang pakiramdam,isang gamot,1,national
+brands,Alaxan,gamot sa pananakit ng katawan,tableta kapag masakit ang kalamnan,isang gamot,2,national
+brands,Bioflu,gamot kapag sipon at ubo,tableta kapag may trangkaso,isang gamot,2,national
+brands,Mercury Drug,pinakasikat na botika dito,tindahan ng gamot,isang tindahan,1,national
+brands,SM,mall na maraming sangay at may bituin sa logo,malaking gusaling pinamimilihan,isang lugar na pinupuntahan,1,national
+brands,Puregold,supermarket na dilaw at may Aling Puring,tindahan ng grocery,isang tindahan,2,national
+brands,Jeepney,sasakyan na makulay at may kalendaryo sa harap,pampasaherong sasakyan dito,isang sasakyan,1,national
+brands,Globe,tatak ng cellphone signal na asul,kumpanya ng load,isang serbisyo,1,national
+brands,Smart,tatak ng cellphone signal na berde,kumpanya ng load,isang serbisyo,1,national
+brands,GCash,app na pang-padala ng pera sa asul,paraan ng pagbayad sa cellphone,isang app,1,national
+brands,Shopee,app na kulay orange na pinamimilihan online,app na may murang bilihin,isang app,1,national
+brands,Lazada,app na asul at pula na pinamimilihan online,app na pinapadalhan ng parcel,isang app,2,national

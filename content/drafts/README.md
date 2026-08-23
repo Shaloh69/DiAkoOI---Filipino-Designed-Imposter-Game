@@ -15,17 +15,26 @@ so these cannot be bundled by accident.
 
 | | |
 |---|---|
-| Topics | Wave 1 — `pagkain`, `aktor`, `kpop`, `buhaypinoy`, `teleserye` |
-| Words | 30 per topic, **150 total** |
-| Clues | **450** |
+| Topics | **all 12** — every launch topic in `02-CONTENT-PH.md` §1 |
+| Words | 60 per topic (two at 61), **722 total** |
+| Clues | **2,166** |
 | Validation | passes with 0 rejections, 0 warnings |
 | Reviewed by a human | **no** |
 | Cultural review | **no** |
 
-**This is half of the wave-1 target**, which is 60 words per topic (`02-CONTENT-PH.md` §1).
-That was deliberate. The constraint on this phase is not volume — it is author agreement
-(§6a) and cultural review (§7). Generating 300 unreviewed entries instead of 150 would have
-produced more review work, not more shippable content.
+`stats` reports every topic at or above the 60-word minimum across all three waves. That
+number is the *only* thing about this directory that is finished.
+
+**Volume was never the constraint, and reaching it does not move the phase forward.**
+`02-CONTENT-PH.md` gates content on author agreement (§6a) and cultural review (§7),
+neither of which has happened. What the full set buys is a complete surface for the
+calibration round to argue with, and enough rows to see the pipeline behave at real size.
+It does not buy shippable content, and 722 unreviewed rows are 722 review decisions.
+
+An earlier revision of this file described the half-size wave-1 set as deliberate on the
+grounds that more unreviewed rows means more review work. That is still true. The set was
+completed anyway so no topic is missing when review starts — the review cost was accepted,
+not avoided.
 
 ---
 
@@ -58,6 +67,13 @@ the validator cannot catch:
 - **Generational reach.** §2 rule 6 — a 19-year-old and their tita should both have a shot.
   The `aktor` and `teleserye` sets in particular lean on names that may not travel.
 - **Difficulty ratings** are guesses. They need a table to calibrate.
+- **Same referent under two names.** `kasaysayan` carries both `Melchora Aquino` and
+  `Tandang Sora`; they are one person. The validator only rejects a duplicate *string*, so
+  a topic can ship two words that resolve to the same answer at the table. Sweep for this —
+  `anime` has the same shape with `Detective Conan` / `Case Closed`.
+- **Fabrication risk is highest in `kasaysayan` and `basketball`.** Dates, titles and
+  who-did-what are the two places a confident-sounding wrong clue is most likely, and the
+  hardest for a reviewer to catch by feel. Check these against a source, not memory.
 
 ## Feature lists
 
@@ -120,6 +136,76 @@ Ang Probinsyano  — teleserye · aksyon · pulis · sobrang tagal · isang lead
 Encantadia       — fantaserye · engkantada · apat na kaharian · may mahika · sariling wika
 Eat Bulaga       — noontime · may laro · matagal na · araw-araw · maraming host
 Marimar          — lumang palabas · dalampasigan · may aso · sobrang sikat noon
+```
+
+### `opm`
+
+```
+Eraserheads      — banda · apat na lalaki · dekada nobenta · rock · hiwalay na sila
+Regine Velasquez — babae · mataas kumanta · beterana · may palayaw sa industriya
+Ben&Ben          — banda · marami ang miyembro · bago · folk-pop · may kambal
+Videoke          — gamit · may mikropono · may score · sa okasyon · may lyrics sa screen
+Gloc-9           — rapper · Tagalog · mabilis · may mensahe ang lyrics · solo
+```
+
+### `lugar`
+
+```
+Boracay      — isla · puting buhangin · turista · pang-bakasyon · may station 1-2-3
+Baguio       — lungsod · malamig · bundok · pang-summer · may parke sa gitna
+Mayon        — bulkan · perpektong hugis · nasa Bicol · umuusok · tanawin
+Intramuros   — pader · Kastila · nasa Maynila · makasaysayan · lumang bato
+Divisoria    — palengke · mura · siksikan · nasa Maynila · pang-Pasko
+```
+
+### `brands`
+
+```
+Jollibee    — fast food · pulang bubuyog · chickenjoy · spaghetti · pang-bata
+Lucky Me    — instant · pancit canton · sachet · mura · niluluto sa tubig
+Datu Puti   — pampalasa · suka at toyo · puting bote · nasa kusina · pang-adobo
+Safeguard   — sabon · kontra mikrobyo · nasa banyo · pang-pamilya
+GCash       — app · asul · pambayad · padala ng pera · nasa cellphone
+```
+
+### `basketball`
+
+```
+Ginebra          — koponan · pinakamaraming fans · Never Say Die · PBA
+June Mar Fajardo — manlalaro · matangkad · maraming MVP · nasa San Miguel
+UAAP             — liga · mga unibersidad · Setyembre · Ateneo vs La Salle
+Three point      — tira · sa labas ng arko · tatlong puntos · malayo
+Barangay liga    — laro · sa kalsada · tuwing pista · korte sa gilid · lokal
+```
+
+### `internet`
+
+```
+TikTok    — app · maikling video · patayo · sayaw · algorithm
+Meme      — larawan · may caption · nakakatawa · kumakalat · walang may-ari
+Sana all  — komento · inggit · biro · sa post ng iba · kabataan
+GCash     — app · pambayad · asul · walang cash · scam-prone
+Lag       — problema · mabagal · sa laro · koneksyon · nakakainis
+```
+
+### `anime`
+
+```
+Voltes V   — robot · limang sasakyan · nagsasama-sama · lumang palabas · pinatigil noon
+Naruto     — ninja · bigote sa pisngi · gustong maging pinuno · dilaw ang buhok
+One Piece  — pirata · barko · naghahanap ng kayamanan · sobrang haba
+Dubbed     — paraan ng panonood · Tagalog ang boses · pinalitan · sa TV
+Cosplay    — libangan · nagbibihis · bilang karakter · sa convention
+```
+
+### `kasaysayan`
+
+```
+Jose Rizal        — bayani · doktor · sumulat ng nobela · binaril · pambansa
+Andres Bonifacio  — bayani · itak · itim na damit · nagsimula ng himagsikan
+Katipunan         — samahan · lihim · KKK · 1896 · may sedula
+EDSA              — rebolusyon · 1986 · walang dugo · kalsada · dilaw
+Bahay Kubo        — tahanan · kawayan · pawid · probinsya · may awit
 ```
 
 Feature lists for the remaining words follow the same method and are implicit in the clue

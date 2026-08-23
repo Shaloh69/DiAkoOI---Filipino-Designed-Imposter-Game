@@ -1,0 +1,62 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+kasaysayan,Jose Rizal,sumulat ng dalawang nobela at binaril sa Bagumbayan,pambansang bayani na doktor,isang bayani,1,national
+kasaysayan,Andres Bonifacio,itim ang damit at may itak sa monumento,bayaning nagsimula ng himagsikan,isang bayani,1,national
+kasaysayan,Emilio Aguinaldo,unang pangulo at taga-Kawit,pinuno noong panahon ng himagsikan,isang pinuno noon,2,national
+kasaysayan,Apolinario Mabini,tinawag na utak ng himagsikan at hindi makalakad,tagapayo noong himagsikan,isang bayani,2,national
+kasaysayan,Melchora Aquino,matandang babaeng nag-aruga sa mga sugatan,matandang babaeng bayani,isang bayani,3,national
+kasaysayan,Gabriela Silang,babaeng nakakabayo na lumaban sa hilaga,babaeng bayani na may kabayo,isang bayani,2,national
+kasaysayan,Lapu-Lapu,pinuno sa Mactan na tumalo sa dayuhan,unang lumaban sa dayuhan,isang pinuno noon,1,national
+kasaysayan,Magellan,dayuhang dumating noong 1521 at namatay dito,dayuhang naglayag papunta dito,isang dayuhan,1,national
+kasaysayan,Gregorio del Pilar,binatang heneral na namatay sa Tirad Pass,batang heneral,isang bayani,3,national
+kasaysayan,Antonio Luna,heneral na mainitin ang ulo at pinatay sa Cabanatuan,heneral noong digmaan,isang bayani,2,national
+kasaysayan,Juan Luna,pintor ng Spoliarium,pintor noong unang panahon,isang pintor,2,national
+kasaysayan,Marcelo del Pilar,sumulat sa La Solidaridad gamit ang Plaridel,manunulat noong panahon ng reporma,isang manunulat,3,national
+kasaysayan,Graciano Lopez Jaena,nagsimula ng pahayagan ng repormista sa Espanya,manunulat noon,isang manunulat,4,national
+kasaysayan,Gomburza,tatlong pari na binitay noong 1872,mga paring pinatay ng dayuhan,mga tao noon,3,national
+kasaysayan,Noli Me Tangere,unang nobela na may Maria Clara at Ibarra,librong sinulat ng bayani,isang libro,2,national
+kasaysayan,El Filibusterismo,ikalawang nobela na may Simoun,librong sinulat ng bayani,isang libro,3,national
+kasaysayan,Katipunan,lihim na samahan na may titik KKK,samahan noong himagsikan,isang samahan,1,national
+kasaysayan,Sigaw sa Pugad Lawin,pagpupunit ng sedula noong Agosto 1896,simula ng himagsikan,isang pangyayari,3,national
+kasaysayan,Cry of Balintawak,ibang tawag sa pagpupunit ng sedula,simula ng paglaban,isang pangyayari,4,national
+kasaysayan,Tejeros,kombensiyon kung saan naghalalan ang mga rebelde,pagpupulong noong himagsikan,isang pangyayari,4,national
+kasaysayan,Biak na Bato,kasunduan kung saan nagpatapon ang mga pinuno,kasunduan noong himagsikan,isang kasunduan,4,national
+kasaysayan,Kawit,bayan kung saan itinaas ang watawat noong 1898,lugar ng pagdedeklara ng kalayaan,isang lugar,3,national
+kasaysayan,Watawat,pula at asul na may araw at tatlong bituin,simbolo ng bansa na tela,isang simbolo,1,national
+kasaysayan,Lupang Hinirang,kinakanta bago magsimula ang laro,awit ng bansa,isang awit,1,national
+kasaysayan,Sedula,papel ng buwis na pinunit noong 1896,papel na kailangan noong panahon ng Kastila,isang papel noon,3,national
+kasaysayan,Polo y servicio,sapilitang paggawa sa ilalim ng Kastila,trabahong pilit noon,isang patakaran noon,4,national
+kasaysayan,Galleon,barkong naglalakbay papuntang Mexico,barkong pangkalakal noon,isang barko,3,national
+kasaysayan,Encomienda,lupang ipinamahagi sa mga Kastila,sistema ng lupa noon,isang patakaran noon,4,national
+kasaysayan,Balangay,sinaunang bangka ng mga katutubo,lumang sasakyang pandagat,isang bangka,4,national
+kasaysayan,Datu,pinuno ng sinaunang pamayanan,tawag sa pinuno noong wala pang dayuhan,isang pinuno noon,3,national
+kasaysayan,Baybayin,sinaunang sulat na may kurbadong titik,lumang paraan ng pagsulat dito,isang sulat,3,national
+kasaysayan,Bahay Kubo,tahanang gawa sa kawayan at pawid,lumang bahay sa probinsya,isang bahay,1,national
+kasaysayan,Bataan,lalawigan kung saan naganap ang mahabang lakad,lugar ng labanan noong ikalawang digmaan,isang lugar,2,national
+kasaysayan,Death March,mahabang lakad ng mga bilanggo noong 1942,malupit na pangyayari noong digmaan,isang pangyayari,3,national
+kasaysayan,MacArthur,heneral na nagsabing babalik siya,dayuhang heneral noong digmaan,isang heneral,2,national
+kasaysayan,Manuel Quezon,pangulo ng Komonwelt at ipinangalan sa lungsod,pangulo noong panahon ng Amerikano,isang pangulo,2,national
+kasaysayan,Manuel Roxas,unang pangulo matapos ang kalayaan noong 1946,pangulo pagkatapos ng digmaan,isang pangulo,4,national
+kasaysayan,Ramon Magsaysay,pangulong namatay sa eroplano sa Cebu,pangulong mahal ng masa,isang pangulo,3,national
+kasaysayan,Ferdinand Marcos,pangulong nagdeklara ng batas militar noong 1972,pangulo na matagal sa puwesto,isang pangulo,2,national
+kasaysayan,Cory Aquino,babaeng pangulo na dilaw ang kulay,unang babaeng pangulo,isang pangulo,2,national
+kasaysayan,Ninoy Aquino,binaril sa paliparan noong 1983,senador na pinatay,isang pulitiko noon,2,national
+kasaysayan,EDSA,rebolusyon noong 1986 na walang dugo,malaking pagkilos ng bayan,isang pangyayari,2,national
+kasaysayan,Batas Militar,panahon ng curfew at pagkakakulong ng kritiko,madilim na panahon noong dekada sitenta,isang panahon,2,national
+kasaysayan,Pinatubo,bulkang sumabog noong 1991,bulkang malaki ang pinsala,isang pangyayari,3,national
+kasaysayan,Yamashita,kayamanang sinasabing itinago ng Hapon,alamat tungkol sa ginto,isang alamat,4,national
+kasaysayan,Balangiga,kampanang kinuha ng Amerikano at ibinalik noong 2018,kampanang pinag-awayan,isang bagay na makasaysayan,4,national
+kasaysayan,Malolos,unang kongreso ng republika,lugar ng unang pagpupulong,isang lugar,4,national
+kasaysayan,Cavite Mutiny,pag-aalsa ng manggagawa noong 1872,pag-aalsa noong panahon ng Kastila,isang pangyayari,4,national
+kasaysayan,Propaganda Movement,kilusang humingi ng reporma sa Espanya,kilusan bago ang himagsikan,isang kilusan,3,national
+kasaysayan,La Liga Filipina,samahang itinatag ng bayani bago siya ipatapon,samahan ng repormista,isang samahan,4,national
+kasaysayan,Dapitan,lugar kung saan ipinatapon ang pambansang bayani,lugar ng pagkakatapon,isang lugar,3,mindanao
+kasaysayan,Bagumbayan,lugar ng pagbaril na parke na ngayon,lugar ng pagbitay noon,isang lugar,3,national
+kasaysayan,Mi Ultimo Adios,tulang isinulat sa bisperas ng pagbitay,huling tula ng bayani,isang tula,3,national
+kasaysayan,Bonifacio Monument,estatwa sa Caloocan ng lalaking may itak,monumento sa hilaga ng kabisera,isang monumento,4,national
+kasaysayan,Rizal Park,parkeng may monumento at bantay ng sundalo,parke sa Maynila,isang parke,3,national
+kasaysayan,Aguinaldo Shrine,bahay kung saan itinaas ang watawat,bahay na museo ngayon,isang gusali,4,national
+kasaysayan,Sultanate of Sulu,kaharian sa timog bago dumating ang Kastila,lumang kaharian sa timog,isang kaharian,4,mindanao
+kasaysayan,Sultan Kudarat,pinunong Muslim na lumaban sa Kastila,pinuno sa timog noon,isang pinuno noon,4,mindanao
+kasaysayan,Diego Silang,lalaking pinuno sa hilaga na pinaslang,rebelde sa hilaga noon,isang bayani,4,luzon
+kasaysayan,Francisco Dagohoy,pinuno ng pinakamahabang pag-aalsa sa Bohol,rebelde sa gitna ng bansa,isang bayani,4,visayas
+kasaysayan,Tandang Sora,palayaw ng matandang babaeng bayani ng himagsikan,tawag sa matandang tumulong sa rebelde,isang bayani,3,national
