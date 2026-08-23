@@ -85,7 +85,7 @@ Future<void> main() async {
         offenders,
         isEmpty,
         reason:
-            'every animation reads its timing from the active pack\'s motion '
+            "every animation reads its timing from the active pack's motion "
             'profile (CLAUDE.md §Hard rules). A hardcoded duration makes a '
             'bouncy pack and a precise one feel the same, which is the whole '
             'thing the system exists to produce. Found:\n'
