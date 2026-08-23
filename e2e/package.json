@@ -1,0 +1,20 @@
+{
+  "name": "@diakooi/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Playwright E2E and visual regression for /site and /admin. Never the Flutter app \u2014 see docs/06-TESTING-STRATEGY.md \u00a71.",
+  "scripts": {
+    "test": "playwright test",
+    "test:visual": "playwright test --grep @visual",
+    "report": "playwright show-report",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "1.62.1",
+    "@types/node": "^22.18.1",
+    "typescript": "^5.9.2",
+    "sirv-cli": "^3.0.1"
+  }
+}

@@ -20,7 +20,7 @@ This is the right base and it is not a close call. Google maintains it, and it a
 ships the exact subsystems this project needs:
 
 ```
-lib/src/
+lib/
   audio/            ← AudioController: music/SFX split, lifecycle handling
   style/            ← theming, palette, transitions
   settings/         ← persisted settings incl. mute
@@ -30,14 +30,41 @@ lib/src/
   game_internals/
 ```
 
+> **Corrected at adoption (2026-08-22).** Earlier revisions of this file showed these under
+> `lib/src/`. Upstream has flattened that away — there is no `lib/src/` at commit
+> `ae636d23`. In DiAkoOi they sit at `app/lib/audio/` and `app/lib/style/`, as siblings of
+> the `lib/engine/` and `lib/ui/` folders CLAUDE.md §Structure mandates.
+
 **Why it matters for DiAkoOi specifically:** the Vibe Pack system is an audio controller
 plus a swappable theme, and both already exist here in working form. Building an audio
 stack from scratch to then discover the lifecycle edge cases (call interrupts, background,
 headphone unplug) is a week you don't need to spend.
 
 It uses `audioplayers` for sound and `provider` for state. **Swap `provider` for Riverpod**
-to match the rest of the project, and **strip AdMob and in-app purchase entirely** — the
-template assumes you want to monetise, we don't.
+to match the rest of the project.
+
+> **Corrected at adoption (2026-08-22): verify absent, then remove the residue.**
+>
+> Earlier revisions of this file — and the Phase 0 prompt in `08-PROMPTS.md` §2 — said to
+> strip AdMob, `in_app_purchase`, `games_services` and `crashlytics` "entirely", describing
+> a template that "assumes you want to monetise". **None of those four packages exist at
+> upstream `ae636d23`.** `templates/basic/pubspec.yaml` depends only on `audioplayers`,
+> `go_router`, `logging`, `provider` and `shared_preferences`; AdMob now lives in a separate
+> `samples/ads/`. Following the old wording means hunting for dependencies that were never
+> there and concluding, wrongly, that removal work was done.
+>
+> What actually remained were two pieces of **residue** left behind after upstream removed
+> the packages, both stripped in the adoption commit:
+>
+> 1. a `googlemobileads` meta-data tag —
+>    `io.flutter.plugins.googlemobileads.FLUTTER_GAME_TEMPLATE_VERSION` — in
+>    `android/app/src/main/AndroidManifest.xml`
+> 2. `achievementIdIOS` / `achievementIdAndroid` fields on `GameLevel` in
+>    `lib/level_selection/levels.dart`, hooks for a store achievements service
+>
+> So the instruction is: **confirm each package is absent, then grep for residue.** CI runs
+> that grep over `app/` on every PR and fails if any such reference returns. Record the
+> outcome as a verification, not as a removal — see `docs/adr/0002-templates.md`.
 
 Get it:
 ```bash

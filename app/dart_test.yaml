@@ -1,0 +1,4 @@
+tags:
+  # Alchemist golden tests. Run with `flutter test --tags golden`.
+  golden:
+    description: Visual regression tests rendered by Alchemist in CI mode.

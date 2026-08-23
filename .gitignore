@@ -68,6 +68,10 @@ Thumbs.db
 *.swp
 *~
 
+# ── Contract testing ────────────────────────────────────────────
+.schemathesis/
+.hypothesis/
+
 # ── Local scratch ───────────────────────────────────────────────
 /tmp/
 /scratch/

@@ -44,9 +44,13 @@ Set up the DiAkoOi monorepo per CLAUDE.md §Structure. Do not write any feature 
 1. Adopt the Flutter Casual Games Toolkit basic template as /app:
    git clone --filter=blob:none https://github.com/flutter/games.git
    Copy templates/basic to /app. Then, in the FIRST commit:
-     - strip AdMob, in_app_purchase, games_services, crashlytics entirely
+     - VERIFY AdMob, in_app_purchase, games_services and crashlytics are absent
+       (they are, at upstream ae636d23), then remove the residue they left:
+       the googlemobileads FLUTTER_GAME_TEMPLATE_VERSION meta-data tag in
+       AndroidManifest.xml, and achievementIdIOS/achievementIdAndroid on
+       GameLevel in lib/level_selection/levels.dart
      - replace provider with flutter_riverpod
-     - keep lib/src/audio/ and lib/src/style/ — the Vibe Pack system builds on both
+     - keep lib/audio/ and lib/style/ — the Vibe Pack system builds on both
      - swap lints to very_good_analysis
      - remove bundled placeholder music/SFX from the repo, leave the folders
 2. Scaffold /site (AstroWind), /admin (Kiranism/next-shadcn-dashboard-starter),
@@ -59,6 +63,13 @@ Set up the DiAkoOi monorepo per CLAUDE.md §Structure. Do not write any feature 
 
 Verify every command in CLAUDE.md §Commands executes without error, then run the Phase 0
 audit from 05-IMPLEMENTATION-PLAN.md and paste results. Stop there.
+
+> **Corrected 2026-08-23, after Phase 0 ran this prompt.** Two instructions above were
+> wrong and are fixed in place: there is no `lib/src/` at upstream `ae636d23` (the tree is
+> flattened to `lib/`), and none of the four monetisation/telemetry packages are present, so
+> that step is a verification plus residue removal rather than a strip. Full detail in
+> `docs/07-TEMPLATES.md` §1 and `docs/adr/0002-templates.md`. Phase 0 is already complete;
+> this prompt is kept for the record.
 ```
 
 ---

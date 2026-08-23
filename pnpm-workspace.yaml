@@ -1,0 +1,19 @@
+packages:
+  - site
+  - admin
+  - api
+  - e2e
+
+# pnpm 10+ blocks dependency postinstall scripts by default and FAILS the
+# install when one is skipped. pnpm 11 reads this `allowBuilds` map — the older
+# `onlyBuiltDependencies` list is not what it honours, and leaving pnpm's
+# generated "set this to true or false" placeholders in place counts as unset,
+# which is what broke CI on the first run of this branch.
+#
+# Values must be booleans. Each of these downloads or compiles a native binary
+# the build and test toolchains genuinely need:
+allowBuilds:
+  esbuild: true # vitest and tsx
+  sharp: true # Astro and Next image pipelines
+  '@tailwindcss/oxide': true # Tailwind v4 engine
+  unrs-resolver: true # oxlint module resolution

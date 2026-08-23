@@ -1,0 +1,54 @@
+name: diakooi
+description: >-
+  DiAkoOi — pass-and-play Filipino social deduction party game.
+  Offline-first. Android only for v1.
+
+# Prevent accidental publishing to pub.dev.
+publish_to: 'none'
+
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  audioplayers: ^6.8.1
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.0.3
+  go_router: ^17.3.0
+  logging: ^1.3.0
+  shared_preferences: ^2.5.5
+
+dev_dependencies:
+  alchemist: ^0.12.1
+  flutter_launcher_icons: ^0.14.4
+  flutter_test:
+    sdk: flutter
+  test: ^1.31.0
+  very_good_analysis: ^10.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    # Emptied in the template-adoption commit; Vibe Packs supply audio from Phase 3.
+    - assets/music/
+    - assets/sfx/
+    # Vibe Pack audio + themes (docs/03-VIBE-SYSTEM.md). Packs land in Phase 3.
+    - assets/vibes/
+    # Bundled word bank so the game works with no network (docs/02-CONTENT-PH.md).
+    - assets/wordbank/
+
+  fonts:
+    - family: Permanent Marker
+      fonts:
+        - asset: assets/fonts/Permanent_Marker/PermanentMarker-Regular.ttf
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icons/icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/icon-adaptive-foreground.png"
