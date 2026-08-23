@@ -432,9 +432,60 @@ void main() {
   });
 
   group('A6 catalogue audit: a query, not a re-read', () {
-    test('every event carries requiresColocation and requiresItemSystem', () {
+    // This group replaced a test that asserted `requiresColocation` was a
+    // `bool` for every event. It was green from the day the field was added
+    // and would have stayed green with all 38 events left at the default —
+    // which is what had actually happened. A bool is always a bool; the
+    // assertion carried no information about whether the tagging was done.
+    test('exactly the four co-location-dependent events are tagged', () {
+      final flagged = [
+        for (final event in InterferenceCatalogue.all)
+          if (event.requiresColocation) event.id,
+      ]..sort();
+      expect(flagged, [
+        InterferenceCatalogue.interrogation,
+        InterferenceCatalogue.silentRound,
+        InterferenceCatalogue.silentRoundAll,
+        InterferenceCatalogue.whisperOnly,
+      ]..sort());
+    });
+
+    test('no app-enforced event requires co-location', () {
+      // An app-enforced event is arithmetic the engine does on its own. If one
+      // ever gets tagged, either the tag or the enforcement class is wrong.
       for (final event in InterferenceCatalogue.all) {
-        expect(event.requiresColocation, isA<bool>(), reason: event.id);
+        if (event.enforcement == EventEnforcement.app) {
+          expect(event.requiresColocation, isFalse, reason: event.id);
+        }
+      }
+    });
+
+    test('word-shape constraints are deliberately NOT tagged', () {
+      // §17 names Silent, Whisper and Interrogation, then quotes a figure —
+      // "roughly a third" — that only matches the wider set of everything the
+      // app cannot enforce. The narrow reading is the one implemented; this
+      // test pins it so widening the flag has to be a deliberate edit with a
+      // proposal behind it, not a drift.
+      // See docs/proposals/0004-colocation-flag-scope.md.
+      for (final id in [
+        InterferenceCatalogue.oneWordOnly,
+        InterferenceCatalogue.oneWordRound,
+        InterferenceCatalogue.copycat,
+        InterferenceCatalogue.theChain,
+        InterferenceCatalogue.taboo,
+        InterferenceCatalogue.liarsTax,
+        InterferenceCatalogue.doubleClue,
+      ]) {
+        expect(
+          InterferenceCatalogue.byId(id)!.requiresColocation,
+          isFalse,
+          reason: id,
+        );
+      }
+    });
+
+    test('every event still carries an item-system flag', () {
+      for (final event in InterferenceCatalogue.all) {
         expect(event.requiresItemSystem, isA<bool>(), reason: event.id);
       }
     });

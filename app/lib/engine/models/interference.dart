@@ -20,7 +20,20 @@ abstract class InterferenceEventDefinition with _$InterferenceEventDefinition {
     /// Lap-dependent, so suppressed when No Roundabouts is the modifier (§9f).
     @Default(false) bool requiresRoundabout,
 
-    /// v2 audit flag (§17). Unused in v1.
+    /// The event's *mechanic* needs everyone in the same room (§17).
+    ///
+    /// Unused by v1 logic — v1 is pass-and-play, so co-location is a given.
+    /// It exists so the v2 audit is a query rather than a re-read of 38
+    /// descriptions, which is §17's "cheap now, expensive later" item 4.
+    ///
+    /// Scope is deliberately narrow: gestures, whispering and live
+    /// interrogation stop working the moment players are not physically
+    /// together, whatever the client architecture. Word-shape constraints
+    /// (One Word, Copycat, The Chain, Taboo) are **not** tagged — they are
+    /// socially enforced today only because the v1 app never sees a clue, and
+    /// a client that did see clues could enforce them anywhere. See
+    /// docs/proposals/0004-colocation-flag-scope.md for the ambiguity in §17
+    /// that this narrow reading resolves.
     @Default(false) bool requiresColocation,
 
     /// Only eligible when the Item System toggle is on (§9a).
@@ -202,6 +215,7 @@ abstract final class InterferenceCatalogue {
       description: 'Gestures only, no speaking, next lap.',
       enforcement: EventEnforcement.social,
       requiresRoundabout: true,
+      requiresColocation: true,
     ),
     InterferenceEventDefinition(
       id: whisperOnly,
@@ -210,6 +224,7 @@ abstract final class InterferenceCatalogue {
       description: 'Must whisper their clue.',
       enforcement: EventEnforcement.social,
       requiresRoundabout: true,
+      requiresColocation: true,
     ),
     InterferenceEventDefinition(
       id: oneWordOnly,
@@ -243,6 +258,7 @@ abstract final class InterferenceCatalogue {
       description:
           'Must answer one yes/no question truthfully before the vote.',
       enforcement: EventEnforcement.social,
+      requiresColocation: true,
     ),
     InterferenceEventDefinition(
       id: taboo,
@@ -387,6 +403,7 @@ abstract final class InterferenceCatalogue {
       description: 'Nobody speaks; the whole lap is gestures.',
       enforcement: EventEnforcement.social,
       requiresRoundabout: true,
+      requiresColocation: true,
     ),
     InterferenceEventDefinition(
       id: categoryReveal,
