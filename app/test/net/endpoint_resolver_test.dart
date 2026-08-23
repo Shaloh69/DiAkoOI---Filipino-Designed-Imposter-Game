@@ -26,8 +26,12 @@ void main() {
       final offenders = <String>[];
       var scanned = 0;
 
+      // raw.githubusercontent.com is exempt, and only that host. It is the
+      // DISCOVERY document location, not an API base URL — the one address
+      // that must be baked in, because it is what makes the rotating one
+      // survivable (12-HOSTING.md §2b).
       final suspicious = RegExp(
-        r'''https?://(?!example\.test|schemas\.|json-schema\.|www\.w3\.)[a-z0-9.-]+''',
+        r'''https?://(?!example\.test|raw\.githubusercontent\.com|schemas\.|json-schema\.|www\.w3\.)[a-z0-9.-]+''',
         caseSensitive: false,
       );
 
@@ -63,6 +67,18 @@ void main() {
             'without shipping a new APK (12-HOSTING.md §2b). Found:\n'
             '${offenders.join('\n')}',
       );
+    });
+
+    test('the discovery URL is the only baked-in host, and is not the API', () {
+      expect(discoveryDocumentUrl, contains('raw.githubusercontent.com'));
+      expect(
+        discoveryDocumentUrl,
+        isNot(contains('trycloudflare')),
+        reason:
+            'the discovery document points AT the API; it must never be the '
+            'API, or the rotation problem is back',
+      );
+      expect(discoveryDocumentUrl, endsWith('/endpoint.json'));
     });
 
     test('the check can actually fail', () {

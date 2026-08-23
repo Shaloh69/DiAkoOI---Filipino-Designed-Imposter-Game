@@ -55,6 +55,28 @@ services:
     depends_on:
       - api
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+
+  # The beta's actual tunnel (docs/12-HOSTING.md §2a): a Quick Tunnel, with no
+  # token and no domain purchased. The hostname rotates on every restart, which
+  # is survivable only because the app resolves its endpoint at runtime (§2b)
+  # and scripts/publish-endpoint.sh republishes after each start.
+  #
+  #   docker compose --profile quicktunnel up -d
+  #
+  # The `tunnel` profile above is the Named Tunnel this upgrades to once a
+  # domain is bought — one of the §2a triggers. Both exist because switching
+  # should be a profile change, not a rewrite.
+  quicktunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: diakooi-tunnel
+    restart: unless-stopped
+    profiles:
+      - quicktunnel
+    depends_on:
+      - api
+    # --url points at the api service on the compose network, so nothing is
+    # published on the host beyond what compose already binds to 127.0.0.1.
+    command: tunnel --no-autoupdate --url http://api:3000
     # Exposes the PUBLIC API ONLY.
     # The admin console is Tailscale-bound and must never be tunnelled.
 

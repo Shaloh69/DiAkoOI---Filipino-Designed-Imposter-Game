@@ -1,0 +1,61 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+anime,Naruto,batang may bigote sa pisngi at gusto maging pinuno,palabas ng mga ninja,isang palabas,1,national
+anime,Dragon Ball,naghahanap ng pitong bilog para humiling,palabas ng malalakas na lalaki,isang palabas,1,national
+anime,One Piece,naghahanap ng kayamanan sa dagat sakay ng barko,palabas ng mga pirata,isang palabas,1,national
+anime,Voltes V,limang sasakyan na nagsasama-sama,lumang palabas ng robot,isang palabas noon,2,national
+anime,Daimos,robot na kontrolado ng karate,lumang palabas ng robot,isang palabas noon,3,national
+anime,Mazinger Z,pinakalumang robot na ipinalabas dito,napakalumang palabas ng robot,isang palabas noon,4,national
+anime,Ghost Fighter,tungkol sa batang namatay at bumalik bilang detektib,lumang palabas na may away,isang palabas noon,2,national
+anime,Slam Dunk,tungkol sa pulang buhok na natutong maglaro,palabas tungkol sa isport,isang palabas,2,national
+anime,Flame of Recca,tungkol sa batang may apoy sa kamay,lumang palabas na may kapangyarihan,isang palabas noon,3,national
+anime,Fushigi Yuugi,tungkol sa dalawang babaeng napunta sa libro,lumang palabas na pang-babae,isang palabas noon,4,national
+anime,Cardcaptor Sakura,tungkol sa batang naghahabol ng kartang mahiwaga,lumang palabas na pang-bata,isang palabas noon,3,national
+anime,Sailor Moon,limang babae na nagpapalit ng damit gamit ang bituin,palabas ng mga babaeng bayani,isang palabas,2,national
+anime,Doraemon,pusa mula sa hinaharap na may bulsa,palabas ng bata at robot na asul,isang palabas,1,national
+anime,Crayon Shin-chan,batang bastos na palaging nakapantalon lang,palabas ng makulit na bata,isang palabas,2,national
+anime,Yu-Gi-Oh,tungkol sa laro ng baraha na buhay ang halimaw,palabas tungkol sa baraha,isang palabas,3,national
+anime,Pokemon,nanghuhuli ng nilalang gamit ang pulang bilog,palabas ng mga alagang nilalang,isang palabas,1,national
+anime,Digimon,mga nilalang sa loob ng mundo ng makina,palabas ng mga alagang nilalang,isang palabas,2,national
+anime,Attack on Titan,tungkol sa pader at higanteng kumakain ng tao,palabas ng mga higante,isang palabas,2,national
+anime,Demon Slayer,tungkol sa kapatid na naging demonyo,palabas ng espada at demonyo,isang palabas,2,national
+anime,Jujutsu Kaisen,tungkol sa batang nilamon ang daliri ng sumpa,bagong palabas ng away,isang palabas,2,national
+anime,My Hero Academia,eskwelahan ng mga bayani na may quirk,palabas ng mga bayaning bata,isang palabas,2,national
+anime,Death Note,batang may kwaderno na pumapatay,palabas na may kwaderno,isang palabas,2,national
+anime,Bleach,batang orange ang buhok na may malaking espada,palabas ng espada at multo,isang palabas,2,national
+anime,Fairy Tail,gremyo ng mga salamangkero na may selyo,palabas ng mahika,isang palabas,3,national
+anime,Hunter x Hunter,tungkol sa batang naghahanap sa ama,palabas ng pagsusulit at away,isang palabas,3,national
+anime,Fullmetal Alchemist,magkapatid na nawalan ng katawan,palabas ng mahika at makina,isang palabas,3,national
+anime,Code Geass,prinsipe na may mata na nag-uutos,palabas ng robot at pulitika,isang palabas,4,national
+anime,Gundam,seryeng may malalaking robot na sinasakyan,palabas ng robot na pangdigma,isang palabas,3,national
+anime,Evangelion,batang pinilit sumakay sa robot na lila,palabas ng robot na malungkot,isang palabas,4,national
+anime,Spirited Away,batang nagtrabaho sa paliguan ng mga diwata,pelikulang gawa sa Japan,isang pelikula,3,national
+anime,Totoro,malaking mabalahibong nilalang sa tabi ng puno,pelikula ng mga bata,isang pelikula,3,national
+anime,Howls Moving Castle,kastilyo na may paa na naglalakad,pelikulang may mahika,isang pelikula,4,national
+anime,Your Name,dalawang tao na nagpapalitan ng katawan,pelikulang may pag-ibig at kometa,isang pelikula,3,national
+anime,Weathering With You,batang babaeng nakakapagpatigil ng ulan,pelikulang may ulan,isang pelikula,4,national
+anime,Suzume,batang nagsasara ng mga pintuan sa buong bansa,bagong pelikulang Hapon,isang pelikula,4,national
+anime,Haikyuu,palabas ng maliit na bata na tumatalon nang mataas,palabas tungkol sa isport na may net,isang palabas,3,national
+anime,Kuroko no Basket,palabas ng manlalarong halos hindi nakikita,palabas tungkol sa isport na may bilog na bakal,isang palabas,3,national
+anime,Captain Tsubasa,batang mahusay tumadyak ng bola,palabas tungkol sa isport na may paa,isang palabas,3,national
+anime,Eyeshield 21,palabas tungkol sa mabilis tumakbo sa larong Amerikano,palabas tungkol sa isport,isang palabas,4,national
+anime,One Punch Man,kalbo na tinatapos ang laban sa isang suntok,palabas na nakakatawa at malakas,isang palabas,2,national
+anime,Tokyo Ghoul,tungkol sa estudyanteng naging kalahating halimaw,palabas na madugo,isang palabas,3,national
+anime,Sword Art Online,mga naipit sa loob ng larong hindi mapatay,palabas tungkol sa laro,isang palabas,3,national
+anime,Re Zero,binata na bumabalik sa oras kapag namatay,palabas na paulit-ulit ang pangyayari,isang palabas,4,national
+anime,Chainsaw Man,binata na may lagari sa ulo,bagong palabas na marahas,isang palabas,3,national
+anime,Spy x Family,pamilyang pekeng espiya at mamamatay-tao,palabas ng pamilya na may lihim,isang palabas,2,national
+anime,Detective Conan,binatang naging bata pero nag-iimbestiga pa rin,palabas ng paglutas ng krimen,isang palabas,3,national
+anime,Case Closed,ibang pangalan ng palabas ng batang detektib,palabas ng misteryo,isang palabas,4,national
+anime,Inuyasha,lalaking may tainga ng aso at espada,lumang palabas na may panahon ng espada,isang palabas noon,3,national
+anime,Ranma,binata na nagiging babae kapag nabasa ng malamig,lumang palabas na nakakatawa,isang palabas noon,4,national
+anime,Kimi ni Todoke,tungkol sa babaeng inaakalang multo,palabas tungkol sa pag-ibig,isang palabas,4,national
+anime,Nihongo,wikang ginagamit sa orihinal na palabas,wika ng bansang pinanggalingan,isang wika,3,national
+anime,Subtitle,nasa ibaba ng screen para maintindihan,binabasa habang nanonood,isang bagay sa panonood,2,national
+anime,Dubbed,kapag Tagalog na ang salita ng karakter,kapag pinalitan ang boses,isang paraan ng panonood,2,national
+anime,Opening,kanta sa umpisa ng bawat episode,parte na kinakanta sa simula,isang parte ng palabas,2,national
+anime,Filler,episode na walang kinalaman sa kwento,parte na pwedeng laktawan,isang parte ng palabas,3,national
+anime,Cosplay,pagsusuot ng damit ng karakter,pagbibihis bilang ibang tao,isang libangan,2,national
+anime,Manga,libro na binabasa mula kanan pakaliwa,binabasa bago pa ipalabas,isang babasahin,2,national
+anime,Otaku,taong sobrang hilig sa palabas na Hapon,tao na mahilig sa palabas,isang tao,3,national
+anime,Waifu,paboritong karakter na babae na inaangkin,paboritong karakter,isang bagay sa fandom,3,national
+anime,Yugatha,tanghali ng Sabado noon sa telebisyon,oras ng panonood ng bata noon,isang oras ng araw,4,national

@@ -1,0 +1,61 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+internet,Facebook,asul na app na may News Feed at Marketplace,app na tinitingnan ng lahat ng tita,isang app,1,national
+internet,TikTok,app ng maiikling video na patayo,app na sinasayawan,isang app,1,national
+internet,YouTube,pulang app na panonood ng mahabang video,app na may mga vlog,isang app,1,national
+internet,Messenger,app na kidlat ang logo at pang-chat,ginagamit para mag-usap,isang app,1,national
+internet,Instagram,app na larawan ang pangunahing laman,app na may mga litrato,isang app,1,national
+internet,Twitter,app na ibon dati ang logo bago naging titik,app na puro sulat ang laman,isang app,2,national
+internet,Viber,lilang app na pang-chat na ginagamit sa trabaho,app ng pag-uusap,isang app,3,national
+internet,Reddit,site na may subreddit at upvote,site na may usapan ng estranghero,isang site,3,national
+internet,Google,hinahanapan ng sagot sa lahat ng tanong,ginagamit kapag may hindi alam,isang serbisyo,1,national
+internet,Wattpad,site ng kwentong sinusulat ng kabataan,site ng mga kwento,isang site,3,national
+internet,Netflix,pulang app na panonood ng serye,binabayaran para makapanood,isang serbisyo,1,national
+internet,Spotify,berdeng app na pakikinggan ng kanta,app na may musika,isang app,2,national
+internet,Vlog,video na kwento ng buhay araw-araw,klase ng video sa internet,isang uri ng video,2,national
+internet,Meme,larawan na may nakakatawang caption,nakakatawang laman ng internet,isang bagay sa internet,1,national
+internet,Viral,kapag milyon na ang nakakita sa loob ng isang araw,kapag kumalat na masyado,isang kalagayan,1,national
+internet,Trending,nasa taas ng listahan ng pinag-uusapan,kapag maraming nagsasalita tungkol dito,isang kalagayan,2,national
+internet,Hashtag,simbolo na may apat na linya bago ang salita,ginagamit para pagsama-samahin ang paksa,isang bagay sa post,2,national
+internet,Selfie,larawan ng sarili gamit ang harap na lente,litrato na ikaw ang kumuha,isang uri ng larawan,1,national
+internet,Reels,maiikling video sa app ng larawan,klase ng maikling video,isang uri ng video,2,national
+internet,Livestream,pagbo-broadcast habang nangyayari,video na kasabay ng totoong oras,isang uri ng video,2,national
+internet,Streamer,taong nagpapanood habang naglalaro,tao na nabubuhay sa panonood ng iba,isang trabaho ngayon,3,national
+internet,Influencer,taong may sponsor sa bawat post,tao na sinusundan ng marami,isang trabaho ngayon,2,national
+internet,Content creator,gumagawa ng video at post bilang trabaho,tao na nagpo-post para kumita,isang trabaho ngayon,2,national
+internet,Follower,taong nagsu-subscribe sa iyong account,tao na nakikita ang iyong post,isang tao sa internet,1,national
+internet,Basher,taong puro masamang komento ang iniiwan,tao na puro pintas,isang tao sa internet,2,national
+internet,Troll,taong sadyang nang-aasar online,tao na naghahanap ng gulo,isang tao sa internet,2,national
+internet,Bot,account na hindi tao ang nagpapatakbo,account na peke,isang bagay sa internet,3,national
+internet,Katol,palayaw sa nagtatanggol ng pulitiko online,tao na laging may pinagtatanggol,isang tao sa internet,4,national
+internet,Chismis,tsismis na kumakalat sa comment section,usapan tungkol sa iba,isang bagay na kumakalat,1,national
+internet,Fake news,balitang hindi totoo pero kumakalat,balitang mali,isang problema ngayon,2,national
+internet,Ghosting,biglang hindi na nagre-reply nang walang paalam,kapag biglang nawala ang tao,isang ugali,2,national
+internet,Seenzoned,nabasa ang mensahe pero walang sagot,kapag hindi ka pinansin,isang pakiramdam,1,national
+internet,Left on read,nabuksan ang chat pero tahimik,kapag hindi sinagot ang mensahe,isang pakiramdam,3,national
+internet,Hugot,post na may sakit sa puso ang mensahe,post tungkol sa pag-ibig na malungkot,isang uri ng post,1,national
+internet,Charot,sinasabi kapag biro lang pala,salitang pambawi sa sinabi,isang salita,2,national
+internet,Sana all,sinasabi kapag inggit ka sa post ng iba,komento kapag maganda ang buhay ng iba,isang komento,1,national
+internet,Petmalu,baliktad na salita na ibig sabihin ay astig,salitang papuri ng kabataan,isang salita,3,national
+internet,Lodi,baliktad na salita para sa hinahangaan,tawag sa hinahangaan,isang salita,3,national
+internet,Werpa,baliktad na salita para sa lakas,salitang pampalakas ng loob,isang salita,3,national
+internet,Awit,salitang sinasabi kapag masakit o nakakaawa,reaksyon kapag malas,isang salita,3,national
+internet,Bet,sinasabi kapag gusto mo ang isang bagay,salitang pagsang-ayon,isang salita,2,national
+internet,Slay,sinasabi kapag napakaganda ng ginawa,papuri ng kabataan ngayon,isang salita,2,national
+internet,Chika,kwentuhan tungkol sa nangyayari,usapan ng magkaibigan,isang usapan,2,national
+internet,Ex Battalion,grupo ng rapper na sikat sa internet noon,grupo na kumalat sa internet,isang grupo,4,national
+internet,Wifi,internet na walang kable,pinagkakabit ng cellphone sa bahay,isang serbisyo,1,national
+internet,Load,binabayaran para may signal ang cellphone,binibili sa tindahan para may data,isang bagay na binibili,1,national
+internet,Data,binabayaran para makapag-internet sa labas,ginagamit kapag walang koneksyon sa bahay,isang serbisyo,2,national
+internet,Buffering,kapag umiikot ang bilog habang nanonood,kapag humihinto ang video,isang problema,2,national
+internet,Lag,kapag nahuhuli ang galaw sa laro,kapag mabagal ang koneksyon,isang problema,2,national
+internet,Zoom,app na pinag-miting noong pandemya,app ng video call,isang app,2,national
+internet,Group chat,usapan ng maraming tao sa isang kwarto,chat na maraming kasali,isang bagay sa app,1,national
+internet,Screenshot,kinunan ang nakikita sa screen,pinaparami ang ebidensya ng chat,isang gawain,1,national
+internet,Emoji,maliliit na mukha na ipinapadala sa chat,larawan sa halip na salita,isang bagay sa chat,1,national
+internet,Reaction,pinipindot nang matagal sa mensahe,paraan ng pagsagot na walang salita,isang bagay sa chat,3,national
+internet,Unsend,binabawi ang naipadala nang mensahe,pagbura ng chat na nagkamali,isang gawain,2,national
+internet,Mobile Legends,laro ng lima laban sa lima sa cellphone,laro na inaaway ang kakampi,isang laro,1,national
+internet,Roblox,laro na parang bloke ang tao,laro ng mga bata sa cellphone,isang laro,2,national
+internet,Minecraft,laro ng paghuhukay at paggawa ng bahay,laro na kubiko ang lahat,isang laro,2,national
+internet,Shopee sale,tuwing kaparehong numero ang buwan at araw,araw ng murang bilihin online,isang okasyon,3,national
+internet,Cash on delivery,binabayaran kapag dumating na ang parcel,paraan ng pagbayad sa online,isang paraan ng bayad,2,national

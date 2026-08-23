@@ -1,0 +1,61 @@
+topic_id,word,clue_tight,clue_standard,clue_loose,difficulty,region
+basketball,Ginebra,koponan na tinatawag na Never Say Die,pinakamaraming tagahanga sa liga,isang koponan,1,national
+basketball,San Miguel,koponan ni June Mar Fajardo,koponan na maraming kampeonato,isang koponan,2,national
+basketball,TNT,koponan na dating tinawag na Talk N Text,koponan sa propesyonal na liga,isang koponan,2,national
+basketball,Magnolia,koponan na dating Purefoods,koponan na pagkain ang pangalan,isang koponan,3,national
+basketball,Meralco,koponan na kuryente ang kumpanya,koponan sa liga na wala pang korona noon,isang koponan,3,national
+basketball,Rain or Shine,koponan na pintura ang kumpanya,koponan sa propesyonal na liga,isang koponan,3,national
+basketball,NLEX,koponan na expressway ang pangalan,koponan sa liga,isang koponan,4,national
+basketball,June Mar Fajardo,pinakamaraming beses na naging MVP,napakataas na manlalaro,isang manlalaro,1,national
+basketball,Jimmy Alapag,dating kapitan ng pambansang koponan,maliit pero magaling na manlalaro,isang manlalaro,3,national
+basketball,Alvin Patrimonio,tinaguriang Captain sa lumang liga,lumang manlalaro na sikat,isang manlalaro,3,national
+basketball,Robert Jaworski,tinawag na Big J at naging senador,lumang manlalaro na naging pulitiko,isang manlalaro noon,3,national
+basketball,Ramon Fernandez,apat na beses na MVP noong dekada otsenta,lumang manlalaro na matangkad,isang manlalaro noon,4,national
+basketball,Kiefer Ravena,anak ng dating manlalaro at naglaro sa Japan,manlalaro na sikat sa kabataan,isang manlalaro,3,national
+basketball,Jordan Clarkson,naglaro sa NBA at sa pambansang koponan,manlalaro na Pinoy pero taga ibang bansa,isang manlalaro,2,national
+basketball,Gilas,palayaw ng pambansang koponan,koponan na kumakatawan sa bansa,isang koponan,2,national
+basketball,PBA,pinakamatandang propesyonal na liga sa Asya,liga ng mga propesyonal dito,isang liga,1,national
+basketball,UAAP,liga ng mga unibersidad tuwing Setyembre,liga ng mga eskwelahan,isang liga,1,national
+basketball,NCAA,mas lumang liga ng mga eskwelahan,liga ng mga paaralan,isang liga,2,national
+basketball,Ateneo,eskwelahang asul na maraming korona,unibersidad na sikat sa laro,isang eskwelahan,1,national
+basketball,La Salle,eskwelahang berde sa Taft,unibersidad na karibal ng asul,isang eskwelahan,1,national
+basketball,UST,eskwelahang dilaw na pinakamatanda,unibersidad na may malaking parke,isang eskwelahan,2,national
+basketball,UP,eskwelahang maroon na nanalo noong 2022,unibersidad ng bayan,isang eskwelahan,2,national
+basketball,FEU,eskwelahang berde at dilaw sa Morayta,unibersidad sa Maynila,isang eskwelahan,3,national
+basketball,Barangay liga,laro sa korte sa gilid ng kalsada tuwing pista,laro sa lugar na tinitirhan,isang laro sa labas,2,national
+basketball,Ring,bilog na bakal na pinapasukan ng bola,bagay na tinatarget sa laro,isang bagay sa korte,1,national
+basketball,Backboard,tabla sa likod ng bilog na bakal,parte ng korte sa itaas,isang bagay sa korte,2,national
+basketball,Three point,tira mula sa labas ng arko,tira na mas malaki ang puntos,isang klase ng tira,1,national
+basketball,Dunk,pagsaksak ng bola habang lumulundag,tira na malapitan at malakas,isang klase ng tira,1,national
+basketball,Layup,tira habang tumatakbo papuntang ilalim,simpleng tira sa malapit,isang klase ng tira,2,national
+basketball,Free throw,tira mula sa linya matapos ang paglabag,libreng tira,isang klase ng tira,2,national
+basketball,Rebound,pagkuha ng bola matapos ang di pumasok,pagkuha ng bola sa ere,isang galaw sa laro,2,national
+basketball,Assist,pagpasa na nauwi sa puntos,pagbibigay ng bola sa kakampi,isang galaw sa laro,2,national
+basketball,Block,pagharang sa tira ng kalaban,pagpigil sa kalaban,isang galaw sa laro,2,national
+basketball,Steal,pag-agaw ng bola sa kalaban,pagkuha ng bola sa kabila,isang galaw sa laro,3,national
+basketball,Traveling,paglakad nang hindi tumatalbog ang bola,isang paglabag sa laro,isang mali sa laro,3,national
+basketball,Double dribble,pagtalbog ulit matapos humawak,isang paglabag sa laro,isang mali sa laro,4,national
+basketball,Buzzer beater,tira na pumasok sa huling segundo,tira sa dulo ng oras,isang sandali sa laro,2,national
+basketball,Overtime,dagdag na oras kapag patas ang laban,dagdag na laro,isang parte ng laban,2,national
+basketball,Timeout,paghinto ng laro para mag-usap ang koponan,pahinga sa gitna ng laban,isang parte ng laban,2,national
+basketball,Coach,siya ang nagtuturo ng estratehiya sa gilid,pinuno ng koponan sa gilid,isang tao sa laro,1,national
+basketball,Referee,siya ang pumipito kapag may mali,tao na nagbabantay ng patakaran,isang tao sa laro,1,national
+basketball,Jersey,damit na may numero at pangalan,suot ng manlalaro,isang damit,1,national
+basketball,Court,lugar na may linya at dalawang bilog na bakal,lugar na pinaglalaruan,isang lugar,1,national
+basketball,Fastbreak,mabilis na atake bago makabalik ang kalaban,mabilis na paglusob,isang galaw sa laro,3,national
+basketball,MVP,parangal sa pinakamahusay sa buong season,pinakamataas na parangal,isang parangal,1,national
+basketball,Rookie,manlalaro sa unang taon niya,bagong manlalaro,isang manlalaro,2,national
+basketball,Import,dayuhang manlalaro na pinapasok sa koponan,manlalaro na taga ibang bansa,isang manlalaro,3,national
+basketball,Draft,pagpili ng koponan sa mga bagong manlalaro,araw ng pagpili ng bagong tao,isang okasyon sa liga,3,national
+basketball,Finals,huling serye para sa korona,dulo ng season,isang parte ng liga,1,national
+basketball,Grand Slam,pagkapanalo sa tatlong kumperensya sa isang taon,pinakamahirap na tagumpay,isang tagumpay,3,national
+basketball,Manila Clasico,laban ng dalawang pinakasikat na koponan,malaking laban sa liga,isang laban,4,national
+basketball,Palarong Pambansa,taunang paligsahan ng mga estudyante,malaking laro ng mga bata,isang paligsahan,3,national
+basketball,Chooks to Go,liga ng tatlo laban sa tatlo,liga na manok ang isponsor,isang liga,4,national
+basketball,MPBL,liga ng mga bayan at lungsod,liga sa labas ng propesyonal,isang liga,4,national
+basketball,Slam Dunk,anime tungkol sa laro na sikat dito,palabas na Hapon tungkol sa laro,isang palabas,2,national
+basketball,Kobe,manlalarong Amerikano na sinasamba ng Pinoy,dayuhang manlalaro na sikat dito,isang manlalaro,1,national
+basketball,LeBron,manlalarong Amerikano na tinatawag na Hari,dayuhang manlalaro ngayon,isang manlalaro,1,national
+basketball,Curry,manlalarong sikat sa malayong tira,dayuhang manlalaro na maliit,isang manlalaro,2,national
+basketball,Araneta,malaking bilog na gusali sa Cubao,lugar kung saan ginaganap ang laban,isang gusali,2,luzon
+basketball,Mall of Asia Arena,malaking arena malapit sa dagat,bagong lugar ng malalaking laban,isang gusali,3,luzon
