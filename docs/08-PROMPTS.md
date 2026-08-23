@@ -113,6 +113,51 @@ Exit criteria: a full 10-round game simulates in a test with zero Flutter import
 
 ---
 
+## 3a. Phase 2 — Content pipeline & word bank
+
+> **Added 2026-08-23.** This section did not exist: the file jumped from Phase 1 straight to
+> Phase 3, so a session reaching Phase 2 had no brief and had to reconstruct it from
+> `05-IMPLEMENTATION-PLAN.md` and `02-CONTENT-PH.md`. Written from what Phase 2 actually
+> built, so the next reader does not repeat that.
+
+```
+Read 02-CONTENT-PH.md and content/STYLE.md fully before starting.
+
+Phase 2 runs in PARALLEL with Phase 1 and is the long pole: ~2,160 authored clues.
+It cannot be finished by a machine. Build the whole pipeline, generate candidates,
+and leave A2 explicitly AUDIT-INCOMPLETE.
+
+Build:
+1. CSV schema + validator as a STANDALONE SCRIPT, not the admin console. Authors must
+   be able to check their own file before anyone imports anything, and CI must be able
+   to reject a broken bank without a browser.
+2. Validation per 02-CONTENT-PH.md §5. Respect the reject/warn split exactly:
+     REJECT — clue contains the word or a synonym, any clue empty, duplicate word
+              within a topic, difficulty outside 1-5, unknown topic, unknown region
+     WARN   — clue over 90 characters, tight/standard too similar (§3)
+   A warning that blocked would make authors edit around the tool instead of thinking.
+3. JSON bundle generator -> app/assets/wordbank/. Sort topics and words so the
+   committed bundle diffs cleanly, and decode the result back through the engine's
+   own WordBankEntry in a test — valid JSON is not the same as loadable.
+4. One CSV per topic in /content/ so three authors never merge-conflict. Header only;
+   authored rows are theirs to add.
+5. Tests for the validator itself, one per failure class in §5.
+
+Then:
+6. Generate CANDIDATE drafts for wave 1 into content/drafts/, NOT content/. Follow
+   content/STYLE.md — list features per word, write all three tiers. These are drafts
+   for humans to edit and reject, and the tooling must not be able to bundle them by
+   accident.
+7. Ship a clearly-labelled placeholder bundle (~20 words) so Phase 4 has something to
+   run. Flag it in the bundle itself, not just in a comment.
+
+A2 stays AUDIT-INCOMPLETE until humans ratify content/STYLE.md at v1, author wave 1 at
+60+ words per topic, cross-review it (§6c) and complete cultural review (§7). Record
+that in BLOCKED.md and say so in the PR. Do not mark the phase done.
+```
+
+---
+
 ## 4. Phase 3 — Design system + Vibe Packs
 
 ```

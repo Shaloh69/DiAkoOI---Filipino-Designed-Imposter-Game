@@ -38,6 +38,10 @@ cd app && flutter test --tags golden        # golden only
 cd app && flutter test --update-goldens     # regenerate baselines
 cd app && flutter analyze                   # must be clean
 
+cd app && dart run tool/content_cli.dart validate --dir ../content
+cd app && dart run tool/content_cli.dart stats    --dir ../content
+cd app && dart run tool/content_cli.dart bundle   --dir ../content
+
 cd site && pnpm dev | pnpm build
 cd admin && pnpm dev | pnpm build | pnpm lint
 cd api && pnpm test | pnpm dev

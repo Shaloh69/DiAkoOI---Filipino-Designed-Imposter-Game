@@ -58,6 +58,11 @@ jobs:
 
       - run: flutter analyze
 
+      # The word bank is the product. A rejection here means a clue that gives
+      # its own word away, or a duplicate, would otherwise reach a table.
+      - name: Validate word-bank content
+        run: dart run tool/content_cli.dart validate --dir ../content
+
       - name: Tests with coverage
         run: flutter test --coverage
 
