@@ -19,6 +19,7 @@ services:
       cp -r /src /work-src && cd /work-src &&
       rm -rf .dart_tool build &&
       flutter pub get &&
+      dart run build_runner build &&
       flutter test --tags golden --update-goldens &&
       cp -rv test/golden/goldens/. /out/
       "

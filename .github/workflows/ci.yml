@@ -37,18 +37,34 @@ jobs:
 
       - run: flutter pub get
 
+      # freezed / json_serializable output is gitignored (**/*.g.dart,
+      # **/*.freezed.dart), so it must be generated here before anything
+      # analyses or compiles the engine.
+      - name: Code generation
+        run: dart run build_runner build
+
+      # git grep, not grep -r: the rule is about what is COMMITTED. A recursive
+      # grep also walks build output — .dart_tool/build_resolvers/sdk.sum is a
+      # binary Dart SDK summary that matches these strings and failed this step
+      # once build_runner joined the job.
       - name: Verify the template strip held
         working-directory: .
         run: |
-          if grep -rniE 'admob|google_mobile_ads|googlemobileads|in_app_purchase|games_services|crashlytics' app/ ; then
+          if git grep -lniE 'admob|google_mobile_ads|googlemobileads|in_app_purchase|games_services|crashlytics' -- app/ ; then
             echo "::error::Ads/IAP/crashlytics reference reintroduced into app/"
             exit 1
           fi
-          echo "No ads/IAP/crashlytics references in app/."
+          echo "No ads/IAP/crashlytics references in tracked app/ sources."
 
       - run: flutter analyze
 
-      - run: flutter test
+      - name: Tests with coverage
+        run: flutter test --coverage
+
+      # A1 requires >= 90% line coverage on lib/engine/. Measuring it once
+      # during Phase 1 proves nothing about Phase 6, so it is a gate.
+      - name: Engine coverage gate
+        run: dart run tool/check_engine_coverage.dart
 
       # Alchemist CI mode. Baselines are committed and must not be regenerated
       # here — a missing or changed baseline fails the job
