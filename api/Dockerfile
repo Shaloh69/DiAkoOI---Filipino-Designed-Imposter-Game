@@ -26,11 +26,11 @@ ENV NODE_ENV=production
 COPY package.json ./
 # Production deps only — fastify, pg, zod. No build scripts involved.
 RUN pnpm install --prod --no-frozen-lockfile --ignore-scripts && pnpm store prune
+# dist/ already contains the .sql migrations: `pnpm build` copies them, because
+# tsc does not carry data files. Doing it in the build rather than here means
+# CI — which runs `node dist/server.js` with no Docker involved — gets them too.
+# Fixing it only in this file left CI starting against an empty schema.
 COPY --from=build /app/dist ./dist
-# The .sql migrations are data, not TypeScript, so `tsc` does not carry them
-# into dist/. Without this the image starts, finds no schema, and answers 503
-# to every documented read — which looks like a database outage and is not.
-COPY --from=build /app/src/migrations ./dist/migrations
 
 # Attachments are content-addressed and encrypted at rest (docs/01-DESIGN.md
 # §16b). The compose file mounts a volume here.
