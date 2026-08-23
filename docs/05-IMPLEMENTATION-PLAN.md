@@ -296,15 +296,33 @@ Full profile and known risks: 06-TESTING-STRATEGY.md §8.
 
 Spec first. `openapi.yaml` before implementation.
 
+**Follow `docs/12-HOSTING.md`, not older hosting assumptions elsewhere in these docs.**
+It is the source of truth for the topology, and §7 there is the setup checklist.
+
 ```
 [ ] openapi.yaml: POST /v1/feedback, GET /v1/word-banks, GET /v1/word-banks/{topic},
     POST /v1/telemetry
 [ ] Fastify + Zod at every boundary; Postgres schema + migrations
 [ ] Feedback attachments: SHA-256 filenames, encrypted at rest, signed URLs (§16b)
 [ ] Rate limiting on all public endpoints
-[ ] Cloudflare Tunnel: public API only. Tailscale: admin + Postgres, NO Funnel
-[ ] pg_dump cron, encrypted, off-box — AND a tested restore
+[ ] Host: WSL2 + Docker Engine — NOT Docker Desktop, which needs an interactive
+    login and so leaves the stack down after an unattended reboot (12-HOSTING §1b)
+[ ] Repo cloned INSIDE the WSL filesystem, never under /mnt/c/ (12-HOSTING §1b)
+[ ] Task Scheduler auto-start, verified across a real unattended reboot (§1c)
+[ ] Cloudflare **Quick Tunnel** for beta — no domain purchased (§2a).
+    The hostname rotates on every cloudflared restart
+[ ] scripts/publish-endpoint.sh: scrape the new tunnel URL, write endpoint.json,
+    publish it. Wired into WSL startup AFTER docker compose up (§2b)
+[ ] App-side endpoint discovery: resolve the API base URL at runtime from
+    endpoint.json, cache with a short TTL, and fall back SILENTLY to bundled
+    content on any failure — offline, 404, timeout, malformed (§2b, §2c).
+    **No hardcoded API base URL anywhere, ever**
+[ ] Tailscale: admin + Postgres bound to the tailnet IP only, NO Funnel (§4)
+[ ] Cloudflare Tunnel ingress lists the API hostname ONLY — never a wildcard (§4)
+[ ] pg_dump cron, encrypted, off-box — AND a tested restore (§5)
 [ ] App-side: word-bank sync with bundled fallback, offline feedback queue
+[ ] LATER, on any §2a trigger: buy a domain, switch to a Named Tunnel. This is a
+    one-line endpoint.json edit with zero app changes, provided §2b was followed
 ```
 
 ### A7 — API + Security
@@ -312,7 +330,9 @@ Spec first. `openapi.yaml` before implementation.
 - [ ] Vitest + Supertest cover happy and error paths per endpoint
 - [ ] **Every error shape documented in the spec** — the most common contract gap
 - [ ] Rate limits verified by test, not inspection
-- [ ] **External port scan:** only Cloudflare-proxied 443 responds
+- [ ] **External port scan:** only Cloudflare-proxied 443 responds. Verified from mobile
+      data with Tailscale OFF, not by reading the config (12-HOSTING §4)
+- [ ] Endpoint discovery proven: app falls back silently with `endpoint.json` unreachable
 - [ ] Admin unreachable off-tailnet — verified from an outside network
 - [ ] No selfie-shaped payload accepted by any endpoint; assert in a test
 - [ ] Telemetry contains no names, photos, or device identifiers

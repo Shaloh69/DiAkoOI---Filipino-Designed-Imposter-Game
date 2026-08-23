@@ -152,11 +152,14 @@ Build per 01-DESIGN.md §2-§8, §13:
 1. Host setup: every §2 parameter. Topic weight mixer with presets (§13b). Large Group
    Mode auto-switch at 13. The host-as-player default-off warning per §2b.
 2. Onboarding: name -> selfie (with Skip -> monogram) -> round-1 reveal.
-3. PRIVACY, read 01-DESIGN.md §4b carefully: the selfie must NEVER touch disk.
-   image_picker and camera.takePicture() BOTH write temp files by default and will
-   silently break this. Use CameraController.startImageStream() and grab one frame to
-   Uint8List. Then write app/test/privacy/no_disk_write_test.dart asserting zero new
-   files under temp and documents dirs across a full onboarding run.
+3. PRIVACY, read 01-DESIGN.md §4b carefully: the APP must never write the selfie to
+   storage. image_picker and camera.takePicture() BOTH write temp files by default and
+   will silently break this. Use CameraController.startImageStream() and grab one frame
+   to Uint8List, DOWNSCALED to display resolution at capture. Then write
+   app/test/privacy/no_disk_write_test.dart asserting zero new files under temp and
+   documents dirs across a full onboarding run, carrying the scope comment from
+   app/test/privacy/README.md. Do NOT claim the selfie "never touches disk" — vendor
+   Extended RAM pages memory below our layer (ADR 0005).
 4. Reveal card: hold-to-reveal primary, tilt as secondary flourish only.
 5. Pass interstitial with selfie + name, carrying the constraint banner slot.
 6. Discussion phase with roundabout tracking; optional soft clue timer, default off.

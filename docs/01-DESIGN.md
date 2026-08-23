@@ -140,7 +140,16 @@ downgrade.
 
 ### 4b. Selfie storage & privacy
 
-- **v1: in-memory only.** Never written to disk, never transmitted, no persistence.
+- **v1: in-memory only.** The app never writes a selfie to storage, never
+  transmits one, and holds no persistence layer for them.
+- **Scope of that guarantee.** It is an application-level guarantee. On devices with
+  vendor "Extended RAM" / "RAM Plus" features, the OS may page process memory to a
+  swap file — below our layer and not controllable from Flutter. See
+  `06-TESTING-STRATEGY.md` §8e. Marketing and policy copy must say "the app never
+  writes your photo to storage", never "your photo never touches disk".
+- **Downscale at capture.** Store display-resolution bytes only (Polaroid thumbnail
+  + grid tile), not the full sensor frame. Reduces memory pressure, paging
+  likelihood, and the A5 memory-flat risk simultaneously.
 - Scoping to v1 is deliberate — v2 networked play must transmit images or drop them, and
   a promise withdrawn later is worse than one never made. Marketing copy uses the scoped
   wording. §17 records the v2 position (monogram-only over the wire).

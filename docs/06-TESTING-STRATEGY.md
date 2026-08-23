@@ -235,17 +235,15 @@ representative of the actual target market — a mid-range Android common in PH.
 | Chipset | MediaTek Dimensity 7360-Turbo (4nm) |
 | CPU | 4× Cortex-A78 @2.5GHz + 4× Cortex-A55 @2.0GHz |
 | GPU | **Mali-G615 MC2** — two cores |
-| RAM | 8GB or 12GB **LPDDR4X** |
+| RAM | **8GB physical LPDDR4X + 8GB Extended RAM (UFS-backed swap)** |
 | Storage | 256GB UFS 3.1 |
 | Display | 6.77" AMOLED, 1080×2392, **120Hz**, HDR10+ |
 | OS | Android 15 / Funtouch 15 |
 | Sensors | Gyroscope present — tilt-to-reveal is viable |
 
-**Confirm which variant you have before profiling.** There is a V60 Lite 4G and a 5G, and
-vivo's own marketing pages describe different chipsets across the family (a Snapdragon 6
-series appears on one listing, Dimensity 7360-Turbo on the 5G). Check Settings → About
-and record the exact chipset in the ADR. A budget written against the wrong SoC is worse
-than no budget.
+> **Variant confirmed (2026-08-22):** Dimensity 7360-Turbo octa-core @2.5GHz, 8GB
+> physical + 8GB Extended RAM. This is the 5G variant. Frame budget per §8a stands
+> at 8.3ms for the 120Hz panel.
 
 ### 8a. Frame budget — 120Hz changes the number
 
@@ -296,8 +294,58 @@ Finding it in Phase 3 means picking a different technique before anything depend
   Verify the app survives a backgrounding, a call, and a notification without losing
   in-memory session state — **including the selfies**, which exist nowhere else (§4b).
   This is the most likely real bug on this specific device.
-- **RAM variant.** If you have the 8GB model, profile on that, not the 12GB. Test the
-  worse case.
+- **RAM.** Confirmed 8GB physical. Profile with **Extended RAM enabled**, which is the
+  shipping default — see §8d.
+
+### 8d. Extended RAM
+
+**The second 8GB is not RAM.** vivo Extended RAM (equivalently Samsung RAM Plus, Xiaomi
+Memory Extension) allocates a swap file on UFS storage and pages cold memory into it under
+pressure. Two consequences:
+
+**Performance.** A page fault into extended RAM is a UFS read, orders of magnitude slower
+than LPDDR4X. If the app's working set gets paged out — likely under Funtouch's aggressive
+background management — resuming a backgrounded game will stutter badly on the first few
+frames. **A5's "memory flat across 10 rounds" test matters more on this device than it
+would on a phone without vendor swap.** Test with Extended RAM ENABLED, since that is the
+shipping default.
+
+**Privacy — read §8e.**
+
+### 8e. Extended RAM vs the selfie promise
+
+Selfies live only as `Uint8List` in process memory (`01-DESIGN.md` §4b). The app never
+writes them to storage.
+
+**The OS might.** When Extended RAM engages, the kernel writes memory pages — including
+whatever holds those bytes — to a swap file on internal storage. This is below the
+application layer. Flutter and Dart expose no way to mark a buffer non-swappable, and
+`mlock`-style pinning is not available to us.
+
+This does **not** break the design. It does mean the claim must be worded precisely:
+
+| Claim | True? |
+|---|---|
+| "The app never writes your photo to storage" | ✅ Provable, and `no_disk_write_test` proves it |
+| "Your photo never leaves your device" | ✅ True |
+| "Your photo never touches disk under any circumstance" | ❌ Not guaranteeable with vendor swap enabled |
+
+`no_disk_write_test.dart` asserts the *application* writes nothing. It cannot assert
+anything about kernel paging, and should not pretend to. That test carries a comment saying
+so explicitly, so a future reader doesn't over-trust it.
+
+**Practical mitigations, in order of value:**
+
+1. **Minimise lifetime.** Hold the selfie only as long as the roster exists; already the
+   design. Swap risk scales with time resident.
+2. **Minimise size.** Downscale at capture to display resolution (a Polaroid thumbnail and
+   a grid tile — a few hundred KB, not a 32MP frame). Smaller buffers are less likely to be
+   selected for paging and cheaper if they are. **This is worth doing anyway for the
+   memory-flat requirement.**
+3. **Clear on teardown.** Overwrite the bytes before dropping the reference on New Game.
+   Doesn't unwrite a swap page, but shortens the window.
+
+See `docs/adr/0005-extended-ram-and-selfie-privacy.md`.
 
 ---
 

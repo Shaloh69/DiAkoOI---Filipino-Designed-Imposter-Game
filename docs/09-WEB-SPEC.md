@@ -91,8 +91,11 @@ Legally required once anything is collected, and the strongest trust asset avail
 
 ```
 [ ] Plain-language summary at top, legal text below
-[ ] Explicit: selfies are held in memory, never written to disk, never transmitted —
-    with the v1 scoping stated honestly
+[ ] Explicit: the APP never writes selfies to storage and never transmits them.
+    Do NOT claim they can never touch disk — vendor RAM-extension features page
+    memory below the app layer (01-DESIGN.md §4b, 06-TESTING-STRATEGY.md §8e).
+    A8 audits this page line by line against actual behaviour; an overclaim here
+    is the policy being wrong, not the app
 [ ] What IS collected: feedback you submit, aggregate usage counters
 [ ] What is NOT collected: names, photos, device identifiers, contacts
 [ ] Retention periods, stated concretely
