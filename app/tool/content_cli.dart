@@ -39,6 +39,7 @@ void main(List<String> args) {
           dir,
           _option(args, '--out') ?? _defaultOut,
           placeholder: args.contains('--placeholder'),
+          allowEmpty: args.contains('--allow-empty'),
         ),
       );
     case 'stats':
@@ -63,6 +64,8 @@ Options
   --out <path>   bundle output     (default: $_defaultOut)
   --strict       treat warnings as failures too
   --placeholder  mark the bundle as scaffolding, not authored content
+  --allow-empty  write a bundle even when no words were found (almost never
+                 what you want — it blanks the offline fallback)
 ''');
 }
 
@@ -144,7 +147,12 @@ int _validate(String dir, {required bool strict}) {
   return 0;
 }
 
-int _bundle(String dir, String out, {bool placeholder = false}) {
+int _bundle(
+  String dir,
+  String out, {
+  bool placeholder = false,
+  bool allowEmpty = false,
+}) {
   final read = _readAll(dir);
   if (read.errors.isNotEmpty) {
     for (final error in read.errors) {
@@ -165,14 +173,32 @@ int _bundle(String dir, String out, {bool placeholder = false}) {
     return 1;
   }
 
+  if (read.rows.isEmpty && !allowEmpty) {
+    // `content/` holds header-only CSVs until the authoring in §6 lands, so
+    // the documented bundle command run against it produced a valid, empty
+    // bundle that silently replaced the shipped bank — leaving the app with
+    // nothing to draw from, offline, with no server in the loop to notice.
+    //
+    // [buildBundle] refuses the same thing for programmatic callers. This
+    // check exists as well as that one so the message a person sees names the
+    // file that was about to be blanked.
+    stderr.writeln(
+      'Refusing to bundle: no words found in $dir. This would overwrite $out '
+      'with an empty bank and leave the app with nothing to draw from. Author '
+      'content first, or pass --allow-empty if you genuinely mean to blank it.',
+    );
+    return 1;
+  }
+
   final bundle = buildBundle(
     read.rows,
     contentVersion: DateTime.now().toUtc().toIso8601String().split('T').first,
     isPlaceholder: placeholder,
+    allowEmpty: allowEmpty,
     note: placeholder
-        ? 'PLACEHOLDER — machine-generated candidate content, NOT authored and '
-              'NOT reviewed. Exists so Phase 4 has something to run. Must be '
-              'replaced by the authored bank before release '
+        ? 'PLACEHOLDER — machine-generated candidate content, NOT authored '
+              'and NOT reviewed. Exists so Phase 4 has something to run. '
+              'Must be replaced by the authored bank before release '
               '(docs/02-CONTENT-PH.md §6, §7).'
         : null,
   );

@@ -252,6 +252,27 @@ pagkain,Adobo,tight clue,standard clue,loose clue,1,national
       expect(text, endsWith('\n'));
       expect(text, contains('\n  "formatVersion"'));
     });
+
+    test('an empty bundle is refused, because it blanks the fallback', () {
+      // `content/` is header-only CSVs until the §6 authoring lands, so the
+      // documented `bundle` command produced a perfectly valid empty bundle
+      // and overwrote the shipped bank with it. The app then has nothing to
+      // draw from, offline, with no server in the loop to notice.
+      expect(
+        () => buildBundle(const [], contentVersion: 'v1'),
+        throwsArgumentError,
+      );
+      expect(
+        buildBundle(const [], contentVersion: 'v1', allowEmpty: true),
+        containsPair('totalWords', 0),
+        reason: 'the escape hatch still exists for a caller that means it',
+      );
+      expect(
+        buildBundle(sampleRows(), contentVersion: 'v1'),
+        containsPair('totalWords', greaterThan(0)),
+        reason: 'and a real bank is unaffected by the guard',
+      );
+    });
   });
 
   group('the committed CSVs and bundle', () {
