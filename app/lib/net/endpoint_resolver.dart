@@ -68,6 +68,22 @@ class Endpoint {
   int get hashCode => Object.hash(apiBaseUrl, updatedAt);
 }
 
+/// Where the rotating API URL is published (docs/12-HOSTING.md §2b).
+///
+/// **This is the one URL that is deliberately baked in, and it is not an API
+/// base URL.** It is a stable, free location that already belongs to the
+/// project: `raw.githubusercontent.com` costs nothing, never rotates, and is
+/// reachable without an account. Everything about the API — host, scheme,
+/// availability — is read from the document it serves.
+///
+/// That is the whole trick. When a domain is eventually bought, the switch is
+/// a one-line edit to `endpoint.json` with zero app changes and no forced
+/// update; without this constant, every tunnel rotation would strand every
+/// installed copy.
+const discoveryDocumentUrl =
+    'https://raw.githubusercontent.com/Shaloh69/'
+    'DiAkoOI---Filipino-Designed-Imposter-Game/main/endpoint.json';
+
 /// Fetches a URL and returns the body, or null on any failure.
 typedef DiscoveryFetch = Future<String?> Function(Uri url);
 
