@@ -10,15 +10,19 @@ the run stops.
 
 ## Handoff — start a fresh session here
 
-**Last completed:** Phase 4 (core loop UI — A4 AUDIT-INCOMPLETE by design).
-**Next:** Phase 5 (animation pass), branched from `main` once the Phase 4 PR merges.
+**Last completed:** Phase 5 (animation pass — A5 AUDIT-INCOMPLETE by design).
+**Next:** Phase 6 (Interference Mode), branched from `main` once the Phase 5 PR merges.
 
-Phase 3 stays A3 AUDIT-INCOMPLETE: licensed audio is a human gate and Phase 4 did not
-depend on it.
+A3 and A4 both stay AUDIT-INCOMPLETE and neither blocks Phase 6: licensed audio is a human
+gate, and A4's remaining items need a handset, a table, and authored content.
 
-**Stack depth is zero.** PRs #1–#4 are all merged into `main` with merge commits, their
-branches deleted, and no PR is open. Every phase branch from here branches **from `main`**
-and merges back before the next starts. Keep it that way.
+**The one thing a fresh session should read first:** the profiling procedure below. It is
+the largest outstanding gate in the project and it is entirely executable by a human with
+the handset — everything it needs is built and committed.
+
+**Stack depth is zero.** PRs #1–#6 are all merged into `main` with merge commits, their
+branches deleted. Every phase branch from here branches **from `main`** and merges back
+before the next starts. Keep it that way.
 
 > **Merging a stack: do not pass `--delete-branch`.** Doing so on #1 deleted
 > `phase/00-foundation` before GitHub retargeted #2, which auto-**closed** #2 — and GitHub
@@ -64,6 +68,21 @@ Decisions made during the run that are not obvious from the code:
   call can cross two edges — the round-end check enters and leaves in one step — so sampling
   the phase after each method silently misses transitions. Two tests hold that trail against
   `GameMachine.transitions`. Keep them honest rather than relaxing them.
+- **ADR 0012** — the reveal state machine is Dart, not Rive, and the file says why. ADR 0008
+  put Rive third in a ladder behind a measurement that still needs the handset, and no `.riv`
+  artefact exists. The interface is shaped so one drops in without touching a caller.
+- **ADR 0013** — every animation is timed in **beats**, each a multiple of the pack's
+  `baseMs`. A static check in `test/ui/motion_test.dart` fails the build on a literal
+  `Duration(...)` outside a five-file exemption list. Adding an exemption means editing that
+  test and stating a reason.
+- **Two bugs that only appear on an overshooting pack.** A bordered `AnimatedContainer`
+  insets its child — use `foregroundDecoration`. And a curve like `easeOutBack` returns
+  values past 1, which `Opacity` asserts on — the overshoot belongs on the transform, never
+  on the alpha. Both are invisible on Lamig and fatal on Sayaw.
+- **Test fixtures must not be richer than reality.** Phase 4's mixer tests supplied a
+  synthetic bank holding all twelve topics; against the bank the app actually ships, every
+  preset produced a mix totalling 44 and **the Start button was disabled**. Tests that touch
+  bundled content now read the real asset off disk.
 - **Alchemist CI mode flattens opacity compositing.** Goldening the reveal at three
   progress values produced three byte-identical baselines. Blur alone *does* golden
   correctly — it is the opacity cross-fade that vanishes. Anything animated by opacity
@@ -95,7 +114,9 @@ is the shipping default (§8d).
 
 ### Awaiting a decision from you
 
-Nothing open.
+| Proposal | Question | Blocks |
+|---|---|---|
+| [0002 — coupled parameter bounds](docs/proposals/0002-coupled-parameter-bounds.md) | Three §2 parameters have a bound the UI does not know about. **Rounds is the urgent one**: its real ceiling is set by the word bank and the topic mix, and exceeding it *throws mid-game*. Roundabouts is capped at 13+ players but §2a says that cap should be overridable and the code does not implement it — a spec divergence. Imposter count 1–4 has no floor on crew, so a 4-player table can be set to 3 imposters and 1 crew. | Worth deciding before **Phase 6**; Interference adds no words and will not change the shape of the Rounds failure |
 
 **Closed 2026-08-23 — proposal 0001 accepted, clamp option.**
 [0001 — topic-weight ceiling](docs/proposals/0001-topic-weight-ceiling.md) is marked
@@ -253,3 +274,170 @@ that does nothing invites a host to turn it on and conclude the app is broken.
 **One count to watch.** Golden baselines went 11 → 10 → 11 this phase: `my_button.png` was
 removed with the Phase 0 harness it belonged to, and `matrix_vibe_button.png` was added.
 A Linux run reporting fewer than **11** golden groups means they stopped executing.
+
+### Phase 5 — Animation pass · **AUDIT-INCOMPLETE**
+
+Every animation is built, timed off the active pack, and has a reduced-motion path. **Almost
+all of A5 is a measurement, and the measurement needs the handset.** The harness that takes
+it is built and committed; the procedure is below.
+
+| A5 item | Status |
+|---|---|
+| Frame target decided and recorded in an ADR | **PASS** — 120Hz / 8.3ms, single config value in `app/lib/theme/frame_budget.dart`, recorded in ADR 0008 and closed as a gate on 2026-08-23 |
+| No animation blocks input; all interruptible | **PASS** — taps land mid-animation with no `pumpAndSettle` anywhere, which is the only way to catch a blocking beat; an interrupted hold is re-pressable |
+| `MediaQuery.disableAnimations` honoured throughout | **PASS** — the flag reaches the pack theme, every beat collapses, the stagger zeroes, both curves linearise, and a full game still plays with motion off |
+| Reduced-motion alternative for every animation | **PASS** — asserted per pack across all nine beats, plus the palette surviving and no pack overshooting |
+| No hardcoded timings | **PASS** — static scan of `lib/`, five exemptions each with a reason, the exemption list checked against the filesystem, and the regex proved against a planted offender |
+| Same trace under at least two Vibe Packs | **HARNESS READY** — the report records `packId`; the procedure runs it twice |
+| Profile trace in default power mode | **BLOCKED** — handset |
+| Hold-to-reveal blur holds budget | **BLOCKED** — handset. This is the measurement ADR 0008 has been waiting on since Phase 3 |
+| Jank check on the 20-player grid | **BLOCKED** — handset. The harness builds the real 20-player roster with selfie-sized buffers |
+| Thermal check, 10 consecutive rounds | **BLOCKED** — handset |
+| Funtouch backgrounding: call, notification, background | **BLOCKED** — handset |
+| Profiled on the 8GB variant | **BLOCKED** — handset (the confirmed device *is* the 8GB variant) |
+| Cold start under 2s with audio preload | **BLOCKED** — handset, and partly on Phase 3: the packs ship no audio yet, so a cold start measured now would not include the preload |
+| Memory flat across 10 rounds | **BLOCKED** — handset |
+
+**Exit condition — "60fps on a real mid-range Android, not the simulator" — is a device
+measurement and cannot be met by machine.** No frame time is produced anywhere in this phase.
+ADR 0008 rejected derived figures explicitly, and that still holds: a number with a caveat
+attached is a number people quote without the caveat.
+
+---
+
+## The A5 profiling procedure
+
+Everything here is executable by one person with the handset. Follow it exactly; where it
+says *record*, write the value down, because the harness cannot read it and a guess would
+make an unverifiable trace look verified.
+
+### Before you start — device setup
+
+1. **Vivo V60 Lite 5G**, the confirmed 8GB variant (`06-TESTING-STRATEGY.md` §8).
+2. **Power mode: default.** Settings → Battery → confirm neither Performance nor Battery
+   Saver is on. *Players will not change it, so neither do we.* A trace taken in Performance
+   mode measures a device nobody has.
+3. **Extended RAM: enabled.** Settings → RAM → confirm the extension is on. This is the
+   shipping default and §8d is explicit that disabling it measures a different phone.
+4. **Charge above 50%, then unplug.** Some vivo builds throttle differently on charge.
+5. **Close other apps.** Not for fairness — for the memory test, which is meaningless if
+   something else is causing the pressure.
+6. **Let the phone sit at room temperature for ten minutes** before the thermal run. §8c
+   wants warm-versus-cold, and a phone that started warm has no cold baseline.
+
+### Build and install
+
+```bash
+cd app
+flutter build apk --profile
+flutter install --profile
+```
+
+**It must be `--profile`.** A debug build's frame times measure the debugger. The harness
+says so on screen and stamps `debug (INVALID for A5)` into the report file, but check the
+command anyway — that label is a backstop, not the plan.
+
+### Run it
+
+1. Launch the app. You land on host setup.
+2. Scroll to **"Profiling harness (A5)"** near the bottom and tap it. *(The button does not
+   exist in a release build — see `profilingAvailable`.)*
+3. **Note the pack name** in the header. The pack is drawn per session, so relaunching is
+   how you get a different one.
+4. Tap **"Run all four scenarios"**. It runs unattended for roughly four minutes:
+   reveal 10s → handoff 10s → vote tally 10s → ten thermal rounds.
+5. **Do not touch the screen while it runs.** A stray tap adds frames that were not the
+   scenario.
+6. When it finishes it writes a file and shows the path on screen.
+
+### Do it twice, on two different packs
+
+A5 requires the same trace under at least two Vibe Packs, and specifically a **bouncy** one
+against a **precise** one — a bouncy profile must not blow a budget a precise one meets.
+
+- Bouncy: **Sayaw** or **Tugtog**
+- Precise: **Lamig** or **Tahimik**
+
+The pack is drawn at random per session. Force-stop the app and relaunch until the header
+shows one from each group, then run the full set on each. Two report files.
+
+### Retrieve the reports
+
+```bash
+adb exec-out run-as ph.teamlanzones.diakooi ls files/
+adb exec-out run-as ph.teamlanzones.diakooi cat files/diakooi-profile-TIMESTAMP.json > report.json
+```
+
+Then **fill in the three `UNRECORDED` fields** in each file — `device`, `powerMode`,
+`extendedRam`. A trace that does not say what it was taken on cannot be checked later, and an
+uncheckable trace is not evidence.
+
+### The backgrounding test — run this separately, by hand
+
+§8c calls Funtouch background management the most likely real bug on this device, and it is
+the one thing the harness cannot automate.
+
+1. Start a **normal game** (not the harness) with at least three players, and give at least
+   one of them a **real selfie** rather than a skip.
+2. Get to the voting grid, so there is session state worth losing.
+3. In turn, checking after each:
+   - press Home, wait **60 seconds**, reopen
+   - pull down the notification shade, dismiss it, return
+   - have someone **call the phone**, decline, return
+   - open three other apps, then return
+4. After each: **is the roster still there, are the selfies still showing, is the vote state
+   intact?**
+
+**A lost selfie is a bug, not a privacy win.** They exist nowhere else, and losing them
+mid-game means restarting onboarding at a table.
+
+Note also whether the first few frames after resuming stutter. §8d predicts they might: a
+page fault into Extended RAM is a UFS read, and resuming may have to fault the working set
+back in.
+
+### What counts as a pass
+
+The frame target is **120Hz / 8.3ms** (`FrameBudget.target`). Read these off the report:
+
+| Reading | Pass | Marginal | Fail |
+|---|---|---|---|
+| `medianMs` per scenario | ≤ 8.3 | 8.3–10 | > 10 |
+| `p99Ms` per scenario | ≤ 8.3 | ≤ 12 | > 12 |
+| `framesOverBudget` ÷ `frameCount` | < 1% | 1–3% | > 3% |
+| Thermal: last round median vs first | within 15% | 15–30% | > 30% |
+| Memory across the 10 rounds | flat | slow creep | grows every round |
+
+**`worstMs` is not a pass/fail number on its own.** One dropped frame in a run shows up there
+and nowhere else — p99 will not catch it, by construction — so read it, but do not fail a run
+on a single spike.
+
+**The reveal scenario is the one that matters.** It is the measurement ADR 0008 has been
+waiting on since Phase 3, and the reason the frame target was in question at all.
+
+### If the reveal fails
+
+Do not start optimising. Walk the ladder in `06-TESTING-STRATEGY.md` §8b, in order, changing
+one thing at a time:
+
+1. **Confirm which technique was measured.** The default is `prerenderedCrossFade`
+   (ADR 0008). If the trace was taken on that and failed, go to 2.
+2. **Try `downscaledBlur`.** One line at the `RevealSurface` call site. Then make an eye
+   judgement at arm's length on the 6.77" panel: blur radius is perceptual and resolution is
+   not, but that has a limit and where it sits is not a calculation.
+3. **Commission a Rive artefact** (ADR 0012). The interface is already shaped for it — four
+   named states, a single 0..1 progress input. This is the point at which paying for art is
+   justified by a measured need rather than a guess.
+4. **Cap to 60Hz.** Change `FrameBudget.target` to `FrameTarget.hz60`, doubling the budget to
+   16.6ms. `06-TESTING-STRATEGY.md` §8a calls this legitimate but visibly less premium on a
+   120Hz panel. Last resort, and record it as a decision rather than a default.
+
+### What to report back
+
+Attach both JSON files and answer these:
+
+- Did `prerenderedCrossFade` hold 8.3ms during a sustained reveal? **This is the headline.**
+- Did the 20-player grid hold it?
+- Did frame times degrade across the ten thermal rounds, and by how much?
+- Did the bouncy pack and the precise pack differ materially?
+- Did the app survive all four backgrounding cases **with selfies intact**?
+- Did resuming stutter, and for roughly how long?
