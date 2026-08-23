@@ -97,16 +97,41 @@ void main() {
     }
   }
 
+  /// Holds the card until it is actually legible, then releases.
+  ///
+  /// Pumped in steps rather than for a fixed duration: the reveal springs on
+  /// the pack's own motion profile, so a slow pack takes longer to become
+  /// readable than a fast one and a hardcoded 300ms would pass on Sayaw and
+  /// fail on Tahimik.
+  Future<void> readCard(WidgetTester tester) async {
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byType(RevealCard)),
+    );
+    var pumps = 0;
+    while (pumps < 60) {
+      await tester.pump(const Duration(milliseconds: 32));
+      pumps++;
+      final button = tester.widgetList<VibeButton>(
+        find.widgetWithText(VibeButton, 'Done — pass it on'),
+      );
+      if (button.isNotEmpty && button.first.onPressed != null) break;
+    }
+    expect(
+      pumps,
+      lessThan(60),
+      reason:
+          'the card never became legible — a reveal that cannot finish in two '
+          'seconds of held press is broken, whatever the pack tempo',
+    );
+    await gesture.up();
+    await tester.pumpAndSettle();
+  }
+
   /// Hands the phone round so every player sees their card.
   Future<void> distribute(WidgetTester tester, int count) async {
     for (var i = 0; i < count; i++) {
       await tapLabel(tester, 'I am P${i + 1}');
-      // Hold, then release. Continue only unlocks once the card was read.
-      final card = find.byType(RevealCard);
-      final gesture = await tester.startGesture(tester.getCenter(card));
-      await tester.pump(const Duration(milliseconds: 300));
-      await gesture.up();
-      await tester.pumpAndSettle();
+      await readCard(tester);
       await tapLabel(tester, 'Done — pass it on');
     }
     await tapLabel(tester, 'Start the roundabout');
