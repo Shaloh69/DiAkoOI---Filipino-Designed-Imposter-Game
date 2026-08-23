@@ -50,6 +50,12 @@ Future<void> main() async {
       'lib/ui/screens/discussion_screen.dart':
           'the §6 clue timer ticks in '
           'real seconds, not in beats',
+      // The harness's own drive rate — how often it pokes the UI under test.
+      // The widgets it renders still get their timings from the pack; only the
+      // poking is fixed, and it has to be, or the measurement would change
+      // with the pack being measured.
+      'lib/profiling/profiling_screen.dart':
+          'a measurement drive rate, not an animation',
     };
 
     test('lib/ holds no literal animation duration outside the theme', () {

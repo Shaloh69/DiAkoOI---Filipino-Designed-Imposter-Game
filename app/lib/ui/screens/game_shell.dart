@@ -1,6 +1,7 @@
 import 'package:diakooi/content/word_bank.dart';
 import 'package:diakooi/engine/engine.dart';
 import 'package:diakooi/game/game_providers.dart';
+import 'package:diakooi/profiling/profiling_screen.dart';
 import 'package:diakooi/theme/vibe_providers.dart';
 import 'package:diakooi/theme/vibe_theme.dart';
 import 'package:diakooi/ui/screens/discussion_screen.dart';
@@ -62,6 +63,15 @@ class _Phase extends ConsumerWidget {
         GamePhase.lobby => HostSetupScreen(
           initial: session.settings,
           availableTopicIds: bank.topicIds,
+          // Debug and profile builds only — see [profilingAvailable]. A release
+          // build has no route to it at all.
+          onOpenProfiling: profilingAvailable
+              ? () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const ProfilingScreen(),
+                  ),
+                )
+              : null,
           onStart: (settings) => notifier
             ..configure(settings)
             ..rollVibe(pack!.id),
